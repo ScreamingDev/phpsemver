@@ -1,16 +1,18 @@
 <?php
 
-define('SEMVER_PHP_BIN_PATH', getenv('PHP_PEAR_PHP_BIN')
+define('PHPSEMVER_NAME', 'PHPSemVer');
+define('PHPSEMVER_ID', 'phpsemver');
+define('PHPSEMVER_PHP_BIN_PATH', getenv('PHP_PEAR_PHP_BIN')
 	?: '/usr/bin/env php');
-define('SEMVER_BIN_PATH', __FILE__);
+define('PHPSEMVER_BIN_PATH', __FILE__);
 define(
-'SEMVER_LIB_PATH',
+'PHPSEMVER_LIB_PATH',
 	dirname(__DIR__) . DIRECTORY_SEPARATOR . 'lib'
 );
-define('SEMVER_TEXTDOMAIN', 'semver');
-define('SEMVER_VERSION', 'DEV');
+define('PHPSEMVER_TEXTDOMAIN', PHPSEMVER_ID);
+define('PHPSEMVER_VERSION', 'DEV');
 
-if (!is_readable(SEMVER_LIB_PATH)) {
+if (!is_readable(PHPSEMVER_LIB_PATH)) {
 	die(
 		'Something went terribly wrong'
 		. PHP_EOL . 'because I was to dumb to think of such situation!'
@@ -20,7 +22,7 @@ if (!is_readable(SEMVER_LIB_PATH)) {
 
 
 // find composer file
-function semver_get_composer_config($dir)
+function phpsemver_get_composer_config($dir)
 {
 	$composer_config = false;
 
@@ -58,7 +60,7 @@ function semver_get_composer_config($dir)
 	return $composer_config;
 }
 
-$composerConfig = semver_get_composer_config(SEMVER_BIN_PATH);
+$composerConfig = phpsemver_get_composer_config(PHPSEMVER_BIN_PATH);
 
 $vendorDir = $composerConfig['_base-dir']
 			 . DIRECTORY_SEPARATOR . $composerConfig['vendor-dir'];
@@ -77,6 +79,6 @@ if (!is_readable($loaderPath)) {
 $loader = require $loaderPath;
 
 $loader = new \Symfony\Component\ClassLoader\ClassLoader();
-$loader->addPrefix('Semver', SEMVER_LIB_PATH);
-$loader->addPrefix(false, SEMVER_LIB_PATH);
+$loader->addPrefix('PHPSemVer', PHPSEMVER_LIB_PATH);
+$loader->addPrefix(false, PHPSEMVER_LIB_PATH);
 $loader->register();

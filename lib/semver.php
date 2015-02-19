@@ -6,7 +6,7 @@ if (!ini_get('date.timezone')) {
 
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'bootstrap.php';
 
-$softecApplication = new \Semver\Console\Application();
+$softecApplication = new \PHPSemVer\Console\Application();
 $softecApplication->fetchCommands();
 
 $softecApplication->run();

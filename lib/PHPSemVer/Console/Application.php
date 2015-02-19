@@ -1,6 +1,6 @@
 <?php
 
-namespace Semver\Console;
+namespace PHPSemVer\Console;
 
 use Symfony\Component\Console\Input\InputOption;
 
@@ -21,7 +21,7 @@ class Application extends \Symfony\Component\Console\Application
         // add if is command
         foreach ($Regex as $single) {
             $file = preg_replace(
-                '@' . preg_quote(SEMVER_LIB_PATH, '@') . '@',
+                '@' . preg_quote(PHPSEMVER_LIB_PATH, '@') . '@',
                 '',
                 $single[0],
                 1

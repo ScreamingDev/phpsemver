@@ -9,7 +9,7 @@
 namespace Tests\Softec;
 
 
-use Softec\Console\Application;
+use PHPSemVer\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class AbstractTestCase extends \PHPUnit_Framework_TestCase

@@ -1,6 +1,6 @@
 <?php
 
-namespace Semver\Constraint;
+namespace PHPSemVer\Constraint;
 
 
 class BuilderMatch extends AbstractAssertion {

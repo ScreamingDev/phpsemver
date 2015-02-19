@@ -2,7 +2,7 @@
 
 namespace Tests\Softec\Console;
 
-use Softec\Console\Application;
+use PHPSemVer\Console\Application;
 
 class ApplicationDefinitionTest extends \PHPUnit_Framework_TestCase
 {

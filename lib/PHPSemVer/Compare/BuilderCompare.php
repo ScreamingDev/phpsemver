@@ -1,13 +1,13 @@
 <?php
 
-namespace Semver\Compare;
+namespace PHPSemVer\Compare;
 
 use PDepend\Source\AST\ASTArtifactList;
 use PDepend\Source\Language\PHP\PHPBuilder;
-use Semver\Constraint\MajorException;
-use Semver\Constraint\MinorException;
-use Semver\Constraint\NamespaceExists;
-use Semver\Constraint\PatchException;
+use PHPSemVer\Constraint\MajorException;
+use PHPSemVer\Constraint\MinorException;
+use PHPSemVer\Constraint\NamespaceExists;
+use PHPSemVer\Constraint\PatchException;
 
 class BuilderCompare
 {

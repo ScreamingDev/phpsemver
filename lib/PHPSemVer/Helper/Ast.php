@@ -1,6 +1,6 @@
 <?php
 
-namespace Semver\Helper;
+namespace PHPSemVer\Helper;
 
 
 class Ast {

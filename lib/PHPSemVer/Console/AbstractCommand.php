@@ -1,10 +1,7 @@
 <?php
 
-namespace Semver\Console;
+namespace PHPSemVer\Console;
 
-
-use DocTrans\DocDocument;
-use DocTrans\Markdown;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -24,7 +21,7 @@ abstract class AbstractCommand extends Command {
 	}
 
 	/**
-	 * @return \Softec\Console\Application
+	 * @return \PHPSemVer\Console\Application
 	 */
 	public function getApplication() {
 		return parent::getApplication();
@@ -73,33 +70,6 @@ abstract class AbstractCommand extends Command {
 	}
 
 	protected $_outputDocument;
-
-
-	/**
-	 * @return DocDocument
-	 */
-	public function getOutputDocument() {
-		if ( null != $this->_outputDocument ) {
-			return $this->_outputDocument;
-		}
-
-		$outputFormat = $this->getInput()->getOption( 'output-format' );
-
-		switch ( $outputFormat ) {
-			case 'md':
-				$this->_outputDocument = new Markdown();
-				break;
-			default:
-				throw new \DomainException(
-					sprintf(
-						'Unknown output-format "%s".',
-						$outputFormat
-					)
-				);
-		}
-
-		return $this->_outputDocument;
-	}
 
 	public function debug( $message ) {
 		if ( ! $this->getOutput()->isDebug() ) {

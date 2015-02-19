@@ -1,12 +1,12 @@
 <?php
 
-namespace Semver\Console;
+namespace PHPSemVer\Console;
 
 use PDepend\Source\Language\PHP\PHPBuilder;
 use PDepend\Source\Language\PHP\PHPParserGeneric;
 use PDepend\Source\Language\PHP\PHPTokenizerInternal;
 use PDepend\Util\Cache\CacheFactory;
-use Semver\Compare\BuilderCompare;
+use PHPSemVer\Compare\BuilderCompare;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
@@ -91,7 +91,7 @@ class RunCommand extends AbstractCommand {
 
 		// fetch previous state
 		foreach ( $targets as $file ) {
-			$tmp_file = tempnam( sys_get_temp_dir(), 'semver' );
+			$tmp_file = tempnam( sys_get_temp_dir(), PHPSEMVER_ID );
 
 			// last state but suppress error messages
 			$oldContent = system(

@@ -1,6 +1,6 @@
 <?php
 
-namespace Semver\Constraint;
+namespace PHPSemVer\Constraint;
 
 class NamespaceExists extends AbstractAssertion {
 	public function __construct( $namespace, $astSet ) {
