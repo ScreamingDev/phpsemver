@@ -75,34 +75,34 @@ class BuilderCompare
     }
 
     /**
-     * @param \Exception $e
+     * @param \Exception $exception
      *
      * @return null
      */
-    public function appendException( $e )
+    public function appendException( $exception )
     {
-        if ( $e instanceof MajorException )
+        if ( $exception instanceof MajorException )
         {
-            $this->appendOutput( $e->getMessage(), static::OUTPUT_MAJOR );
+            $this->appendOutput( $exception->getMessage(), static::OUTPUT_MAJOR );
 
             return null;
         }
 
-        if ( $e instanceof MinorException )
+        if ( $exception instanceof MinorException )
         {
-            $this->appendOutput( $e->getMessage(), static::OUTPUT_MINOR );
+            $this->appendOutput( $exception->getMessage(), static::OUTPUT_MINOR );
 
             return null;
         }
 
-        if ( $e instanceof PatchException )
+        if ( $exception instanceof PatchException )
         {
-            $this->appendOutput( $e->getMessage(), static::OUTPUT_PATCH );
+            $this->appendOutput( $exception->getMessage(), static::OUTPUT_PATCH );
 
             return null;
         }
 
-        $this->appendOutput( $e->getMessage() );
+        $this->appendOutput( $exception->getMessage() );
     }
 
     public function appendOutput( $message, $type = self::OUTPUT_GENERAL )

@@ -24,7 +24,7 @@ class NamespaceExists extends AbstractAssertion {
         }
 
         throw new MajorException(
-            $this->__(
+            $this->translate(
                 'Namespace "%s" is missing or renamed.',
                 $this->getNamespace()
             )
