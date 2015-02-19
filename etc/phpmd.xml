@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<ruleset name="minimal code quality" xmlns="http://pmd.sf.net/ruleset/1.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sf.net/ruleset/1.0.0 http://pmd.sf.net/ruleset_xml_schema.xsd"
+         xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd">
+    <description>minimal code quality</description>
+
+    <!-- Import the clean code rule set -->
+    <rule ref="rulesets/cleancode.xml" />
+
+    <!-- Import the code size rule set -->
+    <rule ref="rulesets/codesize.xml" />
+
+    <!-- Import the design rule set -->
+    <rule ref="rulesets/design.xml" />
+
+    <!-- Import the naming rule set -->
+    <rule ref="rulesets/naming.xml" />
+
+    <!-- Import the unused code rule set -->
+    <rule ref="rulesets/unusedcode.xml" />
+</ruleset>
