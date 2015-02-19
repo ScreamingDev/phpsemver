@@ -15,46 +15,67 @@ use Symfony\Component\Console\Output\OutputInterface;
 abstract class AbstractCommand extends Command {
 	protected $_input;
 	protected $_output;
+    protected $_outputDocument;
 
-	public function getPrdPath() {
-		return $this->getInput()->getOption( 'prd-path' );
+    /**
+     * @param $message
+     *
+     * @return null
+     */
+    public function debug( $message )
+    {
+        if ( ! $this->getOutput()->isDebug() )
+        {
+            return null;
+        }
+
+        $this->getOutput()->writeln( $message );
 	}
 
 	/**
-	 * @return \PHPSemVer\Console\Application
+     * @return OutputInterface
 	 */
-	public function getApplication() {
-		return parent::getApplication();
-	}
-
-
-	/**
-	 * @return InputInterface
-	 */
-	public function getInput() {
-		return $this->_input;
+    public function getOutput()
+    {
+        return $this->_output;
 	}
 
 	/**
-	 * @param InputInterface $input
+     * @param OutputInterface $output
 	 */
-	public function setInput( $input ) {
-		$this->_input = $input;
+    public function setOutput( $output )
+    {
+        $this->_output = $output;
 	}
 
 	/**
-	 * @return OutputInterface
+     * @return \PHPSemVer\Console\Application
 	 */
-	public function getOutput() {
-		return $this->_output;
+    public function getApplication()
+    {
+        return parent::getApplication();
+    }
+
+    public function getPrdPath()
+    {
+        return $this->getInput()->getOption( 'prd-path' );
 	}
 
 	/**
-	 * @param OutputInterface $output
+     * @return InputInterface
 	 */
-	public function setOutput( $output ) {
-		$this->_output = $output;
+    public function getInput()
+    {
+        return $this->_input;
 	}
+
+    /**
+     * @param InputInterface $input
+     */
+    public function setInput( $input )
+    {
+        $this->_input = $input;
+    }
 
 	protected function initialize(
 		InputInterface $input,
@@ -67,16 +88,6 @@ abstract class AbstractCommand extends Command {
 			$input,
 			$output
 		);
-	}
-
-	protected $_outputDocument;
-
-	public function debug( $message ) {
-		if ( ! $this->getOutput()->isDebug() ) {
-			return null;
-		}
-
-		$this->getOutput()->writeln( $message );
 	}
 
 	public function verbose( $message ) {

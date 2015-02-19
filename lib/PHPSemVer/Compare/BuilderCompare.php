@@ -11,6 +11,13 @@ use PHPSemVer\Constraint\PatchException;
 
 class BuilderCompare
 {
+    const OUTPUT_GENERAL = 'general';
+    const OUTPUT_MAJOR   = 'major';
+    const OUTPUT_MINOR   = 'minor';
+    const OUTPUT_PATCH   = 'patch';
+    protected $_newNamespaces = array();
+    protected $_oldNamespaces = array();
+    protected $_output;
     protected $latest;
     protected $previous;
 
@@ -21,8 +28,11 @@ class BuilderCompare
         $this->latest = $latest;
     }
 
-    protected $_oldNamespaces = array();
-    protected $_newNamespaces = array();
+    public function parse()
+    {
+        $this->testNamespaces();
+
+    }
 
     public function testNamespaces()
     {
@@ -36,18 +46,39 @@ class BuilderCompare
                 );
             } catch ( MajorException $e )
             {
-                $this->appendException($e);
+                $this->appendException( $e );
             }
         }
     }
 
-    const OUTPUT_MAJOR   = 'major';
-    const OUTPUT_MINOR   = 'minor';
-    const OUTPUT_PATCH   = 'patch';
-    const OUTPUT_GENERAL = 'general';
+    /**
+     * @return PHPBuilder
+     */
+    public function getPrevious()
+    {
+        return $this->previous;
+    }
 
-    protected $_output;
+    public function assertNamespaceExists( $namespace, $ast )
+    {
+        $assert = new NamespaceExists( $namespace, $ast );
 
+        $assert->run();
+    }
+
+    /**
+     * @return PHPBuilder
+     */
+    public function getLatest()
+    {
+        return $this->latest;
+    }
+
+    /**
+     * @param \Exception $e
+     *
+     * @return null
+     */
     public function appendException( $e )
     {
         if ( $e instanceof MajorException )
@@ -77,35 +108,6 @@ class BuilderCompare
     public function appendOutput( $message, $type = self::OUTPUT_GENERAL )
     {
         $this->_output[ $type ][ ] = $message;
-    }
-
-    public function parse()
-    {
-        $this->testNamespaces();
-
-    }
-
-    public function assertNamespaceExists( $namespace, $ast )
-    {
-        $assert = new NamespaceExists( $namespace, $ast );
-
-        $assert->run();
-    }
-
-    /**
-     * @return PHPBuilder
-     */
-    public function getLatest()
-    {
-        return $this->latest;
-    }
-
-    /**
-     * @return PHPBuilder
-     */
-    public function getPrevious()
-    {
-        return $this->previous;
     }
 
 

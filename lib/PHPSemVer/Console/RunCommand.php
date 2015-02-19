@@ -5,43 +5,25 @@ namespace PHPSemVer\Console;
 use PDepend\Source\Language\PHP\PHPBuilder;
 use PDepend\Source\Language\PHP\PHPParserGeneric;
 use PDepend\Source\Language\PHP\PHPTokenizerInternal;
+use PDepend\Source\Parser\ParserException;
 use PDepend\Util\Cache\CacheFactory;
+use PDepend\Util\Configuration;
 use PHPSemVer\Compare\BuilderCompare;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
 
 class RunCommand extends AbstractCommand {
+    protected $cacheFactory;
 	/**
-	 * @param $targets
-	 *
-	 * @return array
+     * @var PHPBuilder
 	 */
-	protected function _fetchTargets( $targets ) {
-		if ( is_dir( $targets ) ) {
-			$finder = new Finder();
-			$finder->name( '*.php' )
-			       ->files()
-			       ->in( $targets );
-
-			$targets = array();
-
-
-			foreach ( $finder as $single_file ) {
-				/** @var \Symfony\Component\Finder\SplFileInfo $single_file */
-
-				if ( $single_file->isDir() ) {
-					continue;
-				}
-
-				$targets[] = $single_file->getPathname();
-			}
-
-			return (array) $targets;
-		}
-
-		return (array) $targets;
-	}
+    protected $currentBuilder  = null;
+    protected $parseExceptions = array();
+    /**
+     * @var PHPBuilder
+     */
+    protected $previousBuilder = null;
 
 	protected function configure() {
 		$this->setName( 'run' );
@@ -62,7 +44,7 @@ class RunCommand extends AbstractCommand {
 		$settings                = new \stdClass();
 		$settings->cache         = new \stdClass();
 		$settings->cache->driver = 'memory';
-		$config                  = new \PDepend\Util\Configuration( $settings );
+        $config = new Configuration( $settings );
 
 		$this->cacheFactory = new CacheFactory( $config );
 
@@ -84,7 +66,8 @@ class RunCommand extends AbstractCommand {
 
 			try {
 				$parser->parse();
-			} catch ( \PDepend\Source\Parser\ParserException $e ) {
+            } catch ( ParserException $e )
+            {
 				$this->parseExceptions[] = $e;
 			}
 		}
@@ -116,7 +99,8 @@ class RunCommand extends AbstractCommand {
 
 			try {
 				$parser->parse();
-			} catch ( \PDepend\Source\Parser\ParserException $e ) {
+            } catch ( ParserException $e )
+            {
 				$this->parseExceptions[] = $e;
 			}
 		}
@@ -132,13 +116,38 @@ class RunCommand extends AbstractCommand {
 
 	}
 
-	/**
-	 * @var PHPBuilder
+    /**
+     * @param $targets
+     *
+     * @return array
 	 */
-	protected $currentBuilder = null;
+    protected function _fetchTargets( $targets )
+    {
+        if ( is_dir( $targets ) )
+        {
+            $finder = new Finder();
+            $finder->name( '*.php' )
+                   ->files()
+                   ->in( $targets );
 
-	/**
-	 * @var PHPBuilder
-	 */
-	protected $previousBuilder = null;
+            $targets = array();
+
+
+            foreach ( $finder as $single_file )
+            {
+                /** @var \Symfony\Component\Finder\SplFileInfo $single_file */
+
+                if ( $single_file->isDir() )
+                {
+                    continue;
+                }
+
+                $targets[ ] = $single_file->getPathname();
+            }
+
+            return (array) $targets;
+        }
+
+        return (array) $targets;
+    }
 }
