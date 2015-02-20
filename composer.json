@@ -27,10 +27,10 @@
         "behat/mink-extension": "*",
         "behat/mink-goutte-driver": "*",
         "behat/mink-selenium2-driver": "*",
-        "phpunit/phpunit": "~4.4",
-        "phpmd/phpmd": "2.2.*"
+      "phpunit/phpunit": "~4.4"
     },
     "require": {
+      "phpmd/phpmd": "2.2.*",
         "symfony/console": "2.6.*",
         "symfony/class-loader": "2.6.*"
     },
