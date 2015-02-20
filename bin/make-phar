@@ -1,0 +1,69 @@
+#!/usr/bin/env php
+<?php
+
+ini_set( 'phar.readonly', 0 );
+
+if ( ini_get( 'phar.readonly' ) )
+{
+    echo 'Unable to generate PHAR!' . PHP_EOL;
+    echo 'Please set phar.readonly to 0 in your php.ini.' . PHP_EOL;
+    echo PHP_EOL;
+    echo 'Run "php -i | grep .ini" for more information' . PHP_EOL;
+    echo 'or do it again with config: php -dphar.readonly=0 ' . implode( ' ', $argv ) . PHP_EOL;
+    exit;
+}
+
+$basePath = dirname( __DIR__ );
+
+$alias = basename( $basePath );
+
+$filename = $alias . '.phar';
+if ( file_exists( $filename ) )
+{
+    unlink( $filename );
+}
+
+$phar = new Phar( $filename, Phar::NONE, $alias );
+
+$libDir = $basePath . DIRECTORY_SEPARATOR . 'lib';
+$optDir = $basePath . DIRECTORY_SEPARATOR . 'opt';
+
+/**
+ * @param string $directory
+ * @param \Phar  $phar
+ * @param string $basePath
+ */
+function phar_add_dir( $directory, $phar, $basePath )
+{
+    $Directory = new RecursiveDirectoryIterator( $directory );
+    $Iterator  = new RecursiveIteratorIterator( $Directory );
+
+    foreach ( $Iterator as $single )
+    {
+        /** @var SplFileInfo $single */
+        if ( ! $single->isFile() )
+        {
+            continue;
+        }
+
+        if ( false !== strpos( $single->getPath(), 'Test/Softec' ) )
+        {
+            continue;
+        }
+
+        $phar->addFile(
+            $single->getRealPath(),
+            str_replace( $basePath, '', $single->getRealPath() )
+        );
+
+    }
+}
+
+phar_add_dir( $libDir, $phar, $basePath );
+phar_add_dir( $optDir, $phar, $basePath );
+
+$phar->addFile( $basePath . '/composer.json', '/composer.json' );
+
+$phar->setDefaultStub( 'lib/' . $alias . '.php' );
+
+chmod( $filename, 0755 );
