@@ -13,57 +13,165 @@ if ( ini_get( 'phar.readonly' ) )
     exit;
 }
 
-$basePath = dirname( __DIR__ );
+$projectBaseDir = dirname( __DIR__ );
 
-$alias = basename( $basePath );
+$ignoreDir = array(
+    'lib/Tests',
+    'opt/pdepend/pdepend/src/bin',
+    'opt/phpmd/phpmd/src/test',
+    'opt/phpmd/phpmd/setup',
+    'opt/phpmd/phpmd/src/site',
+    'opt/symfony/class-loader/Symfony/Component/ClassLoader/Tests',
+    'opt/symfony/config/Symfony/Component/Config/Tests',
+    'opt/symfony/console/Symfony/Component/Console/Tests',
+    'opt/symfony/dependency-injection/Symfony/Component/DependencyInjection/Tests',
+);
 
-$filename = $alias . '.phar';
-if ( file_exists( $filename ) )
+function fetch_json( $fileName )
 {
-    unlink( $filename );
+    return json_decode( file_get_contents( $fileName ), true );
 }
-
-$phar = new Phar( $filename, Phar::NONE, $alias );
-
-$libDir = $basePath . DIRECTORY_SEPARATOR . 'lib';
-$optDir = $basePath . DIRECTORY_SEPARATOR . 'opt';
 
 /**
  * @param string $directory
  * @param \Phar  $phar
- * @param string $basePath
+ * @param string $baseDir
  */
-function phar_add_dir( $directory, $phar, $basePath )
+function phar_add_dir( $directory, $phar, $baseDir )
 {
+    global $ignoreDir;
+
     $Directory = new RecursiveDirectoryIterator( $directory );
     $Iterator  = new RecursiveIteratorIterator( $Directory );
 
+    $prevPath = '';
     foreach ( $Iterator as $single )
     {
-        /** @var SplFileInfo $single */
-        if ( ! $single->isFile() )
+        $aliasDir = trim( str_replace( $baseDir, '', $prevPath ), '/' );
+
+        if ( in_array( $aliasDir, $ignoreDir, true ) )
         {
             continue;
         }
 
-        if ( false !== strpos( $single->getPath(), 'Test/Softec' ) )
+        /** @var SplFileInfo $single */
+        if ( $single->isDir() && $single->getPath() != $prevPath )
+        {
+            $prevPath = $single->getPath();
+            echo "    " . $aliasDir . PHP_EOL;
+        }
+
+        if ( ! $single->isFile() )
         {
             continue;
         }
 
         $phar->addFile(
             $single->getRealPath(),
-            str_replace( $basePath, '', $single->getRealPath() )
+            str_replace( $baseDir, '', $single->getRealPath() )
         );
-
     }
 }
 
-phar_add_dir( $libDir, $phar, $basePath );
-phar_add_dir( $optDir, $phar, $basePath );
 
-$phar->addFile( $basePath . '/composer.json', '/composer.json' );
+$composerJson     = fetch_json( $projectBaseDir . '/composer.json' );
+$requiredPackages = array_keys( $composerJson[ 'require' ] );
+
+$composerConfig = $composerJson[ 'config' ];
+$vendorPath     = $projectBaseDir . '/' . $composerConfig[ 'vendor-dir' ] . '/';
+
+
+$composerLock      = fetch_json( $projectBaseDir . '/composer.lock' );
+$installedPackages = $composerLock[ 'packages' ];
+
+if ( file_exists( $pharFileName ) )
+{
+    unlink( $pharFileName );
+}
+
+
+while ( $packageName = array_shift( $requiredPackages ) )
+{
+    $packagePath = realpath( $vendorPath . $packageName ) . '/';
+
+    if ( ! $packagePath )
+    {
+        throw new \Exception(
+            sprintf(
+                'Could not find path to package "%s" (not found in "%s").',
+                $packageName,
+                $vendorPath
+            )
+        );
+    }
+
+    $pharTargets[ $packageName ] = $packagePath;
+
+    $package = false;
+    foreach ( $installedPackages as $installedPackage )
+    {
+        if ( $installedPackage[ 'name' ] == $packageName )
+        {
+            $package = $installedPackage;
+            break;
+        }
+    }
+
+    if ( ! $package )
+    {
+        throw new \Exception(
+            sprintf( 'Could not resolve dependencies for "%s" package.', $packageName )
+        );
+    }
+
+    $additionalPackages = array_keys( $package[ 'require' ] );
+    foreach ( $additionalPackages as $additionalPackage )
+    {
+        // skip those that are already about to be parsed or already parsed
+        if ( in_array( $additionalPackage, $requiredPackages, true )
+             || isset( $pharTargets[ $additionalPackage ] )
+        )
+        {
+            continue;
+        }
+
+        // skip php itself
+        if ( 'php' == $additionalPackage )
+        {
+            continue;
+        }
+
+        $requiredPackages[ ] = $additionalPackage;
+    }
+
+}
+
+$alias        = basename( $projectBaseDir );
+$pharFileName = $alias . '.phar';
+$phar         = new Phar( $pharFileName, Phar::NONE, $alias );
+
+echo "Adding lib ..." . PHP_EOL;
+
+phar_add_dir( $projectBaseDir . '/lib', $phar, $projectBaseDir );
+
+foreach ( $pharTargets as $name => $path )
+{
+    echo "Adding " . $name . " ..." . PHP_EOL;
+    phar_add_dir( $path, $phar, $projectBaseDir );
+}
+
+echo "Finishing ..." . PHP_EOL;
+
+// add composer
+$phar->addFile( $projectBaseDir . '/composer.json', '/composer.json' );
+$phar->addFile( $vendorPath . '/autoload.php', str_replace( $projectBaseDir, '', $vendorPath ) . 'autoload.php' );
+phar_add_dir( $vendorPath . 'composer', $phar, $projectBaseDir );
 
 $phar->setDefaultStub( 'lib/' . $alias . '.php' );
 
-chmod( $filename, 0755 );
+if ( ! $phar->offsetExists( 'composer.json' ) )
+{
+    throw new \Exception( 'composer.json not in phar' );
+}
+
+chmod( $pharFileName, 0755 );
