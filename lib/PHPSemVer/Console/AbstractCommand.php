@@ -12,9 +12,10 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @package Softec\Console
  *
  */
-abstract class AbstractCommand extends Command {
-	protected $_input;
-	protected $_output;
+abstract class AbstractCommand extends Command
+{
+    protected $_input;
+    protected $_output;
     protected $_outputDocument;
 
     /**
@@ -29,28 +30,33 @@ abstract class AbstractCommand extends Command {
             return null;
         }
 
-        $this->getOutput()->writeln( $message );
-	}
+        if ( func_num_args() > 1 )
+        {
+            $message = vsprintf( $message, array_slice( func_get_args(), 1 ) );
+        }
 
-	/**
+        $this->getOutput()->writeln( $message );
+    }
+
+    /**
      * @return OutputInterface
-	 */
+     */
     public function getOutput()
     {
         return $this->_output;
-	}
+    }
 
-	/**
+    /**
      * @param OutputInterface $output
-	 */
+     */
     public function setOutput( $output )
     {
         $this->_output = $output;
-	}
+    }
 
-	/**
+    /**
      * @return \PHPSemVer\Console\Application
-	 */
+     */
     public function getApplication()
     {
         return parent::getApplication();
@@ -59,15 +65,15 @@ abstract class AbstractCommand extends Command {
     public function getPrdPath()
     {
         return $this->getInput()->getOption( 'prd-path' );
-	}
+    }
 
-	/**
+    /**
      * @return InputInterface
-	 */
+     */
     public function getInput()
     {
         return $this->_input;
-	}
+    }
 
     /**
      * @param InputInterface $input
@@ -77,24 +83,31 @@ abstract class AbstractCommand extends Command {
         $this->_input = $input;
     }
 
-	protected function initialize(
-		InputInterface $input,
-		OutputInterface $output
-	) {
-		$this->setInput( $input );
-		$this->setOutput( $output );
+    protected function initialize(
+        InputInterface $input,
+        OutputInterface $output
+    ) {
+        $this->setInput( $input );
+        $this->setOutput( $output );
 
-		parent::initialize(
-			$input,
-			$output
-		);
-	}
+        parent::initialize(
+            $input,
+            $output
+        );
+    }
 
-	public function verbose( $message ) {
-		if ( ! $this->getOutput()->isVerbose() ) {
-			return null;
-		}
+    public function verbose( $message )
+    {
+        if ( ! $this->getOutput()->isVerbose() )
+        {
+            return null;
+        }
 
-		$this->getOutput()->writeln( '<info>' . $message . '</info>' );
-	}
+        if ( func_num_args() > 1 )
+        {
+            $message = vsprintf( $message, array_slice( func_get_args(), 1 ) );
+        }
+
+        $this->getOutput()->writeln( '<info>' . $message . '</info>' );
+    }
 }

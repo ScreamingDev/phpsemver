@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Softec\Console;
+namespace Test\PHPSemVer\Console;
 
 
 use PHPSemVer\Console\Application;

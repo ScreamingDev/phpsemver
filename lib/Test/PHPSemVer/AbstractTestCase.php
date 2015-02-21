@@ -6,7 +6,7 @@
  * Time: 21:06
  */
 
-namespace Tests\Softec;
+namespace Test\PHPSemVer;
 
 
 use PHPSemVer\Console\Application;
@@ -14,16 +14,16 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class AbstractTestCase extends \PHPUnit_Framework_TestCase
 {
-    public function getApplication()
-    {
-        return new Application();
-    }
-
     public function getCommandTester($command)
     {
         $application = $this->getApplication();
         $command     = $application->find($command);
 
         return new CommandTester($command);
+    }
+
+    public function getApplication()
+    {
+        return new Application();
     }
 }

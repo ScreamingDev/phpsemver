@@ -6,6 +6,15 @@ use Symfony\Component\Console\Input\InputOption;
 
 class Application extends \Symfony\Component\Console\Application
 {
+    public function __construct()
+    {
+        parent::__construct( 'Softec', '1.0.0' );
+
+        $definition = $this->getDefinition();
+
+        $this->setDefinition( $definition );
+    }
+
     public function fetchCommands()
     {
         $Directory = new \RecursiveDirectoryIterator(__DIR__);
@@ -43,25 +52,5 @@ class Application extends \Symfony\Component\Console\Application
 
             $this->add(new $class);
         }
-    }
-
-    public function __construct()
-    {
-        parent::__construct('Softec', '1.0.0');
-
-        $definition = $this->getDefinition();
-
-        $definition->addOption(
-            new InputOption(
-                'target',
-                't',
-                InputOption::VALUE_OPTIONAL,
-                'File or folder to check',
-                '.'
-            )
-        );
-
-
-        $this->setDefinition($definition);
     }
 }

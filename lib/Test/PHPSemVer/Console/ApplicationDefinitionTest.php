@@ -1,18 +1,18 @@
 <?php
 
-namespace Tests\Softec\Console;
+namespace Test\PHPSemVer\Console;
 
 use PHPSemVer\Console\Application;
 
 class ApplicationDefinitionTest extends \PHPUnit_Framework_TestCase
 {
-    public function testHasOptionForPrdPath()
+    public function testHasOptionForTargetDirectory()
     {
         $application = new Application();
 
         $this->assertInstanceOf(
             'Symfony\\Component\\Console\\Input\\InputOption',
-            $application->getDefinition()->getOption('prd-path')
+            $application->getDefinition()->getOption( 'target' )
         );
     }
 }
