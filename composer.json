@@ -1,41 +1,44 @@
 {
-    "name": "sourcerer-mike/semver",
-    "description": "Compare two version and check for semantic versioning.",
-    "version": "0.1.0",
-    "type": "library",
-    "keywords": [
-        "Semantic versioning"
-    ],
-    "homepage": "https://github.com/sourcerer-mike/semver",
-    "authors": [
-        {
-            "name": "Mike Pretzlaw",
-            "email": "pretzlaw@gmail.com",
-            "homepage": "http://www.screaming-dev.de",
-            "role": "Developer"
-        }
-    ],
-    "support": {
-        "email": "pretzlaw@gmail.com",
-        "issues": "https://github.com/sourcerer-mike/semver/issues",
-        "wiki": "https://github.com/sourcerer-mike/semver/wiki",
-        "source": "https://github.com/sourcerer-mike/semver"
-    },
-    "require-dev": {
-        "behat/behat": "2.4.*@stable",
-        "behat/mink": "1.4.*@stable",
-        "behat/mink-extension": "*",
-        "behat/mink-goutte-driver": "*",
-        "behat/mink-selenium2-driver": "*",
-      "phpunit/phpunit": "~4.4"
-    },
-    "require": {
-      "phpmd/phpmd": "2.2.*",
-        "symfony/console": "2.6.*",
-        "symfony/class-loader": "2.6.*"
-    },
-    "config": {
-        "bin-dir": "bin",
-        "vendor-dir": "opt"
+  "name": "sourcerer-mike/phpsemver",
+  "description": "Compare two version and check for semantic versioning.",
+  "version": "0.1.0",
+  "type": "library",
+  "keywords": [
+    "Code analysis",
+    "Code tool",
+    "Semantic version",
+    "Static code analysis"
+  ],
+  "homepage": "https://github.com/sourcerer-mike/phpsemver",
+  "authors": [
+    {
+      "name": "Mike Pretzlaw",
+      "email": "pretzlaw@gmail.com",
+      "homepage": "http://www.screaming-dev.de",
+      "role": "Developer"
     }
+  ],
+  "support": {
+    "email": "pretzlaw@gmail.com",
+    "issues": "https://github.com/sourcerer-mike/phpsemver/issues",
+    "wiki": "https://github.com/sourcerer-mike/phpsemver/wiki",
+    "source": "https://github.com/sourcerer-mike/phpsemver"
+  },
+  "require-dev": {
+    "behat/behat": "2.4.*@stable",
+    "behat/mink": "1.4.*@stable",
+    "behat/mink-extension": "*",
+    "behat/mink-goutte-driver": "*",
+    "behat/mink-selenium2-driver": "*",
+    "phpunit/phpunit": "~4.4"
+  },
+  "require": {
+    "phpmd/phpmd": "2.2.*",
+    "symfony/console": "2.6.*",
+    "symfony/class-loader": "2.6.*"
+  },
+  "config": {
+    "bin-dir": "bin",
+    "vendor-dir": "opt"
+  }
 }
