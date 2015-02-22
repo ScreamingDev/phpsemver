@@ -10,7 +10,7 @@ define(
 	dirname(__DIR__) . DIRECTORY_SEPARATOR . 'lib'
 );
 define('PHPSEMVER_TEXTDOMAIN', PHPSEMVER_ID);
-define('PHPSEMVER_VERSION', 'DEV');
+define( 'PHPSEMVER_VERSION', '0.1.0' );
 
 if (!is_readable(PHPSEMVER_LIB_PATH)) {
 	die(

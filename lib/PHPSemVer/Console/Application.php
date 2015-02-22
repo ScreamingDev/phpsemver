@@ -8,7 +8,7 @@ class Application extends \Symfony\Component\Console\Application
 {
     public function __construct()
     {
-        parent::__construct( 'Softec', '1.0.0' );
+        parent::__construct( PHPSEMVER_NAME, PHPSEMVER_VERSION );
 
         $definition = $this->getDefinition();
 
