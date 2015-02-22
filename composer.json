@@ -25,11 +25,6 @@
     "source": "https://github.com/sourcerer-mike/phpsemver"
   },
   "require-dev": {
-    "behat/behat": "2.4.*@stable",
-    "behat/mink": "1.4.*@stable",
-    "behat/mink-extension": "*",
-    "behat/mink-goutte-driver": "*",
-    "behat/mink-selenium2-driver": "*",
     "phpunit/phpunit": "~4.4"
   },
   "require": {
