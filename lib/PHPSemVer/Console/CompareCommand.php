@@ -95,7 +95,6 @@ class CompareCommand extends AbstractCommand
                 continue;
             }
 
-
             $tokenizer->setSourceFile( $latestWrapper->getPath( $fileName ) );
 
             $parser = new PHPParserGeneric( $tokenizer, $builder, $cache );
@@ -110,8 +109,6 @@ class CompareCommand extends AbstractCommand
                 $this->parseExceptions[ ] = $e;
             }
         }
-
-        exit;
 
         return $builder;
     }
