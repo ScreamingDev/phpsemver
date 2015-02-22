@@ -10,18 +10,29 @@ class Git extends AbstractWrapper
 
     protected $_fileWrapper;
 
+    protected $_tempPath;
+
     public function __construct( $base )
     {
         parent::__construct( $base );
 
-        $tmpPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid( PHPSEMVER_ID );
-
-        if ( ! is_dir( $tmpPath ) )
+        if ( ! is_dir( $this->getTempPath() ) )
         {
-            mkdir( $tmpPath, 0777, true );
+            mkdir( $this->getTempPath(), 0777, true );
         }
 
-        $this->_fileWrapper = new Directory( $tmpPath );
+        $this->_fileWrapper = new Directory( $this->getTempPath() );
+    }
+
+    public function getTempPath()
+    {
+        if ( ! $this->_tempPath )
+        {
+            $this->_tempPath = sys_get_temp_dir()
+                               . DIRECTORY_SEPARATOR . uniqid( PHPSEMVER_ID );
+        }
+
+        return $this->_tempPath;
     }
 
     public function getAllFileNames()
