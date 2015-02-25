@@ -2,10 +2,18 @@
 
 namespace PHPSemVer\Wrapper;
 
+use PDepend\Source\Language\PHP\PHPBuilder;
+use PDepend\Source\Language\PHP\PHPParserGeneric;
+use PDepend\Source\Language\PHP\PHPTokenizerInternal;
+use PDepend\Source\Parser\ParserException;
+use PDepend\Util\Cache\CacheFactory;
+use PDepend\Util\Configuration;
 
 abstract class AbstractWrapper
 {
     protected $_base;
+    protected $_cacheFactory;
+    protected $_parserExceptions;
 
     public function __construct( $base )
     {
@@ -36,8 +44,71 @@ abstract class AbstractWrapper
         return $this->_base;
     }
 
+    public function getBuilder()
+    {
+        $builder   = new PHPBuilder();
+        $tokenizer = new PHPTokenizerInternal();
+
+        $cache = $this->_getCache( uniqid() );
+
+        foreach ( $this->getAllFileNames() as $fileName )
+        {
+            if ( ! preg_match( '/\.php$/i', $fileName ) )
+            {
+                continue;
+            }
+
+            $tokenizer->setSourceFile( $this->getPath( $fileName ) );
+
+            $parser = new PHPParserGeneric( $tokenizer, $builder, $cache );
+
+            $parser->setMaxNestingLevel( 200 );
+
+            try
+            {
+                $parser->parse();
+            } catch ( ParserException $e )
+            {
+                $this->_parserExceptions[ ] = $e;
+            }
+        }
+
+        return $builder;
+    }
+
+    protected function _getCache( $key = null )
+    {
+        return $this->_getCacheFactory()->create( $key );
+    }
+
+    /**
+     * @return CacheFactory
+     */
+    protected function _getCacheFactory()
+    {
+        if ( ! $this->_cacheFactory )
+        {
+            $settings                = new \stdClass();
+            $settings->cache         = new \stdClass();
+            $settings->cache->driver = 'memory';
+            $config                  = new Configuration( $settings );
+
+            $this->_cacheFactory = new CacheFactory( $config );
+        }
+
+        return $this->_cacheFactory;
+    }
+
     public function getPath( $fileName )
     {
         return $this->getPreviousBase() . DIRECTORY_SEPARATOR . $fileName;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getParserExceptions()
+    {
+        return $this->_parserExceptions;
     }
 }
