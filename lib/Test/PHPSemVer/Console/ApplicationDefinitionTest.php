@@ -6,13 +6,10 @@ use PHPSemVer\Console\Application;
 
 class ApplicationDefinitionTest extends \PHPUnit_Framework_TestCase
 {
-    public function testHasOptionForTargetDirectory()
+    public function testHasTheCorrectVersion()
     {
         $application = new Application();
 
-        $this->assertInstanceOf(
-            'Symfony\\Component\\Console\\Input\\InputOption',
-            $application->getDefinition()->getOption( 'target' )
-        );
+        $this->assertEquals( PHPSEMVER_VERSION, $application->getVersion() );
     }
 }

@@ -36,4 +36,11 @@
         <log type="tap" target="../var/phpunit/logfile.tap"/>
         <log type="testdox-text" target="../var/phpunit/testdox.txt"/>
     </logging>
+
+    <!-- Manage files for CodeCoverage-Report -->
+    <filter>
+        <blacklist>
+            <directory>../opt</directory>
+        </blacklist>
+    </filter>
 </phpunit>
