@@ -122,4 +122,18 @@ class GitTest extends Abstract_TestCase {
 			)
 		);
 	}
+
+	public function testItUsesAGitWrapper() {
+		$git = $this->getTargetInstance();
+
+		$reflectObject = new \ReflectionObject( $git );
+
+		$method = $reflectObject->getMethod( '_getGitWrapper' );
+		$method->setAccessible( true );
+
+		$this->assertInstanceOf(
+			'\\GitWrapper\\GitWrapper',
+			$method->invoke( $git )
+		);
+	}
 }
