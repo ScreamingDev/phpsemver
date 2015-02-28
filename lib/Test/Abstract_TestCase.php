@@ -49,6 +49,9 @@ class Abstract_TestCase extends \PHPUnit_Framework_TestCase {
 	public function getTargetInstance() {
 		$reflect = new \ReflectionClass( $this->getTargetClass() );
 
-		return $reflect->newInstance( func_get_args() );
+		return call_user_func_array(
+			array( $reflect, 'newInstance' ),
+			func_get_args()
+		);
 	}
 }

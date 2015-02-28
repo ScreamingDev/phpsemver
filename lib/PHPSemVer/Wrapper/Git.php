@@ -75,7 +75,7 @@ class Git extends AbstractWrapper {
 			file_put_contents( $fullName, '' );
 
 			// last state but suppress error messages
-			$gitWrapper = new GitWrapper();
+			$gitWrapper = $this->_getGitWrapper();
 			$git        = $gitWrapper->workingCopy( getcwd() );
 
 			try {
