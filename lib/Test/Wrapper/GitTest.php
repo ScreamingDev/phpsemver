@@ -202,4 +202,21 @@ class GitTest extends Abstract_TestCase {
 			)
 		);
 	}
+
+	public function testItWillCreateTemporaryPathsIfNoneExists() {
+		/** @var Git $git */
+		$git = $this->getTargetInstance( 'HEAD' );
+
+		$targetFile = 'foo/bar/' . uniqid();
+		$target     = $git->getBasePath() . $targetFile;
+
+		$this->assertFileNotExists( $target );
+		$this->assertFalse( is_dir( dirname( $target ) ) );
+
+		$path = $git->getPath( $targetFile );
+
+		$this->assertSame( $target, $path );
+		$this->assertFileExists( $target );
+		$this->assertTrue( is_dir( dirname( $target ) ) );
+	}
 }
