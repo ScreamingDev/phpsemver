@@ -3,51 +3,52 @@
 namespace Test;
 
 
-class Abstract_TestCase extends \PHPUnit_Framework_TestCase
-{
-    const BASE_DIR = __DIR__;
+class Abstract_TestCase extends \PHPUnit_Framework_TestCase {
+	const BASE_DIR = __DIR__;
 
-    /**
-     * @param null $constructorArgs
-     *
-     * @return \PHPUnit_Framework_MockObject_MockObject
-     */
-    public function getTargetMock( $constructorArgs = null )
-    {
-        $mockBuilder = $this->getTargetMockBuilder( $constructorArgs );
+	/**
+	 * @param null $constructorArgs
+	 *
+	 * @return \PHPUnit_Framework_MockObject_MockObject
+	 */
+	public function getTargetMock( $constructorArgs = null ) {
+		$mockBuilder = $this->getTargetMockBuilder( $constructorArgs );
 
-        return $mockBuilder->getMock();
-    }
+		return $mockBuilder->getMock();
+	}
 
-    /**
-     * @param null $constructorArgs
-     *
-     * @return \PHPUnit_Framework_MockObject_MockBuilder|\PHPUnit_Framework_MockObject_MockObject
-     */
-    public function getTargetMockBuilder( $constructorArgs = null )
-    {
-        $mockBuilder = $this->getMockBuilder( $this->getTargetClass() );
+	/**
+	 * @param null $constructorArgs
+	 *
+	 * @return \PHPUnit_Framework_MockObject_MockBuilder|\PHPUnit_Framework_MockObject_MockObject
+	 */
+	public function getTargetMockBuilder( $constructorArgs = null ) {
+		$mockBuilder = $this->getMockBuilder( $this->getTargetClass() );
 
-        if ( null === $constructorArgs )
-        {
-            $mockBuilder->disableOriginalConstructor();
+		if ( null === $constructorArgs ) {
+			$mockBuilder->disableOriginalConstructor();
 
-            return $mockBuilder;
-        }
+			return $mockBuilder;
+		}
 
-        $mockBuilder->setConstructorArgs( (array) $constructorArgs );
+		$mockBuilder->setConstructorArgs( (array) $constructorArgs );
 
-        return $mockBuilder;
-    }
+		return $mockBuilder;
+	}
 
-    /**
-     * @return string
-     */
-    public function getTargetClass()
-    {
-        $className = preg_replace( '/^Test\\\\/', '', get_class( $this ), 1 );
-        $className = preg_replace( '/Test$/', '', $className, 1 );
+	/**
+	 * @return string
+	 */
+	public function getTargetClass() {
+		$className = preg_replace( '/^Test\\\\/', '', get_class( $this ), 1 );
+		$className = preg_replace( '/Test$/', '', $className, 1 );
 
-        return (string) $className;
-    }
+		return (string) $className;
+	}
+
+	public function getTargetInstance() {
+		$reflect = new \ReflectionClass( $this->getTargetClass() );
+
+		return $reflect->newInstance( func_get_args() );
+	}
 }

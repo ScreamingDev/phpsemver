@@ -5,108 +5,107 @@ namespace PHPSemVer\Wrapper;
 use GitWrapper\GitException;
 use GitWrapper\GitWrapper;
 
-class Git extends AbstractWrapper
-{
+class Git extends AbstractWrapper {
 
-    protected $_fileWrapper;
+	protected $_fileWrapper;
 
-    protected $_tempPath;
+	protected $_tempPath;
 
-    public function __construct( $base )
-    {
-        parent::__construct( $base );
+	public function __construct( $base ) {
+		parent::__construct( $base );
 
-        if ( ! is_dir( $this->getTempPath() ) )
-        {
-            mkdir( $this->getTempPath(), 0777, true );
-        }
+		if ( ! is_dir( $this->getTempPath() ) ) {
+			mkdir( $this->getTempPath(), 0777, true );
+		}
 
-        $this->_fileWrapper = new Directory( $this->getTempPath() );
-    }
+		$this->_fileWrapper = new Directory( $this->getTempPath() );
+	}
 
-    public function getTempPath()
-    {
-        if ( ! $this->_tempPath )
-        {
-            $this->_tempPath = sys_get_temp_dir()
-                               . DIRECTORY_SEPARATOR . uniqid( PHPSEMVER_ID );
-        }
+	public function getTempPath() {
+		if ( ! $this->_tempPath ) {
+			$this->_tempPath = sys_get_temp_dir()
+			                   . DIRECTORY_SEPARATOR . uniqid( PHPSEMVER_ID );
+		}
 
-        return $this->_tempPath;
-    }
+		return $this->_tempPath;
+	}
 
-    public function getAllFileNames()
-    {
-        $gitWrapper = new GitWrapper();
+	protected $_gitWrapper;
 
-        $options = array(
-            'with-tree' => $this->getBase(),
-        );
+	/**
+	 * @return GitWrapper
+	 */
+	protected function _getGitWrapper() {
+		if ( ! $this->_gitWrapper ) {
+			$this->_gitWrapper = new GitWrapper();
+		}
 
-        $git = $gitWrapper->workingCopy( getcwd() );
+		return $this->_gitWrapper;
+	}
 
-        $result = $git->run(
-            array(
-                'ls-files',
-                $options
-            )
-        );
+	public function getAllFileNames() {
 
-        $allPrevious = explode( PHP_EOL, $result->getOutput() );
+		$options = array(
+			'with-tree' => $this->getBase(),
+		);
 
-        return array_filter( $allPrevious );
-    }
+		$git = $this->_getGitWrapper()->workingCopy( getcwd() );
 
-    public function getPath( $fileName )
-    {
-        $fullName = $this->getBasePath() . $fileName;
+		$result = $git->run(
+			array(
+				'ls-files',
+				$options
+			)
+		);
 
-        if ( ! file_exists( $fullName ) )
-        {
-            $dir = dirname( $fullName );
-            if ( ! is_dir( $dir ) )
-            {
-                mkdir( $dir, 0777, true );
-            }
+		$allPrevious = explode( PHP_EOL, $result->getOutput() );
 
-            file_put_contents( $fullName, '' );
+		return array_filter( $allPrevious );
+	}
 
-            // last state but suppress error messages
-            $gitWrapper = new GitWrapper();
-            $git        = $gitWrapper->workingCopy( getcwd() );
+	public function getPath( $fileName ) {
+		$fullName = $this->getBasePath() . $fileName;
 
-            try
-            {
-                $git->run(
-                    array(
-                        'show',
-                        $this->getBase() . '^:' . $fileName
-                    )
-                );
+		if ( ! file_exists( $fullName ) ) {
+			$dir = dirname( $fullName );
+			if ( ! is_dir( $dir ) ) {
+				mkdir( $dir, 0777, true );
+			}
+
+			file_put_contents( $fullName, '' );
+
+			// last state but suppress error messages
+			$gitWrapper = new GitWrapper();
+			$git        = $gitWrapper->workingCopy( getcwd() );
+
+			try {
+				$git->run(
+					array(
+						'show',
+						$this->getBase() . '^:' . $fileName
+					)
+				);
 
 
-                $content = $git->getOutput();
-            } catch ( GitException $e )
-            {
-                $content = '';
-            }
+				$content = $git->getOutput();
+			} catch ( GitException $e ) {
+				$content = '';
+			}
 
-            file_put_contents( $fullName, $content );
-        }
+			file_put_contents( $fullName, $content );
+		}
 
-        return $fullName;
-    }
+		return $fullName;
+	}
 
-    public function getBasePath()
-    {
-        return $this->_getFileWrapper()->getBasePath();
-    }
+	public function getBasePath() {
+		return $this->_getFileWrapper()->getBasePath();
+	}
 
-    /**
-     * @return Directory
-     */
-    protected function _getFileWrapper()
-    {
-        return $this->_fileWrapper;
-    }
+	/**
+	 * @return Directory
+	 */
+	protected function _getFileWrapper() {
+		return $this->_fileWrapper;
+	}
 }
