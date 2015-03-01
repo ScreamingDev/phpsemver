@@ -60,7 +60,7 @@ abstract class AbstractWrapper
 
             $tokenizer->setSourceFile( $this->getPath( $fileName ) );
 
-            $parser = new PHPParserGeneric( $tokenizer, $builder, $cache );
+            $parser = $this->getParser( $tokenizer, $builder, $cache );
 
             $parser->setMaxNestingLevel( 200 );
 
@@ -99,16 +99,22 @@ abstract class AbstractWrapper
         return $this->_cacheFactory;
     }
 
-    public function getPath( $fileName )
-    {
-        return $this->getPreviousBase() . DIRECTORY_SEPARATOR . $fileName;
-    }
-
     /**
      * @return mixed
      */
     public function getParserExceptions()
     {
         return $this->_parserExceptions;
+    }
+
+    /**
+     * @param $tokenizer
+     * @param $builder
+     * @param $cache
+     *
+     * @return PHPParserGeneric
+     */
+    public function getParser( $tokenizer, $builder, $cache ) {
+        return new PHPParserGeneric( $tokenizer, $builder, $cache );
     }
 }
