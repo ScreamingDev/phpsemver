@@ -10,6 +10,8 @@ class Application extends \Symfony\Component\Console\Application
     {
         parent::__construct( PHPSEMVER_NAME, PHPSEMVER_VERSION );
 
+        $this->fetchCommands();
+
         $definition = $this->getDefinition();
 
         $this->setDefinition( $definition );
