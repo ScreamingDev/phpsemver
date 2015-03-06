@@ -13,3 +13,4 @@ before_script:
   - ./bin/post-update.sh
 script:
   - ./bin/pre-commit.sh
+  - ./bin/post-commit.sh
