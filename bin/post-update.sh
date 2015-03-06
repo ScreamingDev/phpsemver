@@ -1,7 +1,9 @@
 #!/bin/bash
 
-cp -av ./bin/post-update.sh .git/hooks/post-update
-cp -av ./bin/pre-commit.sh .git/hooks/pre-commit
+
+[[ -f .git/hooks/post-update ]] || ln -s ../../bin/post-update.sh .git/hooks/post-update
+[[ -f .git/hooks/pre-commit ]] || ln -s ../../bin/pre-commit.sh .git/hooks/pre-commit
+[[ -f .git/hooks/post-commit ]] || ln -s ../../bin/post-commit.sh .git/hooks/post-commit
 
 # assert composer
 if [[ ! -f ./bin/composer ]]; then
@@ -13,6 +15,8 @@ fi
 if [[ ! -d ./usr ]]; then
     mkdir usr
 fi
+
+git config --remove-section hooks 2>/dev/null
 
 ./bin/composer self-update
 ./bin/composer install

@@ -63,7 +63,7 @@ function MyMain() {
 	fi
 
 	touch "$LocalLock"
-	trap 'rm -f "$LocalLock"; exit $?' INT TERM EXIT
+	trap 'ret_val=$?; rm -f "$LocalLock"; exit $ret_val' INT TERM EXIT
 
 	# prepare targets
 	targets=()
@@ -132,8 +132,6 @@ function assert_exec() {
 }
 
 function messed_up() {
-	echo "ERROR ($1)"
-	echo ""
 	echo "$2" | sed -e 's/^[\t]*//'
 	echo ""
 	echo If you know what you are doing you can disable this check using:
