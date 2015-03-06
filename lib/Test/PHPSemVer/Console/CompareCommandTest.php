@@ -15,13 +15,44 @@ class CompareCommandTest extends \PHPUnit_Framework_TestCase {
 		$commandTester->execute(
 			array(
 				'command' => $command->getName(),
-				'--type' => 'foo',
+				'--type'  => 'foo',
 				'HEAD^1'
 			)
 		);
 
 		$this->assertContains(
 			'Unknown wrapper',
+			$commandTester->getDisplay()
+		);
+	}
+
+	public function testTheWrapperTypeCanBeChanged() {
+		$application = new Application();
+
+		$command       = $application->find( 'compare' );
+		$commandTester = new CommandTester( $command );
+		$commandTester->execute(
+			array(
+				'command' => $command->getName(),
+				'--type'  => 'directory',
+				'HEAD^1'
+			)
+		);
+
+		$argument = $command->getDefinition()->getOption( 'type' );
+
+		$this->assertNotEquals(
+			$argument->getDefault(),
+			$commandTester->getInput()->getOption( 'type' )
+		);
+
+		$this->assertNotContains(
+			'Unknown wrapper',
+			$commandTester->getDisplay()
+		);
+
+		$this->assertContains(
+			'Done',
 			$commandTester->getDisplay()
 		);
 	}
