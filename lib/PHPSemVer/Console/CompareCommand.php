@@ -79,10 +79,6 @@ class CompareCommand extends AbstractCommand {
 			return;
 		}
 
-		$latestWrapper   = new $wrapper( $input->getArgument( 'latest' ) );
-		$previousWrapper = new $wrapper( $input->getArgument( 'previous' ) );
-
-
 		$output->writeln( 'Done!' );
 	}
 
