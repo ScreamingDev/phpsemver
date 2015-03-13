@@ -55,14 +55,13 @@ abstract class AbstractWrapper
 
         $cache = $this->_getCache( uniqid() );
 
-        foreach ( $this->getAllFileNames() as $fileName )
+        foreach ( $this->getAllFileNames() as $sourceFile )
         {
-            if ( ! preg_match( '/\.php$/i', $fileName ) )
+            if ( ! preg_match( '/\.php$/i', $sourceFile ) )
             {
                 continue;
             }
 
-            $sourceFile = $this->getPath( $fileName );
             $tokenizer->setSourceFile( $sourceFile );
 
             $parser = $this->getParser( $tokenizer, $builder, $cache );
