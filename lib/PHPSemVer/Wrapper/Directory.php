@@ -30,4 +30,9 @@ class Directory extends AbstractWrapper
     {
         return realpath( $this->getBase() ) . DIRECTORY_SEPARATOR;
     }
+
+    public function getPath( $fileName )
+    {
+        return $this->getBasePath() . DIRECTORY_SEPARATOR . $fileName;
+    }
 }
