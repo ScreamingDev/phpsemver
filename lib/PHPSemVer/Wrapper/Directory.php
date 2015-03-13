@@ -28,11 +28,16 @@ class Directory extends AbstractWrapper
 
     public function getBasePath()
     {
+        if ( ! $this->getBase() )
+        {
+            return '';
+        }
+
         return realpath( $this->getBase() ) . DIRECTORY_SEPARATOR;
     }
 
     public function getPath( $fileName )
     {
-        return $this->getBasePath() . DIRECTORY_SEPARATOR . $fileName;
+        return $this->getBasePath() . ltrim( $fileName, DIRECTORY_SEPARATOR );
     }
 }

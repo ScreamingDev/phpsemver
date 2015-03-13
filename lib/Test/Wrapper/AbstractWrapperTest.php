@@ -56,4 +56,15 @@ class AbstractWrapperTest extends Abstract_TestCase {
 
 		$this->assertContains( $exception, $failures );
 	}
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testItThrowsExceptionIfBaseIsNotGiven()
+    {
+        $mock = $this->getMockForAbstractClass(
+            $this->getTargetClass(),
+            array( null )
+        );
+    }
 }

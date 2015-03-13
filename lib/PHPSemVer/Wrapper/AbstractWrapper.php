@@ -17,6 +17,10 @@ abstract class AbstractWrapper
 
     public function __construct( $base )
     {
+        if ( ! $base )
+        {
+            throw new \InvalidArgumentException( 'Please provide a base. Can not be empty.' );
+        }
         $this->_base = $base;
     }
 
@@ -58,7 +62,8 @@ abstract class AbstractWrapper
                 continue;
             }
 
-            $tokenizer->setSourceFile( $this->getPath( $fileName ) );
+            $sourceFile = $this->getPath( $fileName );
+            $tokenizer->setSourceFile( $sourceFile );
 
             $parser = $this->getParser( $tokenizer, $builder, $cache );
 
@@ -100,21 +105,22 @@ abstract class AbstractWrapper
     }
 
     /**
-     * @return mixed
-     */
-    public function getParserExceptions()
-    {
-        return $this->_parserExceptions;
-    }
-
-    /**
      * @param $tokenizer
      * @param $builder
      * @param $cache
      *
      * @return PHPParserGeneric
      */
-    public function getParser( $tokenizer, $builder, $cache ) {
+    public function getParser( $tokenizer, $builder, $cache )
+    {
         return new PHPParserGeneric( $tokenizer, $builder, $cache );
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getParserExceptions()
+    {
+        return $this->_parserExceptions;
     }
 }
