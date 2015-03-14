@@ -123,7 +123,7 @@ class CompareCommand extends AbstractCommand
                     continue;
                 }
 
-                $singleRule     = new NoneDeletedRule( $previousWrapper->getBuilder(), $latestWrapper->getBuilder() );
+                $singleRule = new $class( $previousWrapper->getBuilder(), $latestWrapper->getBuilder() );
                 $singleRule->process();
                 $appliedRules[] = $singleRule;
             }

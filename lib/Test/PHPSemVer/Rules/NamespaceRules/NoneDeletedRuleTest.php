@@ -1,6 +1,6 @@
 <?php
 
-namespace PHPSemVer\Rules\Semver2\Major\NamespaceRules;
+namespace PHPSemVer\Rules\NamespaceRules;
 
 
 use PDepend\Source\Language\PHP\PHPBuilder;
