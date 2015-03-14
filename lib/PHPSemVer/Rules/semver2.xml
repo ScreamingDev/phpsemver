@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<phpsemver>
+    <description>Semantic Versioning 2.0</description>
+    <ruleset name="Major">
+        <rule ref="NamespaceRules.NoneDeleted"/>
+        <rule ref="ClassRules.NoneRemoved"/>
+    </ruleset>
+</phpsemver>
