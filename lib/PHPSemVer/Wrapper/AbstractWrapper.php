@@ -62,6 +62,8 @@ abstract class AbstractWrapper
                 continue;
             }
 
+            $sourceFile = realpath($sourceFile);
+
             $tokenizer->setSourceFile( $sourceFile );
 
             $parser = $this->getParser( $tokenizer, $builder, $cache );

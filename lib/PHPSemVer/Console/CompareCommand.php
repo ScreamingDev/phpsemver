@@ -40,7 +40,7 @@ class CompareCommand extends AbstractCommand
             'R',
             InputArgument::OPTIONAL,
             'A ruleset (eg. "semver2.0")',
-            'semver2.0'
+            'SemVer2'
         );
 
         $this->addArgument(
@@ -87,8 +87,47 @@ class CompareCommand extends AbstractCommand
         $previousWrapper = new $wrapper( $input->getArgument( 'previous' ) );
         $latestWrapper   = new $wrapper( $input->getArgument( 'latest' ) );
 
-        $rule = new NoneDeletedRule( $previousWrapper->getBuilder(), $latestWrapper->getBuilder() );
-        $rule->process();
+        $xmlFile      = PHPSEMVER_LIB_PATH . '/PHPSemVer/Rules/Semver2.xml';
+        $xmlFileShort = trim( str_replace( getcwd(), '', $xmlFile ), DIRECTORY_SEPARATOR );
+
+        $xml = simplexml_load_file( $xmlFile );
+
+        $ruleSets = $xml->xpath( '//ruleset' );
+
+        $appliedRules = array();
+        foreach ( $ruleSets as $ruleSet )
+        {
+            foreach ( $ruleSet->xpath( '//rule' ) as $rule )
+            {
+                if ( ! $rule->attributes() || ! $rule->attributes()->ref )
+                {
+                    continue;
+                }
+
+                $rule = (string) $rule->attributes()->ref;
+
+                $segments = explode( '.', $rule );
+                $class    = '\\PHPSemVer\\Rules\\' . implode( '\\', $segments ) . 'Rule';
+
+                if ( ! class_exists( $class ) )
+                {
+                    throw new \Exception(
+                        sprintf(
+                            'Invalid rule "%s" in "%s" (class "%s" not found).',
+                            $rule,
+                            $xmlFileShort,
+                            $class
+                        )
+                    );
+
+                    continue;
+                }
+
+                $singleRule     = new NoneDeletedRule( $previousWrapper->getBuilder(), $latestWrapper->getBuilder() );
+                $singleRule->process();
+                $appliedRules[] = $singleRule;
+            }
+        }
 
         $table = new Table( $output );
         $table->setHeaders(
@@ -98,14 +137,17 @@ class CompareCommand extends AbstractCommand
             )
         );
 
-        foreach ( $rule->getErrors() as $error )
+        foreach ( $appliedRules as $rule )
         {
-            $table->addRow(
-                array(
-                    $error->getRule(),
-                    $error->getMessage()
-                )
-            );
+            foreach ( $rule->getErrors() as $error )
+            {
+                $table->addRow(
+                    array(
+                        $error->getRule(),
+                        $error->getMessage()
+                    )
+                );
+            }
         }
 
         $table->render();

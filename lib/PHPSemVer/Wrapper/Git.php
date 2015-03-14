@@ -52,8 +52,15 @@ class Git extends AbstractWrapper
         );
 
         $allPrevious = explode( PHP_EOL, $result->getOutput() );
+        $allPrevious = array_filter( $allPrevious );
 
-        return array_filter( $allPrevious );
+        $allFileNames = array();
+        foreach ( $allPrevious as $singleFile )
+        {
+            $allFileNames[ $singleFile ] = $this->getPath( $singleFile );
+        }
+
+        return $allFileNames;
     }
 
     /**
