@@ -87,7 +87,7 @@ class CompareCommand extends AbstractCommand
         $previousWrapper = new $wrapper( $input->getArgument( 'previous' ) );
         $latestWrapper   = new $wrapper( $input->getArgument( 'latest' ) );
 
-        $xmlFile      = PHPSEMVER_LIB_PATH . '/PHPSemVer/Rules/Semver2.xml';
+        $xmlFile = PHPSEMVER_LIB_PATH . '/PHPSemVer/Rules/SemVer2.xml';
         $xmlFileShort = trim( str_replace( getcwd(), '', $xmlFile ), DIRECTORY_SEPARATOR );
 
         $xml = simplexml_load_file( $xmlFile );
@@ -97,7 +97,8 @@ class CompareCommand extends AbstractCommand
         $appliedRules = array();
         foreach ( $ruleSets as $ruleSet )
         {
-            foreach ( $ruleSet->xpath( '//rule' ) as $rule )
+            $tableRows = array();
+            foreach ( $ruleSet->xpath( 'rule' ) as $rule )
             {
                 if ( ! $rule->attributes() || ! $rule->attributes()->ref )
                 {
@@ -105,7 +106,6 @@ class CompareCommand extends AbstractCommand
                 }
 
                 $rule = (string) $rule->attributes()->ref;
-
                 $segments = explode( '.', $rule );
                 $class    = '\\PHPSemVer\\Rules\\' . implode( '\\', $segments ) . 'Rule';
 
@@ -125,32 +125,37 @@ class CompareCommand extends AbstractCommand
 
                 $singleRule = new $class( $previousWrapper->getBuilder(), $latestWrapper->getBuilder() );
                 $singleRule->process();
-                $appliedRules[] = $singleRule;
-            }
-        }
 
-        $table = new Table( $output );
-        $table->setHeaders(
-            array(
-                'Type',
-                'Message'
-            )
-        );
-
-        foreach ( $appliedRules as $rule )
-        {
-            foreach ( $rule->getErrors() as $error )
-            {
-                $table->addRow(
-                    array(
+                foreach ( $singleRule->getErrors() as $error )
+                {
+                    $tableRows[ ] = array(
                         $error->getRule(),
                         $error->getMessage()
-                    )
-                );
+                    );
+                }
             }
-        }
 
-        $table->render();
+            if ( ! $tableRows )
+            {
+                continue;
+            }
+
+            $table = new Table( $output );
+            $table->setHeaders(
+                array(
+                    'Type',
+                    'Message'
+                )
+            );
+
+            $output->writeln( '' );
+            $output->writeln( '' );
+            $output->writeln( '<error>' . (string) $ruleSet->attributes()->name . '</error>' );
+            $output->writeln( '' );
+
+            $table->addRows( $tableRows );
+            $table->render();
+        }
 
         $output->writeln( 'Done!' );
     }

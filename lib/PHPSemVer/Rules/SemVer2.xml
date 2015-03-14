@@ -5,4 +5,7 @@
         <rule ref="NamespaceRules.NoneDeleted"/>
         <rule ref="ClassRules.NoneRemoved"/>
     </ruleset>
+    <ruleset name="Minor">
+        <rule ref="NamespaceRules.Added"/>
+    </ruleset>
 </phpsemver>

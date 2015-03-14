@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Mike
- * Date: 13.03.15
- * Time: 20:46
- */
 
 namespace PHPSemVer\Rules;
 
