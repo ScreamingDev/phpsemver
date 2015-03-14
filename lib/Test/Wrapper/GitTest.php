@@ -3,6 +3,7 @@
 namespace Test\PHPSemVer\Wrapper;
 
 use GitWrapper\GitCommand;
+use PHPSemVer\Wrapper\Directory;
 use PHPSemVer\Wrapper\Git;
 use Symfony\Component\Filesystem\Filesystem;
 use Test\Abstract_TestCase;
@@ -35,7 +36,7 @@ class GitTest extends Abstract_TestCase
 
     public function testItCanGenerateATemporaryPath()
     {
-		/** @var Git $git */
+        /** @var Git $git */
         $git = $this->getTargetInstance( 'HEAD' );
 
         $this->assertContains( sys_get_temp_dir(), $git->getTempPath() );
@@ -53,20 +54,20 @@ class GitTest extends Abstract_TestCase
         $stub = $mockBuilder->setMethods( array( 'getTempPath' ) )->getMock();
 
         // And mock the method "getTempDir"
-		$stub->expects( $this->exactly( 4 ) )
-            ->method( 'getTempPath' )
-            ->willReturn( $tempDir );
+        $stub->expects( $this->exactly( 4 ) )
+             ->method( 'getTempPath' )
+             ->willReturn( $tempDir );
 
         $this->assertEquals( $tempDir, $stub->getTempPath() );
 
         // And instantiate the class
         $reflectedClass = new \ReflectionClass( $this->getTargetClass() );
         $constructor    = $reflectedClass->getConstructor();
-		$constructor->invoke( $stub, 'HEAD' );
+        $constructor->invoke( $stub, 'HEAD' );
 
-		// Then the directory should be created
-		$this->assertTrue( is_dir( $tempDir ) );
-	}
+        // Then the directory should be created
+        $this->assertTrue( is_dir( $tempDir ) );
+    }
 
     /**
      * @param $data
@@ -101,23 +102,30 @@ class GitTest extends Abstract_TestCase
             ->method( '_getGitWrapper' )
             ->willReturn( $gitWrapper );
 
-        $this->assertEquals( $data, $git->getAllFileNames() );
+        // create directory
+        mkdir( $git->getTempPath(), 0777, true );
 
-//
-//		var_dump($gitWrapper);
+        // set wrapper for temporary path
+        $reflectObject = new \ReflectionObject( $git );
+        $property      = $reflectObject->getProperty( '_fileWrapper' );
+        $property->setAccessible( true );
+        $property->setValue( $git, new Directory( $git->getTempPath() ) );
 
-	}
+        $this->assertEquals( $data, array_keys( $git->getAllFileNames() ) );
 
-	public function testItSupportsTheTemporaryPathForAFile() {
-		$git = $this->getTargetInstance( 'HEAD' );
+    }
 
-		$fileName = 'somefile.txt';
+    public function testItSupportsTheTemporaryPathForAFile()
+    {
+        $git = $this->getTargetInstance( 'HEAD' );
 
-		$filePath = $git->getPath( $fileName );
+        $fileName = 'somefile.txt';
 
-		$this->assertFileExists( $filePath );
-		$this->assertContains( $fileName, $filePath );
-	}
+        $filePath = $git->getPath( $fileName );
+
+        $this->assertFileExists( $filePath );
+        $this->assertContains( $fileName, $filePath );
+    }
 
     public function testItUsesAGitWrapper()
     {
@@ -136,7 +144,7 @@ class GitTest extends Abstract_TestCase
 
     public function testItWillCreateTemporaryPathsIfNoneExists()
     {
-		/** @var Git $git */
+        /** @var Git $git */
         $git = $this->getTargetInstance( 'HEAD' );
 
         $targetFile = 'foo/bar/' . uniqid();
@@ -150,7 +158,7 @@ class GitTest extends Abstract_TestCase
         $this->assertSame( $target, $path );
         $this->assertFileExists( $target );
         $this->assertTrue( is_dir( dirname( $target ) ) );
-	}
+    }
 
     /**
      * @param $data
@@ -181,7 +189,7 @@ class GitTest extends Abstract_TestCase
                    ->method( 'workingCopy' )
                    ->willReturn( $workingCopy );
 
-		/** @var Git $git */
+        /** @var Git $git */
         $git = $this->getTargetMockBuilder( 'HEAD' )
                     ->setMethods( array( '_getGitWrapper' ) )
                     ->getMock();
@@ -198,5 +206,5 @@ class GitTest extends Abstract_TestCase
         $this->assertContains( $fileName, $filePath );
 
         $this->assertSame( $data, file_get_contents( $filePath ) );
-	}
+    }
 }
