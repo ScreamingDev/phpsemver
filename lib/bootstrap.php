@@ -5,10 +5,8 @@ define('PHPSEMVER_ID', 'phpsemver');
 define('PHPSEMVER_PHP_BIN_PATH', getenv('PHP_PEAR_PHP_BIN')
 	?: '/usr/bin/env php');
 define('PHPSEMVER_BIN_PATH', __FILE__);
-define(
-'PHPSEMVER_LIB_PATH',
-	dirname(__DIR__) . DIRECTORY_SEPARATOR . 'lib'
-);
+define( 'PHPSEMVER_BASE_PATH', dirname( __DIR__ ) );
+define( 'PHPSEMVER_LIB_PATH', PHPSEMVER_BASE_PATH . DIRECTORY_SEPARATOR . 'lib' );
 define('PHPSEMVER_TEXTDOMAIN', PHPSEMVER_ID);
 define( 'PHPSEMVER_VERSION', '0.1.0' );
 
