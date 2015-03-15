@@ -6,7 +6,7 @@
  * Time: 03:25
  */
 
-namespace PHPSemVer\Rules\NamespaceRules;
+namespace PHPSemVer\Assertions\Namespaces;
 
 
 use PHPSemVer\Rules\AbstractRule;

@@ -3,7 +3,7 @@
 namespace spec\PHPSemVer\Rules;
 
 use PDepend\Source\Language\PHP\PHPBuilder;
-use PHPSemVer\Rules\ClassRules\NoneRemovedRule;
+use PHPSemVer\Assertions\Classes\NoneRemovedRule;
 use PhpSpec\ObjectBehavior;
 use PhpSpec\Wrapper\Subject;
 use Prophecy\Argument;

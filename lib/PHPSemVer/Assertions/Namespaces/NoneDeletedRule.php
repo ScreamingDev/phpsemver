@@ -1,6 +1,6 @@
 <?php
 
-namespace PHPSemVer\Rules\NamespaceRules;
+namespace PHPSemVer\Assertions\Namespaces;
 
 use PHPSemVer\Rules\AbstractRule;
 use PHPSemVer\Rules\RuleInterface;

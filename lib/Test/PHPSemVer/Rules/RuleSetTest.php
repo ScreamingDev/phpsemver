@@ -10,8 +10,8 @@ namespace PHPSemVer\Rules;
 
 
 use PDepend\Source\Language\PHP\PHPBuilder;
-use PHPSemVer\Rules\ClassRules\NoneRemovedRule;
-use PHPSemVer\Rules\NamespaceRules\AddedRule;
+use PHPSemVer\Assertions\Classes\NoneRemovedRule;
+use PHPSemVer\Assertions\Namespaces\AddedRule;
 use PHPSemVer\Specification;
 use Test\Abstract_TestCase;
 

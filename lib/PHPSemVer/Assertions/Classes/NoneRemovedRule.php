@@ -6,7 +6,7 @@
  * Time: 03:16
  */
 
-namespace PHPSemVer\Rules\ClassRules;
+namespace PHPSemVer\Assertions\Classes;
 
 
 use PHPSemVer\Rules\AbstractRule;

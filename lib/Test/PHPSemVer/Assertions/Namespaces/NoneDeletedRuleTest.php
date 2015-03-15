@@ -1,12 +1,13 @@
 <?php
 
-namespace PHPSemVer\Rules\NamespaceRules;
+namespace Test\PHPSemVer\Assertions\Namespaces;
 
 
 use PDepend\Source\Language\PHP\PHPBuilder;
+use PHPSemVer\Assertions\Namespaces\NoneDeletedRule;
 use Test\Abstract_TestCase;
 
-class AddedRuleTest extends Abstract_TestCase
+class NoneDeletedRuleTest extends Abstract_TestCase
 {
     public function testItContainsErrorsWhenANamespaceIsMissing()
     {
@@ -17,19 +18,19 @@ class AddedRuleTest extends Abstract_TestCase
         $previousMock->expects( $this->any() )
                      ->method( 'getNamespaces' )
                      ->willReturn(
-                         array()
+                         array(
+                             new \PDepend\Source\AST\ASTNamespace( 'missing_one' )
+                         )
                      );
 
         $latestMock = $mockBuilder->getMock();
         $latestMock->expects( $this->any() )
                    ->method( 'getNamespaces' )
                    ->willReturn(
-                       array(
-                           new \PDepend\Source\AST\ASTNamespace( 'missing_one' )
-                       )
+                       array()
                    );
 
-        $rule = new AddedRule( $previousMock, $latestMock );
+        $rule = new NoneDeletedRule( $previousMock, $latestMock );
         $rule->process();
 
         $this->assertNotEmpty( $rule->getErrors() );

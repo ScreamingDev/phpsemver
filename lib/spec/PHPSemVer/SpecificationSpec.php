@@ -2,8 +2,6 @@
 
 namespace spec\PHPSemVer;
 
-use PDepend\Source\Language\PHP\PHPBuilder;
-use PHPSemVer\Rules\ClassRules\NoneRemovedRule;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 

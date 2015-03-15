@@ -1,42 +1,36 @@
 <?php
 
-namespace PHPSemVer\Rules\NamespaceRules;
+namespace Test\PHPSemVer\Assertions\Namespaces;
 
 
-use PDepend\Source\AST\ASTClass;
-use PDepend\Source\AST\ASTNamespace;
 use PDepend\Source\Language\PHP\PHPBuilder;
-use PHPSemVer\Rules\ClassRules\NoneRemovedRule;
+use PHPSemVer\Assertions\Namespaces\AddedRule;
 use Test\Abstract_TestCase;
 
-class NoneRemovedRuleTest extends Abstract_TestCase
+class AddedRuleTest extends Abstract_TestCase
 {
     public function testItContainsErrorsWhenANamespaceIsMissing()
     {
         $mockBuilder = $this->getMockBuilder( get_class( new PHPBuilder() ) )
                             ->setMethods( array( 'getNamespaces' ) );
 
-        $class     = new ASTClass( 'missing_class' );
-        $namespace = new ASTNamespace( 'missing_namespace' );
-        $namespace->addType( $class );
-
         $previousMock = $mockBuilder->getMock();
         $previousMock->expects( $this->any() )
                      ->method( 'getNamespaces' )
                      ->willReturn(
-                         array(
-                             $namespace
-                         )
+                         array()
                      );
 
         $latestMock = $mockBuilder->getMock();
         $latestMock->expects( $this->any() )
                    ->method( 'getNamespaces' )
                    ->willReturn(
-                       array()
+                       array(
+                           new \PDepend\Source\AST\ASTNamespace( 'missing_one' )
+                       )
                    );
 
-        $rule = new NoneRemovedRule( $previousMock, $latestMock );
+        $rule = new AddedRule( $previousMock, $latestMock );
         $rule->process();
 
         $this->assertNotEmpty( $rule->getErrors() );
