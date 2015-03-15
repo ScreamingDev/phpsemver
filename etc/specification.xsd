@@ -11,14 +11,14 @@
 
     <xs:complexType name="assertions_type">
         <xs:sequence>
-            <xs:element name="classes" minOccurs="0">
+            <xs:element name="Classes" minOccurs="0">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element name="SomeRemoved" minOccurs="0"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="namespaces" minOccurs="0">
+            <xs:element name="Namespaces" minOccurs="0">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element name="SomeRemoved" minOccurs="0"/>
@@ -37,8 +37,8 @@
 
     <xs:complexType name="ruleSet_type">
         <xs:sequence>
-            <xs:element name="description" type="description_type"/>
-            <xs:element name="assertions" type="assertions_type"/>
+            <xs:element name="Description" type="description_type"/>
+            <xs:element name="Assertions" type="assertions_type"/>
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required"/>
         <xs:attribute name="title" type="xs:string"/>
@@ -46,8 +46,8 @@
 
     <xs:complexType name="phpsemver_type">
         <xs:sequence>
-            <xs:element name="description" type="description_type" maxOccurs="1"/>
-            <xs:element name="ruleSet" type="ruleSet_type" maxOccurs="unbounded"/>
+            <xs:element name="Description" type="description_type" maxOccurs="1"/>
+            <xs:element name="RuleSet" type="ruleSet_type" maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:attribute name="title" type="xs:string"/>
     </xs:complexType>

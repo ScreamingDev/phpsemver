@@ -2,7 +2,7 @@
 
 namespace PHPSemVer;
 
-use PHPSemVer\Rules\AbstractAssertion;
+use PHPSemVer\Assertions\AbstractAssertion;
 use PHPSemVer\Rules\RuleSet;
 
 class Specification
@@ -34,7 +34,7 @@ class Specification
     {
         $xml = simplexml_load_string( $xmlString );
 
-        foreach ( $xml->xpath( '//ruleSet' ) as $ruleSetXml )
+        foreach ( $xml->xpath( '//RuleSet' ) as $ruleSetXml )
         {
             if ( ! $ruleSetXml->attributes() || ! $ruleSetXml->attributes()->name )
             {

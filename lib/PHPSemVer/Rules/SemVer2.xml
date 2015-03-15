@@ -20,7 +20,7 @@
         The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",
         "MAY", and "OPTIONAL" in this document are to be interpreted as described in RFC 2119.
     </description>
-    <ruleSet name="major">
+    <RuleSet name="major">
         <description>
             Major version X (X.y.z | X > 0) MUST be incremented
             if any backwards incompatible changes are introduced to the public API.
@@ -35,8 +35,8 @@
                 <SomeRemoved/>
             </namespaces>
         </assertions>
-    </ruleSet>
-    <ruleSet name="minor">
+    </RuleSet>
+    <RuleSet name="minor">
         <description>
             Minor version Y (x.Y.z | x > 0) MUST be incremented if new,
             backwards compatible functionality is introduced to the public API.
@@ -51,8 +51,8 @@
                 <SomeAdded/>
             </namespaces>
         </assertions>
-    </ruleSet>
-    <ruleSet name="patch">
-        
-    </ruleSet>
+    </RuleSet>
+    <RuleSet name="patch">
+
+    </RuleSet>
 </phpsemver>
