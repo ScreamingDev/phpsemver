@@ -2,4 +2,4 @@ suites:
   PHPSemVer:
     namespace: PHPSemVer
     src_path: lib
-    spec_path: usr/phpspec
+    spec_path: lib
