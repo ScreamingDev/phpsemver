@@ -28,13 +28,19 @@
     "phpunit/phpunit": "~4.4"
   },
   "require": {
+    "cpliakas/git-wrapper": "~1.4",
     "phpmd/phpmd": "2.2.*",
+    "phpspec/phpspec": "~2.0",
     "symfony/console": "2.6.*",
-    "symfony/class-loader": "2.6.*",
-    "cpliakas/git-wrapper": "~1.4"
+    "symfony/class-loader": "2.6.*"
   },
   "config": {
     "bin-dir": "bin",
     "vendor-dir": "opt"
+  },
+  "autoload": {
+    "psr-4": {
+      "PHPSemVer\\": "lib/PHPSemVer"
+    }
   }
 }

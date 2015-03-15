@@ -111,6 +111,8 @@ function MyMain() {
 		return
 	fi
 
+	assert_exec phpspec ./bin/phpspec run --config etc/phpspec.yml
+
 	test_phpmd "${targets[@]}"
 }
 
@@ -171,6 +173,18 @@ function test_phpmd() {
 
 	$output
 	"
+}
+
+function assert_exec() {
+    config=$1;
+    shift
+    echo "Asserting $config ...";
+    echo "";
+    ${*};
+
+    if [ "$?" -ne "0" ]; then
+        messed_up $config "$output"
+    fi
 }
 
 function messed_up() {
