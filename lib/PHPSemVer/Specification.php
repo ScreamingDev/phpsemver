@@ -20,11 +20,6 @@ class Specification
         $this->_assertions[ $hash ] = $assertionObject;
     }
 
-    public function addRuleSet( $ruleSet )
-    {
-        $this->_ruleSets[ ] = $ruleSet;
-    }
-
     public function getAssertions()
     {
         return $this->_assertions;
@@ -39,9 +34,21 @@ class Specification
     {
         $xml = simplexml_load_string( $xmlString );
 
-        foreach ( $xml->xpath( '//ruleSet' ) as $ruleSet )
+        foreach ( $xml->xpath( '//ruleSet' ) as $ruleSetXml )
         {
-            $ruleSet = new RuleSet();
+            if ( ! $ruleSetXml->attributes() || ! $ruleSetXml->attributes()->name )
+            {
+                throw new \Exception( 'Please provide a valid ruleSet name-attribute. Found invalid.' );
+            }
+
+            $ruleSet = new RuleSet( $ruleSetXml->attributes()->name );
+
+            $this->addRuleSet( $ruleSet );
         }
+    }
+
+    public function addRuleSet( $ruleSet )
+    {
+        $this->_ruleSets[ ] = $ruleSet;
     }
 }
