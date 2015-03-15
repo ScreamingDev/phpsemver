@@ -3,6 +3,7 @@
 namespace PHPSemVer;
 
 use PHPSemVer\Rules\AbstractRule;
+use PHPSemVer\Rules\RuleSet;
 
 class Specification
 {
@@ -32,5 +33,15 @@ class Specification
     public function getRuleSets()
     {
         return $this->_ruleSets;
+    }
+
+    public function updateFromXmlString( $xmlString )
+    {
+        $xml = simplexml_load_string( $xmlString );
+
+        foreach ( $xml->xpath( '//ruleSet' ) as $ruleSet )
+        {
+            $ruleSet = new RuleSet();
+        }
     }
 }

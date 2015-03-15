@@ -20,35 +20,7 @@ class RuleTest extends Abstract_TestCase
 
     public function testItProvidesAllRuleSets()
     {
-        $rule = new Rule( PHPSEMVER_LIB_PATH . '/PHPSemVer/Rules/SemVer2.xml' );
-
-        $ruleSets = $rule->getAllRuleNames();
-        $this->assertTrue( is_array( $ruleSets ) );
-
-        $this->assertArrayHasKey( 'Major', $ruleSets );
-        $this->assertArrayHasKey( 'Minor', $ruleSets );
-
-        $this->assertNotEmpty( $ruleSets );
-        $this->assertNotEmpty( $ruleSets[ 'Major' ] );
-        $this->assertNotEmpty( $ruleSets[ 'Minor' ] );
-    }
-
-    public function testItProvidesClassesForRules()
-    {
-        $rule = new Rule( PHPSEMVER_LIB_PATH . '/PHPSemVer/Rules/SemVer2.xml' );
-
-        $classes = $rule->getRuleClasses();
-
-        $this->assertArrayHasKey( 'Major', $classes );
-        $this->assertArrayHasKey( 'Minor', $classes );
-
-        $this->assertNotEmpty( $classes[ 'Major' ] );
-        $this->assertNotEmpty( $classes[ 'Minor' ] );
-
-        $this->assertContains(
-            '\\PHPSemVer\\Rules\\ClassRules\\NoneRemovedRule',
-            $classes[ 'Major' ]
-        );
+        $this->markTestIncomplete();
     }
 
     /**

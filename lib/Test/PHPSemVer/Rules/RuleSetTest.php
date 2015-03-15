@@ -1,6 +1,13 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: Mike
+ * Date: 15.03.15
+ * Time: 23:07
+ */
 
-namespace Test\PHPSemVer\Rules;
+namespace PHPSemVer\Rules;
+
 
 use PDepend\Source\Language\PHP\PHPBuilder;
 use PHPSemVer\Rules\ClassRules\NoneRemovedRule;
@@ -8,7 +15,7 @@ use PHPSemVer\Rules\NamespaceRules\AddedRule;
 use PHPSemVer\Specification;
 use Test\Abstract_TestCase;
 
-class SpecificationTest extends Abstract_TestCase
+class RuleSetTest extends Abstract_TestCase
 {
     public function testItGathersAssertions()
     {
