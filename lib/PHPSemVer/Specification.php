@@ -1,8 +1,10 @@
 <?php
 
-namespace PHPSemVer\Rules;
+namespace PHPSemVer;
 
-class RuleConfig
+use PHPSemVer\Rules\AbstractRule;
+
+class Specification
 {
     protected $_assertions = array();
     protected $_ruleSets = array();
