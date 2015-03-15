@@ -52,4 +52,7 @@
             </namespaces>
         </assertions>
     </ruleSet>
+    <ruleSet name="patch">
+        
+    </ruleSet>
 </phpsemver>
