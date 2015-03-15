@@ -124,7 +124,7 @@ function test_phpunit() {
 function assert_exec() {
     config=$1;
     shift
-    output=$(${*});
+    ${*};
 
     if [ "$?" -ne "0" ]; then
         messed_up $config "$output"

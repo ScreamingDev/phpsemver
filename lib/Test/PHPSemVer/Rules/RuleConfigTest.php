@@ -9,10 +9,18 @@
 namespace Test\PHPSemVer\Rules;
 
 
-class RuleConfigTest extends \PHPUnit_Framework_TestCase
-{
-    public function testAddingAssertionsIsPossible()
-    {
+use PHPSemVer\Rules\RuleConfig;
+use Test\Abstract_TestCase;
 
+class RuleConfigTest extends Abstract_TestCase
+{
+    public function testItGathersAssertions()
+    {
+        $ruleConfig = new RuleConfig();
+
+        $value = array( 1, 2, 3 );
+        $this->setProperty( $ruleConfig, '_assertions', $value );
+
+        $this->assertEquals( $value, $ruleConfig->getAssertions() );
     }
 }
