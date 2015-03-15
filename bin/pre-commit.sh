@@ -114,6 +114,8 @@ function MyMain() {
 	assert_exec phpspec ./bin/phpspec run --config etc/phpspec.yml
 
 	test_phpmd "${targets[@]}"
+
+	assert_exec phpunit ./bin/phpunit -c etc/phpunit.xml --disallow-test-output lib/Test
 }
 
 function test_non-ascii() {
