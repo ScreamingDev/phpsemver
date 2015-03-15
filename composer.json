@@ -25,12 +25,12 @@
     "source": "https://github.com/sourcerer-mike/phpsemver"
   },
   "require-dev": {
-    "phpunit/phpunit": "~4.4"
+    "phpunit/phpunit": "~4.4",
+    "phpspec/phpspec": "~2.0"
   },
   "require": {
     "cpliakas/git-wrapper": "~1.4",
     "phpmd/phpmd": "2.2.*",
-    "phpspec/phpspec": "~2.0",
     "symfony/console": "2.6.*",
     "symfony/class-loader": "2.6.*"
   },
