@@ -84,12 +84,6 @@ $vendorPath     = $projectBaseDir . '/' . $composerConfig[ 'vendor-dir' ] . '/';
 $composerLock      = fetch_json( $projectBaseDir . '/composer.lock' );
 $installedPackages = $composerLock[ 'packages' ];
 
-if ( file_exists( $pharFileName ) )
-{
-    unlink( $pharFileName );
-}
-
-
 while ( $packageName = array_shift( $requiredPackages ) )
 {
     $packagePath = realpath( $vendorPath . $packageName ) . '/';
@@ -148,6 +142,12 @@ while ( $packageName = array_shift( $requiredPackages ) )
 
 $alias        = basename( $projectBaseDir );
 $pharFileName = $alias . '.phar';
+
+if ( file_exists( $pharFileName ) )
+{
+    unlink( $pharFileName );
+}
+
 $phar         = new Phar( $pharFileName, Phar::NONE, $alias );
 
 echo "Adding lib ..." . PHP_EOL;
