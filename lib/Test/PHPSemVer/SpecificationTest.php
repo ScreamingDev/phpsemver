@@ -16,7 +16,9 @@ class SpecificationTest extends \PHPUnit_Framework_TestCase
 
         $spec = new Specification();
 
-        $spec->updateFromXmlString( file_get_contents( $xml ) );
+        $xml = simplexml_load_file( $xml );
+
+        $spec->updateFromXml( $xml );
 
         $ruleSets = $spec->getRuleSets();
 
@@ -37,7 +39,7 @@ class SpecificationTest extends \PHPUnit_Framework_TestCase
         $ruleSet = $xml->addChild( 'RuleSet' );
         $ruleSet->addAttribute( 'name', 'test2' );
 
-        $spec->updateFromXmlString( $xml->asXML() );
+        $spec->updateFromXml( $xml );
 
         $rules = $spec->getRuleSets();
 
@@ -63,6 +65,6 @@ class SpecificationTest extends \PHPUnit_Framework_TestCase
 
         $xml->addChild( 'RuleSet' );
 
-        $spec->updateFromXmlString( $xml->asXML() );
+        $spec->updateFromXml( $xml );
     }
 }

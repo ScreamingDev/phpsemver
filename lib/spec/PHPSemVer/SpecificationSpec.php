@@ -14,7 +14,8 @@ class SpecificationSpec extends ObjectBehavior
 
     function it_can_read_from_xml_string()
     {
-        $this->updateFromXmlString( '<?xml version="1.0" ?><phpsemver></phpsemver>' )->shouldReturn( null );
+        $xml = simplexml_load_string( '<?xml version="1.0" ?><phpsemver></phpsemver>' );
+        $this->updateFromXml( $xml )->shouldReturn( null );
     }
 
     function it_contains_rule_sets()

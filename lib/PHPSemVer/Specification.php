@@ -30,10 +30,13 @@ class Specification
         return $this->_ruleSets;
     }
 
-    public function updateFromXmlString( $xmlString )
+    /**
+     * @param \SimpleXMLElement $xml
+     *
+     * @throws \Exception
+     */
+    public function updateFromXml( $xml )
     {
-        $xml = simplexml_load_string( $xmlString );
-
         foreach ( $xml->xpath( '//RuleSet' ) as $ruleSetXml )
         {
             if ( ! $ruleSetXml->attributes() || ! $ruleSetXml->attributes()->name )
