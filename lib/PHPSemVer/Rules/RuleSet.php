@@ -2,6 +2,8 @@
 
 namespace PHPSemVer\Rules;
 
+use PHPSemVer\Assertions\AbstractAssertion;
+
 class RuleSet
 {
     protected $_assertions = array();
@@ -12,7 +14,7 @@ class RuleSet
         $this->_name = $name;
     }
 
-    public function addAssertion( AbstractRule $assertion )
+    public function addAssertion( AbstractAssertion $assertion )
     {
         $hash                       = spl_object_hash( $assertion );
         $this->_assertions[ $hash ] = $assertion;

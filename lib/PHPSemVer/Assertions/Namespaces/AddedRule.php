@@ -9,10 +9,10 @@
 namespace PHPSemVer\Assertions\Namespaces;
 
 
-use PHPSemVer\Rules\AbstractRule;
-use PHPSemVer\Rules\RuleInterface;
+use PHPSemVer\Assertions\AbstractAssertion;
+use PHPSemVer\Assertions\AssertionInterface;
 
-class AddedRule extends AbstractRule implements RuleInterface
+class AddedRule extends AbstractAssertion implements AssertionInterface
 {
 
     public function process()

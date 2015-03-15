@@ -42,7 +42,7 @@ class Rule
 
             foreach ( $classes as $className )
             {
-                /** @var AbstractRule $singleRule */
+                /** @var AbstractAssertion $singleRule */
                 $singleRule = new $className( $previousBuilder, $latestBuilder );
                 $singleRule->process();
 

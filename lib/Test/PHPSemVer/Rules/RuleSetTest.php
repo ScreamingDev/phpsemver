@@ -33,18 +33,14 @@ class RuleSetTest extends Abstract_TestCase
         $rule1   = new NoneRemovedRule( $builder, $builder );
         $rule2   = new AddedRule( $builder, $builder );
 
-        $ruleConfig = new Specification();
-        $ruleConfig->addAssertion( $rule2 );
+        $ruleConfig = new RuleSet( 'foo' );
         $ruleConfig->addAssertion( $rule1 );
         $ruleConfig->addAssertion( $rule2 );
         $ruleConfig->addAssertion( $rule1 );
+        $ruleConfig->addAssertion( $rule2 );
 
-        $this->assertEquals(
-            array(
-                $rule2,
-                $rule1
-            ),
-            array_values( $ruleConfig->getAssertions() )
-        );
+        $this->assertCount( 2, $ruleConfig->getAssertions() );
+        $this->assertContains( $rule1, $ruleConfig->getAssertions() );
+        $this->assertContains( $rule2, $ruleConfig->getAssertions() );
     }
 }

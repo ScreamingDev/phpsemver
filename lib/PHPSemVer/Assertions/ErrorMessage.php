@@ -1,6 +1,6 @@
 <?php
 
-namespace PHPSemVer\Rules;
+namespace PHPSemVer\Assertions;
 
 
 class ErrorMessage

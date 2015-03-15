@@ -2,7 +2,7 @@
 
 namespace PHPSemVer;
 
-use PHPSemVer\Rules\AbstractRule;
+use PHPSemVer\Rules\AbstractAssertion;
 use PHPSemVer\Rules\RuleSet;
 
 class Specification
@@ -11,9 +11,9 @@ class Specification
     protected $_ruleSets = array();
 
     /**
-     * @param AbstractRule $assertionObject Assertion to test against.
+     * @param AbstractAssertion $assertionObject Assertion to test against.
      */
-    public function addAssertion( AbstractRule $assertionObject )
+    public function addAssertion( AbstractAssertion $assertionObject )
     {
         $hash = spl_object_hash( $assertionObject );
 

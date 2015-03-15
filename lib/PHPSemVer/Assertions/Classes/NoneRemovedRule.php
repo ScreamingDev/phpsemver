@@ -9,10 +9,10 @@
 namespace PHPSemVer\Assertions\Classes;
 
 
-use PHPSemVer\Rules\AbstractRule;
-use PHPSemVer\Rules\RuleInterface;
+use PHPSemVer\Assertions\AbstractAssertion;
+use PHPSemVer\Assertions\AssertionInterface;
 
-class NoneRemovedRule extends AbstractRule implements RuleInterface
+class NoneRemovedRule extends AbstractAssertion implements AssertionInterface
 {
 
     public function process()

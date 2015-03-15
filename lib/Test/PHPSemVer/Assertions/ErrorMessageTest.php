@@ -1,8 +1,9 @@
 <?php
 
-namespace PHPSemVer\Rules;
+namespace Test\PHPSemVer\Assertions;
 
 
+use PHPSemVer\Assertions\ErrorMessage;
 use Test\Abstract_TestCase;
 
 class ErrorMessageTest extends Abstract_TestCase

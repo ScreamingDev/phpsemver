@@ -2,10 +2,10 @@
 
 namespace PHPSemVer\Assertions\Namespaces;
 
-use PHPSemVer\Rules\AbstractRule;
-use PHPSemVer\Rules\RuleInterface;
+use PHPSemVer\Assertions\AbstractAssertion;
+use PHPSemVer\Assertions\AssertionInterface;
 
-class NoneDeletedRule extends AbstractRule implements RuleInterface
+class NoneDeletedRule extends AbstractAssertion implements AssertionInterface
 {
     public function process()
     {

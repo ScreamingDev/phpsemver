@@ -1,10 +1,10 @@
 <?php
 
-namespace PHPSemVer\Rules;
+namespace PHPSemVer\Assertions;
 
 use PDepend\Source\Language\PHP\PHPBuilder;
 
-interface RuleInterface
+interface AssertionInterface
 {
     public function __construct( PHPBuilder $previousBuilder, PHPBuilder $latestBuilder );
 

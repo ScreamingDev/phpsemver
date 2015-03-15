@@ -1,11 +1,11 @@
 <?php
 
-namespace PHPSemVer\Rules;
+namespace PHPSemVer\Assertions;
 
 
 use PDepend\Source\Language\PHP\PHPBuilder;
 
-class AbstractRule
+class AbstractAssertion
 {
 
     protected $_errors = array();
