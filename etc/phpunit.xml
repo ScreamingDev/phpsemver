@@ -35,6 +35,12 @@
         <log type="coverage-clover" target="../var/phpunit/coverage.xml"/>
         <log type="tap" target="../var/phpunit/logfile.tap"/>
         <log type="testdox-text" target="../var/phpunit/testdox.txt"/>
+        <log type="coverage-text"
+             target="php://stdout"
+             showUncoveredFiles="false"
+             lowUpperBound="50"
+             highLowerBound="90"
+             showOnlySummary="true"/>
     </logging>
 
     <!-- Manage files for CodeCoverage-Report -->

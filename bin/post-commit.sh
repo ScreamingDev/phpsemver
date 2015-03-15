@@ -118,7 +118,7 @@ function MyMain() {
 }
 
 function test_phpunit() {
-    assert_exec phpunit ./bin/phpunit -c etc/phpunit.xml --disallow-test-output --coverage-text ${*}
+    assert_exec phpunit ./bin/phpunit -c etc/phpunit.xml --disallow-test-output ${*}
 }
 
 function assert_exec() {
