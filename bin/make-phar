@@ -17,7 +17,6 @@ $projectBaseDir = dirname( __DIR__ );
 
 $ignoreDir = array(
     'lib/Tests',
-    'opt/pdepend/pdepend/src/bin',
     'opt/phpmd/phpmd/src/test',
     'opt/phpmd/phpmd/setup',
     'opt/phpmd/phpmd/src/site',
