@@ -14,6 +14,16 @@ class RuleConfigSpec extends ObjectBehavior
         $this->addAssertion( new NoneRemovedRule( new PHPBuilder(), new PHPBuilder() ) );
     }
 
+    function it_can_be_filled_with_rule_sets()
+    {
+        $this->addRuleSet( 'minor' )->shouldReturn( null );
+    }
+
+    function it_contains_rule_sets()
+    {
+        $this->getRuleSets()->shouldReturn( array() );
+    }
+
     function it_gathers_assertions()
     {
         $this->getAssertions()->shouldReturn( array() );

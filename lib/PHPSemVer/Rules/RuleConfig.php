@@ -5,6 +5,7 @@ namespace PHPSemVer\Rules;
 class RuleConfig
 {
     protected $_assertions = array();
+    protected $_ruleSets = array();
 
     /**
      * @param AbstractRule $assertionObject Assertion to test against.
@@ -16,8 +17,18 @@ class RuleConfig
         $this->_assertions[ $hash ] = $assertionObject;
     }
 
+    public function addRuleSet( $ruleSet )
+    {
+        $this->_ruleSets[ ] = $ruleSet;
+    }
+
     public function getAssertions()
     {
         return $this->_assertions;
+    }
+
+    public function getRuleSets()
+    {
+        return $this->_ruleSets;
     }
 }
