@@ -1,5 +1,8 @@
 #!/bin/bash
 
+[[ ! -L .git/hooks/post-update ]] || rm .git/hooks/post-update
+[[ ! -L .git/hooks/pre-commit ]] || rm .git/hooks/pre-commit
+[[ ! -L .git/hooks/post-commit ]] || rm .git/hooks/post-commit
 
 [[ -f .git/hooks/post-update ]] || ln -s ../../bin/post-update.sh .git/hooks/post-update
 [[ -f .git/hooks/pre-commit ]] || ln -s ../../bin/pre-commit.sh .git/hooks/pre-commit
