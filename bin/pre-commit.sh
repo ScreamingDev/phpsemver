@@ -179,7 +179,7 @@ function messed_up() {
 	echo If you know what you are doing you can disable this check using:
 	echo ""
 	echo git config hooks.$1 false
-	exit 1
+	exit 2
 }
 
 function join { local IFS="$1"; shift; echo "$*"; }

@@ -90,7 +90,7 @@ class CompareCommand extends AbstractCommand
         $latestWrapper   = new $wrapper( $input->getArgument( 'latest' ) );
 
         $xmlFile        = PHPSEMVER_LIB_PATH . '/PHPSemVer/Rules/SemVer2.xml';
-        $foo            = 7;
+
         $ruleCollection = new Rule( $xmlFile );
         $errorMessages  = $ruleCollection->processAll(
             $previousWrapper->getBuilder(),
