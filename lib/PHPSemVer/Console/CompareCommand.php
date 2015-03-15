@@ -3,7 +3,9 @@
 namespace PHPSemVer\Console;
 
 use PDepend\Source\Language\PHP\PHPBuilder;
-use PHPSemVer\Rules\Semver2\Major\NamespaceRules\NoneDeletedRule;
+use PHPSemVer\Rules\Rule;
+use PHPSemVer\Rules\RuleCollection;
+use PHPSemVer\Rules\RuleFactory;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -87,73 +89,44 @@ class CompareCommand extends AbstractCommand
         $previousWrapper = new $wrapper( $input->getArgument( 'previous' ) );
         $latestWrapper   = new $wrapper( $input->getArgument( 'latest' ) );
 
-        $xmlFile = PHPSEMVER_LIB_PATH . '/PHPSemVer/Rules/SemVer2.xml';
-        $xmlFileShort = trim( str_replace( getcwd(), '', $xmlFile ), DIRECTORY_SEPARATOR );
+        $xmlFile        = PHPSEMVER_LIB_PATH . '/PHPSemVer/Rules/SemVer2.xml';
+        $foo            = 7;
+        $ruleCollection = new Rule( $xmlFile );
+        $errorMessages  = $ruleCollection->processAll(
+            $previousWrapper->getBuilder(),
+            $latestWrapper->getBuilder()
+        );
 
-        $xml = simplexml_load_file( $xmlFile );
-
-        $ruleSets = $xml->xpath( '//ruleset' );
-
-        $appliedRules = array();
-        foreach ( $ruleSets as $ruleSet )
+        foreach ( $errorMessages as $ruleSet => $messages )
         {
-            $tableRows = array();
-            foreach ( $ruleSet->xpath( 'rule' ) as $rule )
-            {
-                if ( ! $rule->attributes() || ! $rule->attributes()->ref )
-                {
-                    continue;
-                }
-
-                $rule = (string) $rule->attributes()->ref;
-                $segments = explode( '.', $rule );
-                $class    = '\\PHPSemVer\\Rules\\' . implode( '\\', $segments ) . 'Rule';
-
-                if ( ! class_exists( $class ) )
-                {
-                    throw new \Exception(
-                        sprintf(
-                            'Invalid rule "%s" in "%s" (class "%s" not found).',
-                            $rule,
-                            $xmlFileShort,
-                            $class
-                        )
-                    );
-
-                    continue;
-                }
-
-                $singleRule = new $class( $previousWrapper->getBuilder(), $latestWrapper->getBuilder() );
-                $singleRule->process();
-
-                foreach ( $singleRule->getErrors() as $error )
-                {
-                    $tableRows[ ] = array(
-                        $error->getRule(),
-                        $error->getMessage()
-                    );
-                }
-            }
-
-            if ( ! $tableRows )
+            if ( ! $messages )
             {
                 continue;
             }
 
+            $output->writeln( '' );
+            $output->writeln( '' );
+            $output->writeln( '<error>' . (string) $ruleSet . '</error>' );
+            $output->writeln( '' );
+
             $table = new Table( $output );
             $table->setHeaders(
                 array(
-                    'Type',
+                    'Assertion',
                     'Message'
                 )
             );
 
-            $output->writeln( '' );
-            $output->writeln( '' );
-            $output->writeln( '<error>' . (string) $ruleSet->attributes()->name . '</error>' );
-            $output->writeln( '' );
 
-            $table->addRows( $tableRows );
+            foreach ( $messages as $message )
+            {
+                $table->addRow(
+                    array(
+                        $message->getRule(),
+                        $message->getMessage()
+                    )
+                );
+            }
             $table->render();
         }
 
