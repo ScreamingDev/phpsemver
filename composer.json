@@ -1,7 +1,7 @@
 {
   "name": "sourcerer-mike/phpsemver",
   "description": "Compare two version and check for semantic versioning.",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "type": "library",
   "keywords": [
     "Code analysis",
@@ -24,6 +24,9 @@
     "wiki": "https://github.com/sourcerer-mike/phpsemver/wiki",
     "source": "https://github.com/sourcerer-mike/phpsemver"
   },
+  "bin": [
+    "bin/phpsemver"
+  ],
   "require-dev": {
     "phpunit/phpunit": "~4.4",
     "phpspec/phpspec": "~2.0"
