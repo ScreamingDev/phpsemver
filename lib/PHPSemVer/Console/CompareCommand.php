@@ -10,148 +10,159 @@ use PHPSemVer\Wrapper\Directory;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class CompareCommand extends AbstractCommand
-{
-    protected $_cacheFactory;
-    protected $cacheFactory;
-    /**
-     * @var PHPBuilder
-     */
-    protected $currentBuilder = null;
-    protected $parseExceptions = array();
-    /**
-     * @var PHPBuilder
-     */
-    protected $previousBuilder = null;
+class CompareCommand extends AbstractCommand {
+	protected $_cacheFactory;
+	protected $cacheFactory;
+	/**
+	 * @var PHPBuilder
+	 */
+	protected $currentBuilder  = null;
+	protected $parseExceptions = array();
+	/**
+	 * @var PHPBuilder
+	 */
+	protected $previousBuilder = null;
 
-    protected function configure()
-    {
-        $this->setName('compare');
+	protected function configure() {
+		$this->setName( 'compare' );
 
-        $this->addOption(
-            'type',
-            't',
-            InputArgument::OPTIONAL,
-            'Type of given targets',
-            'git'
-        );
+		$this->addOption(
+			'type',
+			't',
+			InputArgument::OPTIONAL,
+			'Type of given targets',
+			'git'
+		);
 
-        $this->addOption(
-            'ruleset',
-            'R',
-            InputArgument::OPTIONAL,
-            'A ruleset (eg. "semver2.0")',
-            'SemVer2'
-        );
+		$this->addOption(
+			'print-assertion',
+			null,
+			InputOption::VALUE_NONE,
+			'Print which assertion caused that warning.'
+		);
 
-        $this->addArgument(
-            'previous',
-            InputArgument::REQUIRED,
-            'Place to lookup the old code'
-        );
+		$this->addOption(
+			'ruleset',
+			'R',
+			InputArgument::OPTIONAL,
+			'A ruleset (eg. "semver2.0")',
+			'SemVer2'
+		);
 
-        $this->addArgument(
-            'latest',
-            InputArgument::OPTIONAL,
-            'Place to lookup the new code',
-            'HEAD'
-        );
-    }
+		$this->addArgument(
+			'previous',
+			InputArgument::REQUIRED,
+			'Place to lookup the old code'
+		);
 
-    protected function execute(
-        InputInterface $input,
-        OutputInterface $output
-    ) {
-        $this->verbose(
-            'Comparing %s "%s" with %s "%s" using "%s" ...',
-            $input->getOption('type'),
-            $input->getArgument('latest'),
-            $input->getOption('type'),
-            $input->getArgument('previous'),
-            $input->getOption('ruleset')
-        );
+		$this->addArgument(
+			'latest',
+			InputArgument::OPTIONAL,
+			'Place to lookup the new code',
+			'HEAD'
+		);
+	}
 
-        $wrapper = $this->getWrapperClass($input->getOption('type'));
+	protected function execute(
+		InputInterface $input,
+		OutputInterface $output
+	) {
+		$this->verbose(
+			'Comparing %s "%s" with %s "%s" using "%s" ...',
+			$input->getOption( 'type' ),
+			$input->getArgument( 'latest' ),
+			$input->getOption( 'type' ),
+			$input->getArgument( 'previous' ),
+			$input->getOption( 'ruleset' )
+		);
 
-        if ( ! $wrapper) {
-            $output->writeln(
-                sprintf(
-                    '<error>Unknown wrapper-type "%s"</error>',
-                    $input->getOption('type')
-                )
-            );
+		$wrapper = $this->getWrapperClass( $input->getOption( 'type' ) );
 
-            return;
-        }
+		if ( ! $wrapper ) {
+			$output->writeln(
+				sprintf(
+					'<error>Unknown wrapper-type "%s"</error>',
+					$input->getOption( 'type' )
+				)
+			);
 
-        if ($output->isDebug()) {
-            $output->writeln('Using wrapper ' . $wrapper);
-        }
+			return;
+		}
 
-        $previousWrapper = new $wrapper($input->getArgument('previous'));
-        if (is_dir($input->getArgument('latest'))) {
-            $latestWrapper = new Directory($input->getArgument('latest'));
-        } else {
-            $latestWrapper = new $wrapper($input->getArgument('latest'));
-        }
+		if ( $output->isDebug() ) {
+			$output->writeln( 'Using wrapper ' . $wrapper );
+		}
 
-        if ($output->isVerbose()) {
-            $output->writeln(
-                sprintf(
-                    'Compare "%s" with "%s"',
-                    $input->getArgument('previous'),
-                    $input->getArgument('latest')
-                )
-            );
-        }
+		$previousWrapper = new $wrapper( $input->getArgument( 'previous' ) );
+		if ( is_dir( $input->getArgument( 'latest' ) ) ) {
+			$latestWrapper = new Directory( $input->getArgument( 'latest' ) );
+		} else {
+			$latestWrapper = new $wrapper( $input->getArgument( 'latest' ) );
+		}
 
-        $xmlFile = PHPSEMVER_LIB_PATH . '/PHPSemVer/Rules/SemVer2.xml';
+		if ( $output->isVerbose() ) {
+			$output->writeln(
+				sprintf(
+					'Compare "%s" with "%s"',
+					$input->getArgument( 'previous' ),
+					$input->getArgument( 'latest' )
+				)
+			);
+		}
 
-        $ruleCollection = new Rule($xmlFile);
-        $errorMessages  = $ruleCollection->processAll(
-            $previousWrapper->getBuilder(),
-            $latestWrapper->getBuilder()
-        );
+		$xmlFile = PHPSEMVER_LIB_PATH . '/PHPSemVer/Rules/SemVer2.xml';
 
-        $table = new Table($output);
-        $table->setHeaders(
-            array(
-                'Level',
-                'Message',
-                'Assertion',
-            )
-        );
+		$ruleCollection = new Rule( $xmlFile );
+		$errorMessages  = $ruleCollection->processAll(
+			$previousWrapper->getBuilder(),
+			$latestWrapper->getBuilder()
+		);
 
-        foreach ($errorMessages as $ruleSet => $messages) {
-            if ( ! $messages) {
-                continue;
-            }
+		$table   = new Table( $output );
+		$headers = array(
+			'Level',
+			'Message',
+		);
 
-            foreach ($messages as $message) {
-                $table->addRow(
-                    array(
-                        $ruleSet,
-                        $message->getMessage(),
-                        $message->getRule(),
-                    )
-                );
-            }
-        }
+		if ( $input->getOption( 'print-assertion' ) ) {
+			$headers[] = 'Assertion';
+		}
 
-        $table->render();
-        $output->writeln('Done!');
-    }
+		$table->setHeaders( $headers );
 
-    public function getWrapperClass($name)
-    {
-        $className = '\\PHPSemVer\\Wrapper\\' . ucfirst($name);
+		foreach ( $errorMessages as $ruleSet => $messages ) {
+			if ( ! $messages ) {
+				continue;
+			}
 
-        if ( ! class_exists($className)) {
-            return false;
-        }
+			foreach ( $messages as $message ) {
+				$row = array(
+					$ruleSet,
+					$message->getMessage(),
+				);
 
-        return $className;
-    }
+				if ( $input->getOption( 'print-assertion' ) ) {
+					$row[] = $message->getRule();
+				}
+
+				$table->addRow( $row );
+			}
+		}
+
+		$table->render();
+		$output->writeln( 'Done!' );
+	}
+
+	public function getWrapperClass( $name ) {
+		$className = '\\PHPSemVer\\Wrapper\\' . ucfirst( $name );
+
+		if ( ! class_exists( $className ) ) {
+			return false;
+		}
+
+		return $className;
+	}
 }
