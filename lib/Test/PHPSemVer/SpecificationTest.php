@@ -4,8 +4,9 @@ namespace Test\PHPSemVer;
 
 
 use PHPSemVer\Specification;
+use Test\Abstract_TestCase;
 
-class SpecificationTest extends \PHPUnit_Framework_TestCase
+class SpecificationTest extends Abstract_TestCase
 {
     public function testItAddsConfigOfXmlFiles()
     {
@@ -66,5 +67,14 @@ class SpecificationTest extends \PHPUnit_Framework_TestCase
         $xml->addChild( 'RuleSet' );
 
         $spec->updateFromXml( $xml );
+    }
+
+    public function testItLoadsXml()
+    {
+
+        $spec = new Specification();
+        $spec->updateFromXml(
+            simplexml_load_file( $this->getResourcePath( 'Rules/FullSpec.xml' ) )
+        );
     }
 }

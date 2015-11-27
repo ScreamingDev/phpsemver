@@ -12,7 +12,7 @@ namespace PHPSemVer\Assertions\Namespaces;
 use PHPSemVer\Assertions\AbstractAssertion;
 use PHPSemVer\Assertions\AssertionInterface;
 
-class AddedRule extends AbstractAssertion implements AssertionInterface
+class SomeAdded extends AbstractAssertion implements AssertionInterface
 {
 
     public function process()
@@ -29,7 +29,7 @@ class AddedRule extends AbstractAssertion implements AssertionInterface
             {
                 $this->appendError(
                     sprintf(
-                        'Found new class "%s".',
+                        'Added class "%s".',
                         $namespace->getName()
                     )
                 );

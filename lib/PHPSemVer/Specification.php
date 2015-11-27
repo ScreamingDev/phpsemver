@@ -45,6 +45,7 @@ class Specification
             }
 
             $ruleSet = new RuleSet( $ruleSetXml->attributes()->name );
+            $ruleSet->updateFromXml($ruleSetXml);
 
             $this->addRuleSet( $ruleSet );
         }

@@ -4,6 +4,7 @@ namespace PHPSemVer\Wrapper;
 
 use GitWrapper\GitException;
 use GitWrapper\GitWrapper;
+use Symfony\Component\Filesystem\Filesystem;
 
 class Git extends AbstractWrapper
 {
@@ -12,24 +13,22 @@ class Git extends AbstractWrapper
     protected $_gitWrapper;
     protected $_tempPath;
 
-    public function __construct( $base )
+    public function __construct($base)
     {
-        parent::__construct( $base );
+        parent::__construct($base);
 
-        if ( ! is_dir( $this->getTempPath() ) )
-        {
-            mkdir( $this->getTempPath(), 0777, true );
+        if ( ! is_dir($this->getTempPath())) {
+            mkdir($this->getTempPath(), 0777, true);
         }
 
-        $this->_fileWrapper = new Directory( $this->getTempPath() );
+        $this->_fileWrapper = new Directory($this->getTempPath());
     }
 
     public function getTempPath()
     {
-        if ( ! $this->_tempPath )
-        {
+        if ( ! $this->_tempPath) {
             $this->_tempPath = sys_get_temp_dir()
-                               . DIRECTORY_SEPARATOR . uniqid( PHPSEMVER_ID );
+                . DIRECTORY_SEPARATOR . uniqid(PHPSEMVER_ID);
         }
 
         return $this->_tempPath;
@@ -42,7 +41,7 @@ class Git extends AbstractWrapper
             'with-tree' => $this->getBase(),
         );
 
-        $git = $this->_getGitWrapper()->workingCopy( getcwd() );
+        $git = $this->_getGitWrapper()->workingCopy(getcwd());
 
         $result = $git->run(
             array(
@@ -51,16 +50,21 @@ class Git extends AbstractWrapper
             )
         );
 
-        $allPrevious = explode( PHP_EOL, $result->getOutput() );
-        $allPrevious = array_filter( $allPrevious );
+        $allPrevious = explode(PHP_EOL, $result->getOutput());
+        $allPrevious = array_filter($allPrevious);
 
         $allFileNames = array();
-        foreach ( $allPrevious as $singleFile )
-        {
-            $allFileNames[ $singleFile ] = $this->getPath( $singleFile );
+        foreach ($allPrevious as $singleFile) {
+            $allFileNames[$singleFile] = $this->getPath($singleFile);
         }
 
         return $allFileNames;
+    }
+
+    function __destruct()
+    {
+        $fs = new Filesystem();
+        $fs->remove($this->getTempPath());
     }
 
     /**
@@ -68,8 +72,7 @@ class Git extends AbstractWrapper
      */
     protected function _getGitWrapper()
     {
-        if ( ! $this->_gitWrapper )
-        {
+        if ( ! $this->_gitWrapper) {
             $this->_gitWrapper = new GitWrapper();
         }
 
@@ -81,26 +84,23 @@ class Git extends AbstractWrapper
         return $this->_getFileWrapper()->getBasePath();
     }
 
-    public function getPath( $fileName )
+    public function getPath($fileName)
     {
-        $fullName = $this->_getFileWrapper()->getPath( $fileName );
+        $fullName = $this->_getFileWrapper()->getPath($fileName);
 
-        if ( ! file_exists( $fullName ) )
-        {
-            $dir = dirname( $fullName );
-            if ( ! is_dir( $dir ) )
-            {
-                mkdir( $dir, 0777, true );
+        if ( ! file_exists($fullName)) {
+            $dir = dirname($fullName);
+            if ( ! is_dir($dir)) {
+                mkdir($dir, 0777, true);
             }
 
-            file_put_contents( $fullName, '' );
+            file_put_contents($fullName, '');
 
             // last state but suppress error messages
             $gitWrapper = $this->_getGitWrapper();
-            $git        = $gitWrapper->workingCopy( getcwd() );
+            $git        = $gitWrapper->workingCopy(getcwd());
 
-            try
-            {
+            try {
                 $git->run(
                     array(
                         'show',
@@ -110,12 +110,11 @@ class Git extends AbstractWrapper
 
 
                 $content = $git->getOutput();
-            } catch ( GitException $e )
-            {
+            } catch (GitException $e) {
                 $content = '';
             }
 
-            file_put_contents( $fullName, $content );
+            file_put_contents($fullName, $content);
         }
 
         return $fullName;

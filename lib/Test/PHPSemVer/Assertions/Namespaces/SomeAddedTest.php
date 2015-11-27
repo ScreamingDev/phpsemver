@@ -30,7 +30,7 @@ class AddedRuleTest extends Abstract_TestCase
                        )
                    );
 
-        $rule = new AddedRule( $previousMock, $latestMock );
+        $rule = new SomeAdded( $previousMock, $latestMock );
         $rule->process();
 
         $this->assertNotEmpty( $rule->getErrors() );

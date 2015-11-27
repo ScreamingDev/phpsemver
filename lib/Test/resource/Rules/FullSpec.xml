@@ -27,14 +27,14 @@
             It MAY include minor and patch level changes.
             Patch and minor version MUST be reset to 0 when major version is incremented.
         </description>
-        <assertions>
+        <Assertions>
             <Classes>
                 <SomeRemoved/>
             </Classes>
             <Namespaces>
                 <SomeRemoved/>
             </Namespaces>
-        </assertions>
+        </Assertions>
     </RuleSet>
     <RuleSet name="minor">
         <description>
@@ -46,16 +46,13 @@
             It MAY include patch level changes.
             Patch version MUST be reset to 0 when minor version is incremented.
         </description>
-        <assertions>
-            <namespaces>
+        <Assertions>
+            <Namespaces>
                 <SomeAdded/>
-            </namespaces>
-        </assertions>
+            </Namespaces>
+        </Assertions>
     </RuleSet>
     <RuleSet name="patch">
 
     </RuleSet>
-    <Filter>
-
-    </Filter>
 </phpsemver>

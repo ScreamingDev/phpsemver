@@ -12,15 +12,22 @@ class Directory extends AbstractWrapper
 {
     function getAllFileNames()
     {
-        $Directory = new RecursiveDirectoryIterator( $this->getBasePath() );
-        $Iterator  = new RecursiveIteratorIterator( $Directory );
-        $Regex     = new RegexIterator( $Iterator, '/^.+\.php$/i', RecursiveRegexIterator::GET_MATCH );
+        $Directory = new RecursiveDirectoryIterator($this->getBasePath());
+        $Iterator  = new RecursiveIteratorIterator($Directory);
+        $Regex     = new RegexIterator(
+            $Iterator, '/^.+\.php$/i', RecursiveRegexIterator::GET_MATCH
+        );
 
         $allFileNames = array();
-        foreach ( $Regex as $single )
-        {
-            $short                  = str_replace( $this->getBasePath(), '', $single[ 0 ] );
-            $allFileNames[ $short ] = $single[ 0 ];
+        foreach ($Regex as $single) {
+            if (false !== strpos($single[0], 'opt')) {
+                // todo: add filter rules to xml
+                continue;
+            }
+            $short = str_replace(
+                $this->getBasePath(), '', $single[0]
+            );
+            $allFileNames[$short] = $single[0];
         }
 
         return $allFileNames;
@@ -28,16 +35,15 @@ class Directory extends AbstractWrapper
 
     public function getBasePath()
     {
-        if ( ! $this->getBase() )
-        {
+        if ( ! $this->getBase()) {
             return '';
         }
 
-        return realpath( $this->getBase() ) . DIRECTORY_SEPARATOR;
+        return realpath($this->getBase()) . DIRECTORY_SEPARATOR;
     }
 
-    public function getPath( $fileName )
+    public function getPath($fileName)
     {
-        return $this->getBasePath() . ltrim( $fileName, DIRECTORY_SEPARATOR );
+        return $this->getBasePath() . ltrim($fileName, DIRECTORY_SEPARATOR);
     }
 }

@@ -69,4 +69,16 @@ class Abstract_TestCase extends \PHPUnit_Framework_TestCase
 
         $property->setValue( $object, $value );
     }
+
+    public function getResourcePath( $file )
+    {
+        return __DIR__
+               . DIRECTORY_SEPARATOR . 'resource'
+               . DIRECTORY_SEPARATOR . $file;
+    }
+
+    public function getResourceContent( $file )
+    {
+        return file_get_contents( $this->getResourcePath( $file ) );
+    }
 }

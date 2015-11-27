@@ -10,10 +10,9 @@ class Rule
 {
     protected $_fileName;
 
-    function __construct( $targetRule )
+    function __construct($targetRule)
     {
-        if ( ! file_exists( $targetRule ) )
-        {
+        if ( ! file_exists($targetRule)) {
             throw new \Exception(
                 sprintf(
                     'Please provide a valid rule name. ' .
@@ -30,24 +29,22 @@ class Rule
      * @param PHPBuilder $previousBuilder
      * @param PHPBuilder $latestBuilder
      */
-    public function processAll( PHPBuilder $previousBuilder, PHPBuilder $latestBuilder )
-    {
+    public function processAll(
+        PHPBuilder $previousBuilder, PHPBuilder $latestBuilder
+    ) {
         $errorMessages = array();
-        foreach ( $this->getRuleClasses() as $assertionName => $classes )
-        {
-            if ( ! isset( $errorMessages[ $assertionName ] ) )
-            {
-                $errorMessages[ $assertionName ] = [ ];
+        foreach ($this->getRuleClasses() as $assertionName => $classes) {
+            if ( ! isset($errorMessages[$assertionName])) {
+                $errorMessages[$assertionName] = [];
             }
 
-            foreach ( $classes as $className )
-            {
+            foreach ($classes as $className) {
                 /** @var AbstractAssertion $singleRule */
-                $singleRule = new $className( $previousBuilder, $latestBuilder );
+                $singleRule = new $className($previousBuilder, $latestBuilder);
                 $singleRule->process();
 
-                $errorMessages[ $assertionName ] = array_merge(
-                    $errorMessages[ $assertionName ],
+                $errorMessages[$assertionName] = array_merge(
+                    $errorMessages[$assertionName],
                     $singleRule->getErrors()
                 );
             }
@@ -60,17 +57,14 @@ class Rule
     {
         $ruleClasses = array();
 
-        foreach ( $this->getAllRuleNames() as $ruleSet => $refs )
-        {
-            if ( ! isset( $ruleClasses[ $ruleSet ] ) )
-            {
-                $ruleClasses[ $ruleSet ] = [ ];
+        foreach ($this->getAllRuleNames() as $ruleSet => $refs) {
+            if ( ! isset($ruleClasses[$ruleSet])) {
+                $ruleClasses[$ruleSet] = [];
             }
 
-            foreach ( $refs as $ruleName )
-            {
-                $class                      = $this->ruleNameToClass( $ruleName );
-                $ruleClasses[ $ruleSet ][ ] = $class;
+            foreach ($refs as $ruleName) {
+                $class                   = $this->ruleNameToClass($ruleName);
+                $ruleClasses[$ruleSet][] = $class;
             }
         }
 
@@ -79,34 +73,31 @@ class Rule
 
     public function getAllRuleNames()
     {
-        $xml = simplexml_load_file( $this->_fileName );
+        $xml = simplexml_load_file($this->_fileName);
 
         $ruleSet = array();
 
-        foreach ( $xml->xpath( '//ruleset' ) as $singleRuleSet )
-        {
-            $section = (string) $singleRuleSet->attributes()->name;
-            foreach ( $singleRuleSet->xpath( 'rule' ) as $singleRule )
-            {
-                if ( ! $singleRule->attributes() || ! $singleRule->attributes()->ref )
-                {
-                    continue;
-                }
+        foreach ($xml->xpath('//RuleSet') as $singleRuleSet) {
+            $section = (string)$singleRuleSet->attributes()->name;
+            foreach ($singleRuleSet->xpath('assertions') as $assertions) {
+                foreach ($assertions->children() as $name => $rules) {
+                    foreach ($rules as $ruleName => $settings) {
+                        $ruleSet[$section][] = (string)$name . '\\' . $ruleName;
+                    }
 
-                $ruleSet[ $section ][ ] = (string) $singleRule->attributes()->ref;
+                }
             }
         }
 
         return $ruleSet;
     }
 
-    public function ruleNameToClass( $ruleName )
+    public function ruleNameToClass($ruleName)
     {
-        $segments = explode( '.', $ruleName );
-        $class    = '\\PHPSemVer\\Rules\\' . implode( '\\', $segments ) . 'Rule';
+        $segments = explode('.', $ruleName);
+        $class    = '\\PHPSemVer\\Assertions\\' . implode('\\', $segments);
 
-        if ( ! class_exists( $class ) )
-        {
+        if ( ! class_exists($class)) {
             throw new \Exception(
                 sprintf(
                     'Invalid rule "%s" in "%s" (class "%s" not found).',

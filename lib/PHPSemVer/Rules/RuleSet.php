@@ -29,4 +29,30 @@ class RuleSet
     {
         return $this->_name;
     }
+
+    /**
+     * @param \SimpleXMLElement $ruleSetXml
+     */
+    public function updateFromXml( $ruleSetXml )
+    {
+        foreach ( $ruleSetXml->xpath( 'Assertions' ) as $assertion )
+        {
+            $namespace = '\\PHPSemVer\\Assertions\\';
+            foreach ( $assertion->children() as $section) {
+                foreach ($section->children() as $className) {
+                    $className = $namespace . $section->getName() . '\\' . $className->getName();
+
+                    if (!class_exists($className)) {
+                        throw new \Exception(
+                            sprintf(
+                                'Please provide valid assertions. '.
+                                'Could not find class "%s".',
+                                $className
+                            )
+                        );
+                    }
+                }
+            }
+        }
+    }
 }
