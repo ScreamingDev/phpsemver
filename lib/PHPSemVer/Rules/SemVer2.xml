@@ -34,6 +34,9 @@
             <Namespaces>
                 <SomeRemoved/>
             </Namespaces>
+            <Methods>
+                <SomeRemoved/>
+            </Methods>
         </assertions>
     </RuleSet>
     <RuleSet name="minor">
@@ -47,9 +50,9 @@
             Patch version MUST be reset to 0 when minor version is incremented.
         </description>
         <assertions>
-            <namespaces>
+            <Namespaces>
                 <SomeAdded/>
-            </namespaces>
+            </Namespaces>
         </assertions>
     </RuleSet>
     <RuleSet name="patch">
