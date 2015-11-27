@@ -29,7 +29,7 @@ class SomeAdded extends AbstractAssertion implements AssertionInterface
             {
                 $this->appendError(
                     sprintf(
-                        'Added class "%s".',
+                        'Added namespace "%s".',
                         $namespace->getName()
                     )
                 );
