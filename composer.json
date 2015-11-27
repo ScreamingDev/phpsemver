@@ -33,9 +33,9 @@
   },
   "require": {
     "cpliakas/git-wrapper": "~1.4",
-    "phpmd/phpmd": "2.2.*",
-    "symfony/console": "2.6.*",
-    "symfony/class-loader": "2.6.*"
+    "phpmd/phpmd": "~2.3",
+    "symfony/console": "~2",
+    "symfony/class-loader": "~2"
   },
   "config": {
     "bin-dir": "bin",
