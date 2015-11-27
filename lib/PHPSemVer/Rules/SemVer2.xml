@@ -53,6 +53,9 @@
             <Namespaces>
                 <SomeAdded/>
             </Namespaces>
+            <Methods>
+                <SomeAdded/>
+            </Methods>
         </assertions>
     </RuleSet>
     <RuleSet name="patch">
