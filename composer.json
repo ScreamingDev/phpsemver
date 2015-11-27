@@ -1,7 +1,7 @@
 {
   "name": "sourcerer-mike/phpsemver",
   "description": "Compare two version and check for semantic versioning.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "library",
   "keywords": [
     "Code analysis",
