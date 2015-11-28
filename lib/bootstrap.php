@@ -24,15 +24,11 @@ if ( ! is_readable( PHPSEMVER_LIB_PATH ) ) {
 function phpsemver_get_composer_config( $dir ) {
 	$composer_config = false;
 
+	$final_composer_config = [];
 	while ( dirname( $dir ) != $dir ) {
 		$dir = dirname( $dir );
 
 		$composer_json_file = $dir . DIRECTORY_SEPARATOR . 'composer.json';
-
-		if ( false !== strpos( $dir, dirname( __DIR__ ) ) ) {
-			// self: continue
-			continue;
-		}
 
 		if ( ! is_readable( $composer_json_file ) ) {
 			continue;
@@ -54,16 +50,14 @@ function phpsemver_get_composer_config( $dir ) {
 
 		// override with config if given
 		if ( isset( $composer_json['config'] ) ) {
-			$composer_config = array_merge(
+			$final_composer_config = array_merge(
 				$composer_config,
 				$composer_json['config']
 			);
 		}
-
-		break;
 	}
 
-	return $composer_config;
+	return $final_composer_config;
 }
 
 $composerConfig = phpsemver_get_composer_config( PHPSEMVER_BIN_PATH );
