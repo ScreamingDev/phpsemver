@@ -4,31 +4,32 @@ namespace PHPSemVer\Assertions;
 
 
 use PDepend\Source\Language\PHP\PHPBuilder;
+use PHPSemVer\DataTree\DataNode;
 
 class AbstractAssertion
 {
 
     protected $_errors = array();
-    protected $_latestBuilder;
-    protected $_previousBuilder;
+    protected $_latest;
+    protected $_previous;
 
     /**
-     * @param PHPBuilder $previousBuilder
-     * @param PHPBuilder $latestBuilder
+     * @param PHPBuilder $previous
+     * @param PHPBuilder $latest
      */
-    public function __construct( PHPBuilder $previousBuilder, PHPBuilder $latestBuilder )
+    public function __construct( DataNode $previous, DataNode $latest )
     {
-        $this->_previousBuilder = $previousBuilder;
-        $this->_latestBuilder   = $latestBuilder;
+        $this->_previous = $previous;
+        $this->_latest   = $latest;
     }
 
-    public function appendError( $message )
+    public function appendMessage( $message )
     {
-        $this->_errors[ ] = new ErrorMessage( get_class( $this ), $message );
+        $this->_errors[ ] = new Message( get_class( $this ), $message );
     }
 
     /**
-     * @return ErrorMessage[]
+     * @return Message[]
      */
     public function getErrors()
     {
@@ -36,19 +37,19 @@ class AbstractAssertion
     }
 
     /**
-     * @return PHPBuilder
+     * @return DataNode
      */
-    public function getLatestBuilder()
+    public function getLatest()
     {
-        return $this->_latestBuilder;
+        return $this->_latest;
     }
 
     /**
-     * @return PHPBuilder
+     * @return DataNode
      */
-    public function getPreviousBuilder()
+    public function getPrevious()
     {
-        return $this->_previousBuilder;
+        return $this->_previous;
     }
 
 

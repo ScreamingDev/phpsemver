@@ -53,6 +53,9 @@
             <Namespaces>
                 <SomeAdded/>
             </Namespaces>
+            <Classes>
+                <SomeAdded/>
+            </Classes>
             <Methods>
                 <SomeAdded/>
             </Methods>

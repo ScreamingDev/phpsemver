@@ -117,8 +117,8 @@ class CompareCommand extends AbstractCommand {
 
 		$ruleCollection = new Rule( $xmlFile );
 		$errorMessages  = $ruleCollection->processAll(
-			$previousWrapper->getBuilder(),
-			$latestWrapper->getBuilder()
+			$previousWrapper->getDataTree(),
+			$latestWrapper->getDataTree()
 		);
 
 		$table   = new Table( $output );

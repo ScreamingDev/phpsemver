@@ -3,6 +3,10 @@
 namespace PHPSemVer\Console;
 
 use PDepend\Source\Language\PHP\PHPBuilder;
+use PhpParser\Lexer\Emulative;
+use PhpParser\Parser;
+use PHPSemVer\DataTree\DataNode;
+use PHPSemVer\DataTree\Importer\NikicParser;
 use PHPSemVer\Parser\PHP\FileParser;
 use PHPSemVer\Rules\Rule;
 use PHPSemVer\Rules\RuleCollection;
@@ -13,6 +17,10 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+
+function foo_me() {
+	echo 'foo_you';
+}
 
 class ParseCommand extends AbstractCommand {
 	protected $_cacheFactory;
@@ -35,9 +43,15 @@ class ParseCommand extends AbstractCommand {
 		InputInterface $input,
 		OutputInterface $output
 	) {
-		$parser = new FileParser(__FILE__);
+		ini_set('xdebug.max_nesting_level', 3000);
 
-		var_dump($parser->getAST());
+		$parser = new Parser(new Emulative);
+
+		$code = file_get_contents(__FILE__);
+
+		$translator = new NikicParser();
+		$dataTree   = new DataNode();
+		$translator->importStmts($parser->parse($code), $dataTree);
 
 		$output->writeln( 'Done!' );
 	}

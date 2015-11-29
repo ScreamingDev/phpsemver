@@ -8,6 +8,10 @@ use PDepend\Source\Language\PHP\PHPTokenizerInternal;
 use PDepend\Source\Parser\ParserException;
 use PDepend\Util\Cache\CacheFactory;
 use PDepend\Util\Configuration;
+use PhpParser\Lexer\Emulative;
+use PhpParser\Parser;
+use PHPSemVer\DataTree\DataNode;
+use PHPSemVer\DataTree\Importer\NikicParser;
 
 abstract class AbstractWrapper
 {
@@ -48,12 +52,14 @@ abstract class AbstractWrapper
         return $this->_base;
     }
 
-    public function getBuilder()
+    public function getDataTree()
     {
-        $builder   = new PHPBuilder();
-        $tokenizer = new PHPTokenizerInternal();
+        ini_set('xdebug.max_nesting_level', 3000);
 
-        $cache = $this->_getCache( uniqid() );
+        $parser = new Parser(new Emulative);
+
+        $translator = new NikicParser();
+        $dataTree   = new DataNode();
 
         foreach ( $this->getAllFileNames() as $sourceFile )
         {
@@ -64,22 +70,13 @@ abstract class AbstractWrapper
 
             $sourceFile = realpath($sourceFile);
 
-            $tokenizer->setSourceFile( $sourceFile );
-
-            $parser = $this->getParser( $tokenizer, $builder, $cache );
-
-            $parser->setMaxNestingLevel( 200 );
-
-            try
-            {
-                $parser->parse();
-            } catch ( ParserException $e )
-            {
-                $this->_parserExceptions[ ] = $e;
-            }
+            $translator->importStmts(
+                $parser->parse(file_get_contents($sourceFile)),
+                $dataTree
+            );
         }
 
-        return $builder;
+        return $dataTree;
     }
 
     protected function _getCache( $key = null )

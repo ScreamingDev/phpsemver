@@ -5,6 +5,7 @@ namespace PHPSemVer\Rules;
 
 use DesignPattern\Structural\AbstractComposite;
 use PDepend\Source\Language\PHP\PHPBuilder;
+use PHPSemVer\DataTree\DataNode;
 
 class Rule
 {
@@ -26,11 +27,11 @@ class Rule
     }
 
     /**
-     * @param PHPBuilder $previousBuilder
-     * @param PHPBuilder $latestBuilder
+     * @param PHPBuilder $previous
+     * @param PHPBuilder $latest
      */
     public function processAll(
-        PHPBuilder $previousBuilder, PHPBuilder $latestBuilder
+        DataNode $previous, DataNode $latest
     ) {
         $errorMessages = array();
         foreach ($this->getRuleClasses() as $assertionName => $classes) {
@@ -40,7 +41,7 @@ class Rule
 
             foreach ($classes as $className) {
                 /** @var AbstractAssertion $singleRule */
-                $singleRule = new $className($previousBuilder, $latestBuilder);
+                $singleRule = new $className($previous, $latest);
                 $singleRule->process();
 
                 $errorMessages[$assertionName] = array_merge(
