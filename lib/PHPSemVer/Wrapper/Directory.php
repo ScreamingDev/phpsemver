@@ -20,13 +20,17 @@ class Directory extends AbstractWrapper
 
         $allFileNames = array();
         foreach ($Regex as $single) {
-            if (false !== strpos($single[0], 'opt')) {
-                // todo: add filter rules to xml
-                continue;
+            if ($this->getExcludePattern()) {
+                foreach ($this->getExcludePattern() as $pattern) {
+                    if (false !== strpos($single[0], $pattern)) {
+                        continue 2;
+                    }
+
+                }
             }
-            $short = str_replace(
-                $this->getBasePath(), '', $single[0]
-            );
+
+            $short = str_replace($this->getBasePath(), '', $single[0]);
+
             $allFileNames[$short] = $single[0];
         }
 
@@ -39,11 +43,11 @@ class Directory extends AbstractWrapper
             return '';
         }
 
-        return realpath($this->getBase()) . DIRECTORY_SEPARATOR;
+        return realpath($this->getBase()).DIRECTORY_SEPARATOR;
     }
 
     public function getPath($fileName)
     {
-        return $this->getBasePath() . ltrim($fileName, DIRECTORY_SEPARATOR);
+        return $this->getBasePath().ltrim($fileName, DIRECTORY_SEPARATOR);
     }
 }

@@ -17,25 +17,17 @@ class SomeAdded extends AbstractAssertion implements AssertionInterface
 
     public function process()
     {
-        $prevNamespaces = array();
-        foreach ( $this->getPreviousBuilder()->getNamespaces() as $namespace )
-        {
-            $prevNamespaces[ ] = $namespace->getName();
-        }
+        $prevNamespaces = array_keys($this->getPrevious()->namespaces);
 
-        foreach ( $this->getLatestBuilder()->getNamespaces() as $namespace )
-        {
-            if ( ! in_array( $namespace->getName(), $prevNamespaces ) )
-            {
-                $this->appendError(
+        foreach (array_keys($this->getLatest()->namespaces) as $namespace) {
+            if ( ! in_array($namespace, $prevNamespaces)) {
+                $this->appendMessage(
                     sprintf(
                         'Added namespace "%s".',
-                        $namespace->getName()
+                        $namespace
                     )
                 );
             }
         }
-
-
     }
 }

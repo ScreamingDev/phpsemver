@@ -30,6 +30,14 @@ class CompareCommand extends AbstractCommand {
 		$this->setName( 'compare' );
 
 		$this->addOption(
+			'exclude',
+			null,
+			InputOption::VALUE_OPTIONAL,
+			'Exclude files containing the given string.',
+			''
+		);
+
+		$this->addOption(
 			'type',
 			't',
 			InputArgument::OPTIONAL,
@@ -115,10 +123,13 @@ class CompareCommand extends AbstractCommand {
 
 		$xmlFile = PHPSEMVER_LIB_PATH . '/PHPSemVer/Rules/SemVer2.xml';
 
+		$previousWrapper->setExcludePattern($input->getOption('exclude'));
+		$latestWrapper->setExcludePattern($input->getOption('exclude'));
+
 		$ruleCollection = new Rule( $xmlFile );
 		$errorMessages  = $ruleCollection->processAll(
-			$previousWrapper->getBuilder(),
-			$latestWrapper->getBuilder()
+			$previousWrapper->getDataTree(),
+			$latestWrapper->getDataTree()
 		);
 
 		$table   = new Table( $output );

@@ -12,37 +12,44 @@ namespace PHPSemVer\Assertions\Methods;
 use PHPSemVer\Assertions\AbstractAssertion;
 use PHPSemVer\Assertions\AssertionInterface;
 
-class SomeAdded extends AbstractAssertion implements AssertionInterface {
+class SomeAdded extends AbstractAssertion implements AssertionInterface
+{
 
-	public function process() {
-		$prevMethods = array();
+    public function process()
+    {
+        foreach ($this->getLatest()->namespaces as $namespace => $node) {
+            if ( ! isset( $this->getPrevious()->namespaces[$namespace] )) {
+                continue;
+            }
 
-		foreach ( $this->getPreviousBuilder()->getNamespaces() as $namespace ) {
-			foreach ( $namespace->getClasses() as $class ) {
-				foreach ( $class->getAllMethods() as $method ) {
-					$prevMethods[] = $namespace->getName()
-					                 . '\\' . $class->getName()
-					                 . '::' . $method->getName();
-				}
-			}
-		}
+            $prevNamespace = $this->getPrevious()->namespaces[$namespace];
 
-		foreach ( $this->getLatestBuilder()->getNamespaces() as $namespace ) {
-			foreach ( $namespace->getClasses() as $class ) {
-				foreach ( $class->getAllMethods() as $method ) {
-					$methodName = $namespace->getName()
-					              . '\\' . $class->getName()
-					              . '::' . $method->getName();
-					if ( ! in_array( $methodName, $prevMethods ) ) {
-						$this->appendError(
-							sprintf(
-								'Added method "%s".',
-								$methodName
-							)
-						);
-					}
-				}
-			}
-		}
-	}
+            foreach ($node->classes as $className => $class) {
+                if ( ! isset( $prevNamespace->classes[$className] )) {
+                    continue;
+                }
+
+                $prevClass = $prevNamespace->classes[$className];
+
+                $prevMethods = [];
+                foreach ($prevClass->getMethods() as $method) {
+                    $prevMethods[] = $method->name;
+                }
+
+                foreach ($class->getMethods() as $method) {
+                    if ( ! in_array($method->name, $prevMethods)) {
+                        $this->appendMessage(
+                            sprintf(
+                                'Added method "%s\\%s::%s".',
+                                $namespace,
+                                $className,
+                                $method->name
+                            )
+                        );
+                    }
+                }
+            }
+        }
+
+    }
 }
