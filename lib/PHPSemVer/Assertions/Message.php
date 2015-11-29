@@ -3,7 +3,7 @@
 namespace PHPSemVer\Assertions;
 
 
-class ErrorMessage
+class Message
 {
     protected $_message;
     protected $_rule;

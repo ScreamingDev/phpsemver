@@ -14,35 +14,41 @@ use PHPSemVer\Assertions\AssertionInterface;
 
 class SomeRemoved extends AbstractAssertion implements AssertionInterface {
 
-	public function process() {
-		$prevMethods = array();
-
-		foreach ( $this->getLatestBuilder()->getNamespaces() as $namespace ) {
-			foreach ( $namespace->getClasses() as $class ) {
-				foreach ( $class->getAllMethods() as $method ) {
-					$prevMethods[] = $namespace->getName()
-					                 . '\\' . $class->getName()
-					                 . '::' . $method->getName();
-				}
+	public function process()
+	{
+		foreach ($this->getPrevious()->namespaces as $namespace => $node) {
+			if ( ! isset( $this->getLatest()->namespaces[$namespace] )) {
+				continue;
 			}
-		}
 
-		foreach ( $this->getPreviousBuilder()->getNamespaces() as $namespace ) {
-			foreach ( $namespace->getClasses() as $class ) {
-				foreach ( $class->getAllMethods() as $method ) {
-					$methodName = $namespace->getName()
-					              . '\\' . $class->getName()
-					              . '::' . $method->getName();
-					if ( ! in_array( $methodName, $prevMethods ) ) {
-						$this->appendError(
+			$latestNamespace = $this->getLatest()->namespaces[$namespace];
+
+			foreach ($node->classes as $className => $class) {
+				if ( ! isset( $latestNamespace->classes[$className] )) {
+					continue;
+				}
+
+				$latestClass = $latestNamespace->classes[$className];
+
+				$latestMethods = [];
+				foreach ($latestClass->getMethods() as $method) {
+					$latestMethods[] = $method->name;
+				}
+
+				foreach ($class->getMethods() as $method) {
+					if ( ! in_array($method->name, $latestMethods)) {
+						$this->appendMessage(
 							sprintf(
-								'Removed method "%s".',
-								$methodName
+								'Removed method "%s\\%s::%s".',
+								$namespace,
+								$className,
+								$method->name
 							)
 						);
 					}
 				}
 			}
 		}
+
 	}
 }

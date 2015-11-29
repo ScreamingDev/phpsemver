@@ -9,21 +9,14 @@ class SomeRemoved extends AbstractAssertion implements AssertionInterface
 {
     public function process()
     {
-        $currentNamespaces = array();
+        $latestNamespaces = array_keys($this->getLatest()->namespaces);
 
-        foreach ( $this->getLatestBuilder()->getNamespaces() as $namespace )
-        {
-            $currentNamespaces[ ] = $namespace->getName();
-        }
-
-        foreach ( $this->getPreviousBuilder()->getNamespaces() as $namespace )
-        {
-            if ( ! in_array( $namespace->getName(), $currentNamespaces ) )
-            {
-                $this->appendError(
+        foreach (array_keys($this->getPrevious()->namespaces) as $namespace) {
+            if ( ! in_array($namespace, $latestNamespaces)) {
+                $this->appendMessage(
                     sprintf(
-                        'Removed namespace "%s"',
-                        $namespace->getName()
+                        'Removed namespace "%s".',
+                        $namespace
                     )
                 );
             }

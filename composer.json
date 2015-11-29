@@ -35,7 +35,8 @@
     "cpliakas/git-wrapper": "~1.4",
     "phpmd/phpmd": "~2.3",
     "symfony/console": "~2",
-    "symfony/class-loader": "~2"
+    "symfony/class-loader": "~2",
+    "nikic/php-parser": "~1"
   },
   "config": {
     "bin-dir": "bin",
