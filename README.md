@@ -1,4 +1,6 @@
-# PHPSemVer - Check your changes against semantic versions
+# PHPSemVer 2
+
+> Check your changes against semantic versions
 
 ## Yadda
 
