@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "2253729e0509906da53bf3045f267c2a",
-    "content-hash": "fc4655f56892944d36f8ff37bd86e7a8",
+    "hash": "9d1b474b2171ec93ad05084a2e5cdec8",
+    "content-hash": "c1ac00c44c61c0c95c7292204bafded6",
     "packages": [
         {
             "name": "cpliakas/git-wrapper",
