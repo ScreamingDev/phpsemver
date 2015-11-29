@@ -6,7 +6,7 @@
  * Time: 03:16
  */
 
-namespace PHPSemVer\Assertions\Methods;
+namespace PHPSemVer\Assertions\Functions;
 
 
 use PHPSemVer\Assertions\AbstractAssertion;
