@@ -1,8 +1,27 @@
 # PHPSemVer - Check your changes against semantic versions
 
+## Yadda
+
+Available source wrapper:
+
+- GIT
+- Filesystem
+
+Assertions on:
+
+- Namespaces
+- Classes
+- Methods
+- Functions
+
+Tells you which are major, minor or patch changes.
+
+
 ## Example
 
-    ./bin/phpsemver compare HEAD~3 .
+Compare the last commit with your current work:
+
+    ./bin/phpsemver compare HEAD .
     
     +-------+-----------------------------------------------------------------+
     | Level | Message                                                         |
@@ -15,3 +34,8 @@
     +-------+-----------------------------------------------------------------+
     Done!
 
+Or some version (git-tag) against the latest changes:
+
+    bin/phpsemver compare v1.0.0 HEAD
+
+You're welcome!

@@ -37,6 +37,9 @@
             <Methods>
                 <SomeRemoved/>
             </Methods>
+            <Functions>
+                <SomeRemoved/>
+            </Functions>
         </assertions>
     </RuleSet>
     <RuleSet name="minor">
@@ -59,6 +62,9 @@
             <Methods>
                 <SomeAdded/>
             </Methods>
+            <Functions>
+                <SomeAdded/>
+            </Functions>
         </assertions>
     </RuleSet>
     <RuleSet name="patch">
