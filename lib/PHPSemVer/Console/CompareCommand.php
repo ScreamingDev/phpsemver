@@ -127,6 +127,24 @@ class CompareCommand extends AbstractCommand {
 		$latestWrapper->setExcludePattern($input->getOption('exclude'));
 
 		$ruleCollection = new Rule( $xmlFile );
+        $config = simplexml_load_file($xmlFile);
+
+        $ignorePattern = [];
+        if (isset($config->Filter)) {
+            if (isset($config->Filter->Blacklist)) {
+                foreach ($config->Filter->Blacklist as $node) {
+                    if ( ! isset($node->Pattern)) {
+                        continue;
+                    }
+
+                    $ignorePattern[] = (string)$node->Pattern;
+                }
+            }
+        }
+
+        $latestWrapper->setExcludePattern($ignorePattern);
+        $previousWrapper->setExcludePattern($ignorePattern);
+
 		$errorMessages  = $ruleCollection->processAll(
 			$previousWrapper->getDataTree(),
 			$latestWrapper->getDataTree()
