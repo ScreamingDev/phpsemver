@@ -39,6 +39,7 @@
             </Methods>
             <Functions>
                 <SomeRemoved/>
+                <ReturnTypeChanged/>
             </Functions>
         </assertions>
     </RuleSet>
