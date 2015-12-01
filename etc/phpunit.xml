@@ -1,52 +1,27 @@
 <phpunit
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.4/phpunit.xsd"
-        backupGlobals="true"
-        backupStaticAttributes="false"
+        xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.5/phpunit.xsd"
         bootstrap="../lib/Test/bootstrap.php"
-        cacheTokens="false"
-        colors="false"
+        backupGlobals="false"
+        colors="true"
         convertErrorsToExceptions="true"
         convertNoticesToExceptions="true"
         convertWarningsToExceptions="true"
-        forceCoversAnnotation="false"
-        mapTestClassNameToCoveredClassName="false"
-        processIsolation="false"
-        stopOnError="false"
-        stopOnFailure="false"
-        stopOnIncomplete="false"
-        stopOnSkipped="false"
-        testSuiteLoaderClass="PHPUnit_Runner_StandardTestSuiteLoader"
-        timeoutForSmallTests="1"
-        timeoutForMediumTests="10"
-        timeoutForLargeTests="60"
-        verbose="false">
-
+        >
     <testsuites>
-        <testsuite name="Console">
-            <directory>../lib/Tests/PHPSemVer/Console</directory>
-        </testsuite>
-        <testsuite name="Semver2">
-            <directory>../lib/Tests/PHPSemVer/Semver2</directory>
+        <testsuite name="general">
+            <directory>../lib/Test/PHPSemVer</directory>
         </testsuite>
     </testsuites>
 
-    <logging>
-        <log type="coverage-clover" target="../var/phpunit/coverage.xml"/>
-        <log type="tap" target="../var/phpunit/logfile.tap"/>
-        <log type="testdox-text" target="../var/phpunit/testdox.txt"/>
-        <log type="coverage-text"
-             target="php://stdout"
-             showUncoveredFiles="false"
-             lowUpperBound="50"
-             highLowerBound="90"
-             showOnlySummary="true"/>
-    </logging>
-
-    <!-- Manage files for CodeCoverage-Report -->
     <filter>
-        <blacklist>
-            <directory>../opt</directory>
-        </blacklist>
+        <whitelist>
+            <directory>../lib/PHPSemVer</directory>
+        </whitelist>
     </filter>
+
+    <logging>
+        <log type="coverage-clover" target="var/phpunit/coverage.xml"/>
+        <log type="testdox-text" target="var/phpunit/testdox.txt"/>
+    </logging>
 </phpunit>
