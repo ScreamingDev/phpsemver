@@ -104,7 +104,7 @@ class Git extends AbstractWrapper
                 $git->run(
                     array(
                         'show',
-                        $this->getBase() . '^:' . $fileName
+                        $this->getBase() . ':' . $fileName
                     )
                 );
 
