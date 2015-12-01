@@ -100,16 +100,13 @@ class CompareCommand extends AbstractCommand {
 			return;
 		}
 
-		if ( $output->isDebug() ) {
-			$output->writeln( 'Using wrapper ' . $wrapper );
-		}
+        $this->debug('Using wrapper ' . $wrapper);
 
 		$previousWrapper = new $wrapper( $input->getArgument( 'previous' ) );
-		if ( is_dir( $input->getArgument( 'latest' ) ) ) {
-			$latestWrapper = new Directory( $input->getArgument( 'latest' ) );
-		} else {
-			$latestWrapper = new $wrapper( $input->getArgument( 'latest' ) );
-		}
+        $latestWrapper = new $wrapper($input->getArgument('latest'));
+        if (is_dir($input->getArgument('latest'))) {
+            $latestWrapper = new Directory($input->getArgument('latest'));
+        }
 
 		if ( $output->isVerbose() ) {
 			$output->writeln(
@@ -127,23 +124,7 @@ class CompareCommand extends AbstractCommand {
 		$latestWrapper->setExcludePattern($input->getOption('exclude'));
 
 		$ruleCollection = new Rule( $xmlFile );
-        $config = simplexml_load_file($xmlFile);
-
-        $ignorePattern = [];
-        if (isset($config->Filter)) {
-            if (isset($config->Filter->Blacklist)) {
-                foreach ($config->Filter->Blacklist as $node) {
-                    if ( ! isset($node->Pattern)) {
-                        continue;
-                    }
-
-                    $ignorePattern[] = (string)$node->Pattern;
-                }
-            }
-        }
-
-        $latestWrapper->setExcludePattern($ignorePattern);
-        $previousWrapper->setExcludePattern($ignorePattern);
+        $this->appendIgnorePattern($xmlFile, $latestWrapper, $previousWrapper);
 
 		$errorMessages  = $ruleCollection->processAll(
 			$previousWrapper->getDataTree(),
@@ -194,4 +175,31 @@ class CompareCommand extends AbstractCommand {
 
 		return $className;
 	}
+
+    /**
+     * @param $xmlFile
+     * @param $latestWrapper
+     * @param $previousWrapper
+     */
+    protected function appendIgnorePattern(
+        $xmlFile, $latestWrapper, $previousWrapper
+    ) {
+        $config = simplexml_load_file($xmlFile);
+
+        $ignorePattern = [];
+        if (isset($config->Filter)) {
+            if (isset($config->Filter->Blacklist)) {
+                foreach ($config->Filter->Blacklist as $node) {
+                    if ( ! isset($node->Pattern)) {
+                        continue;
+                    }
+
+                    $ignorePattern[] = (string)$node->Pattern;
+                }
+            }
+        }
+
+        $latestWrapper->setExcludePattern($ignorePattern);
+        $previousWrapper->setExcludePattern($ignorePattern);
+    }
 }
