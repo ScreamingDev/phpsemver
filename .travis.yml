@@ -22,4 +22,3 @@ after_success:
 
 script:
   - ./bin/pre-commit.sh
-  - ./bin/post-commit.sh
