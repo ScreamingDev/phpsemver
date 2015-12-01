@@ -82,7 +82,7 @@ class Rule
             $section = (string)$singleRuleSet->attributes()->name;
             foreach ($singleRuleSet->xpath('assertions') as $assertions) {
                 foreach ($assertions->children() as $name => $rules) {
-                    foreach ($rules as $ruleName => $settings) {
+                    foreach (array_keys($rules) as $ruleName) {
                         $ruleSet[$section][] = (string)$name . '\\' . $ruleName;
                     }
 
