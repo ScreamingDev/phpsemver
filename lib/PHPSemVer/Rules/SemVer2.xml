@@ -72,6 +72,8 @@
 
     </RuleSet>
     <Filter>
-
+        <Blacklist>
+            <Pattern>.*/vendor/.*</Pattern>
+        </Blacklist>
     </Filter>
 </phpsemver>

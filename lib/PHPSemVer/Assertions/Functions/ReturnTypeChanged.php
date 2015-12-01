@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Mike
- * Date: 14.03.15
- * Time: 03:16
- */
 
 namespace PHPSemVer\Assertions\Functions;
 
@@ -14,7 +8,7 @@ use PhpParser\Node\Stmt\Function_;
 use PHPSemVer\Assertions\AbstractAssertion;
 use PHPSemVer\Assertions\AssertionInterface;
 
-class BodyChanges extends AbstractAssertion implements AssertionInterface
+class ReturnTypeChanged extends AbstractAssertion implements AssertionInterface
 {
     public function process()
     {
