@@ -18,7 +18,7 @@ class CompareCommandTest extends \PHPUnit_Framework_TestCase
             array(
                 'command' => $command->getName(),
                 '--type'  => 'foo',
-                'HEAD^1'
+                'previous' => 'HEAD~1',
             )
         );
 

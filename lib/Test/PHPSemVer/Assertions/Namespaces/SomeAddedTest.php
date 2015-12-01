@@ -12,6 +12,9 @@ class SomeAddedTest extends Abstract_TestCase
 {
     public function testItContainsErrorsWhenANamespaceIsMissing()
     {
+        $this->markTestIncomplete();
+
+        return;
         $mockBuilder = $this->getMockBuilder( get_class( new PHPBuilder() ) )
                             ->setMethods( array( 'getNamespaces' ) );
 
