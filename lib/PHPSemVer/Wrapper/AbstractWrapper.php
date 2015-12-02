@@ -115,16 +115,6 @@ abstract class AbstractWrapper
         return $dataTree;
     }
 
-    public function getExcludePattern()
-    {
-        return (array) $this->excludePattern;
-    }
-
-    public function setExcludePattern($pattern)
-    {
-        $this->excludePattern = $pattern;
-    }
-
     /**
      * Get parser for files.
      *
