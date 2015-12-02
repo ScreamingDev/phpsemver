@@ -11,7 +11,10 @@ namespace PHPSemVer\Rules;
 
 use PDepend\Source\Language\PHP\PHPBuilder;
 use PHPSemVer\Assertions\Classes\NoneRemovedRule;
+use PHPSemVer\Assertions\Functions\SomeAdded;
+use PHPSemVer\Assertions\Methods\SomeRemoved;
 use PHPSemVer\Assertions\Namespaces\AddedRule;
+use PHPSemVer\DataTree\DataNode;
 use PHPSemVer\Specification;
 use Test\Abstract_TestCase;
 
@@ -29,9 +32,9 @@ class RuleSetTest extends Abstract_TestCase
 
     public function testItWontHaveDuplicateAssertionsStored()
     {
-        $builder = new PHPBuilder();
-        $rule1   = new NoneRemovedRule( $builder, $builder );
-        $rule2   = new AddedRule( $builder, $builder );
+        $data  = new DataNode();
+        $rule1 = new SomeRemoved($data, $data);
+        $rule2 = new SomeAdded($data, $data);
 
         $ruleConfig = new RuleSet( 'foo' );
         $ruleConfig->addAssertion( $rule1 );

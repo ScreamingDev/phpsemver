@@ -83,12 +83,6 @@ class Git extends AbstractWrapper
         return $allFileNames;
     }
 
-    function __destruct()
-    {
-        $fs = new Filesystem();
-        $fs->remove($this->getTempPath());
-    }
-
     /**
      * Get internal wrapper.
      *
@@ -101,11 +95,6 @@ class Git extends AbstractWrapper
         }
 
         return $this->_gitWrapper;
-    }
-
-    public function getBasePath()
-    {
-        return $this->_getFileWrapper()->getBasePath();
     }
 
     public function getPath($fileName)
@@ -152,5 +141,16 @@ class Git extends AbstractWrapper
     protected function _getFileWrapper()
     {
         return $this->_fileWrapper;
+    }
+
+    function __destruct()
+    {
+        $fileSystem = new Filesystem();
+        $fileSystem->remove($this->getTempPath());
+    }
+
+    public function getBasePath()
+    {
+        return $this->_getFileWrapper()->getBasePath();
     }
 }

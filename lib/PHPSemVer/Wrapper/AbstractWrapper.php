@@ -16,10 +16,7 @@
 
 namespace PHPSemVer\Wrapper;
 
-use PDepend\Source\Language\PHP\PHPBuilder;
 use PDepend\Source\Language\PHP\PHPParserGeneric;
-use PDepend\Source\Language\PHP\PHPTokenizerInternal;
-use PDepend\Source\Parser\ParserException;
 use PDepend\Util\Cache\CacheFactory;
 use PDepend\Util\Configuration;
 use PhpParser\Lexer\Emulative;
@@ -57,13 +54,29 @@ abstract class AbstractWrapper
         $allPaths = array();
 
         foreach ($this->getAllFileNames() as $fileName) {
-            $allPaths[$fileName] = $this->getBasePath().$fileName;
+            foreach ($this->getExcludePattern() as $pattern) {
+                if (preg_match($pattern, $fileName)) {
+                    continue 2;
+                }
+            }
+
+            $allPaths[$fileName] = $this->getBasePath() . $fileName;
         }
 
         return $allPaths;
     }
 
     abstract public function getAllFileNames();
+
+    public function getExcludePattern()
+    {
+        return (array)$this->excludePattern;
+    }
+
+    public function setExcludePattern($pattern)
+    {
+        $this->excludePattern = $pattern;
+    }
 
     abstract public function getBasePath();
 
