@@ -20,10 +20,11 @@ use Test\Abstract_TestCase;
 
 class ContainsTest extends Abstract_TestCase
 {
+    /**
+     * @expectedException \PHPSemVer\Constraints\FailedConstraint
+     */
     public function itThrowsErrorIfNothingFound()
     {
-        $this->setExpectedException('PHPSemVer\\Constraints\\FailedConstraint');
-
         $needle = new ClassMethod(new Name(uniqid('y_')));
         $other  = new Class_(
             new Name('foo'),
@@ -42,10 +43,11 @@ class ContainsTest extends Abstract_TestCase
         $constraint->evaluate($other);
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     */
     public function itThrowsInvalidArgumentForUnsupportedTypes()
     {
-        $this->setExpectedException('\\InvalidArgumentException');
-
         $constraint = new Contains(new Function_(new Name('foo')));
         $constraint->evaluate(null);
     }

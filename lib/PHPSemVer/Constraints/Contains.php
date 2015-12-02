@@ -44,16 +44,11 @@ class Contains extends AbstractConstraint implements ConstraintInterface
      */
     public function evaluate($other)
     {
-        if ( isset( $other->stmts )) {
+        if (isset( $other->stmts )) {
             return $this->searchInList($other->stmts);
         }
 
-        throw new \InvalidArgumentException(
-            sprintf(
-                'Can not handle "%s".',
-                get_class($other)
-            )
-        );
+        throw new \InvalidArgumentException(sprintf('Can not handle "%s".', get_class($other)));
     }
 
     protected function searchInList($stmtList)
@@ -70,11 +65,6 @@ class Contains extends AbstractConstraint implements ConstraintInterface
             }
         }
 
-        throw new FailedConstraint(
-            sprintf(
-                '"%s" not found',
-                $name
-            )
-        );
+        throw new FailedConstraint(sprintf('"%s" not found', $name));
     }
 }
