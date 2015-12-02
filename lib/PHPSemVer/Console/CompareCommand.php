@@ -209,6 +209,8 @@ class CompareCommand extends AbstractCommand {
 	}
 
     /**
+     * Add pattern to exclude files.
+     *
      * @param $xmlFile
      * @param $latestWrapper
      * @param $previousWrapper

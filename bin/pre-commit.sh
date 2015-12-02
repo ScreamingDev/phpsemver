@@ -116,6 +116,8 @@ function MyMain() {
 	test_phpmd "${targets[@]}"
 
 	assert_exec phpunit ./bin/phpunit -c etc/phpunit.xml --disallow-test-output lib/Test
+
+	assert_exec phpcs bin/phpcs --standard=etc/phpcs.xml lib
 }
 
 function test_non-ascii() {
