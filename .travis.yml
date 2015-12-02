@@ -13,7 +13,7 @@ before_install:
 
 before_script:
   - composer self-update
-  - composer -q install
+  - composer install
   - ./bin/post-update.sh
 
 after_success:
