@@ -3,7 +3,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/sourcerer-mike/phpsemver/etc/specification.xsd"
         title="Semantic Versioning 2.0.0">
-    <description>
+    <Description>
         Given a version number MAJOR.MINOR.PATCH, increment the:
         <br/>
         <br/>
@@ -19,32 +19,22 @@
         <br/>
         The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",
         "MAY", and "OPTIONAL" in this document are to be interpreted as described in RFC 2119.
-    </description>
+    </Description>
     <RuleSet name="major">
-        <description>
+        <Description>
             Major version X (X.y.z | X > 0) MUST be incremented
             if any backwards incompatible changes are introduced to the public API.
             It MAY include minor and patch level changes.
             Patch and minor version MUST be reset to 0 when major version is incremented.
-        </description>
-        <assertions>
+        </Description>
+        <Trigger>
             <Classes>
-                <SomeRemoved/>
+                <IsRemoved />
             </Classes>
-            <Namespaces>
-                <SomeRemoved/>
-            </Namespaces>
-            <Methods>
-                <SomeRemoved/>
-            </Methods>
-            <Functions>
-                <SomeRemoved/>
-                <ReturnTypeChanged/>
-            </Functions>
-        </assertions>
+        </Trigger>
     </RuleSet>
     <RuleSet name="minor">
-        <description>
+        <Description>
             Minor version Y (x.Y.z | x > 0) MUST be incremented if new,
             backwards compatible functionality is introduced to the public API.
             It MUST be incremented if any public API functionality is marked as deprecated.
@@ -52,21 +42,7 @@
             or improvements are introduced within the private code.
             It MAY include patch level changes.
             Patch version MUST be reset to 0 when minor version is incremented.
-        </description>
-        <assertions>
-            <Namespaces>
-                <SomeAdded/>
-            </Namespaces>
-            <Classes>
-                <SomeAdded/>
-            </Classes>
-            <Methods>
-                <SomeAdded/>
-            </Methods>
-            <Functions>
-                <SomeAdded/>
-            </Functions>
-        </assertions>
+        </Description>
     </RuleSet>
     <RuleSet name="patch">
 

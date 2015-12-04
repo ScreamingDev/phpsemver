@@ -56,28 +56,9 @@ class Rule
      *
      * @return array
      */
-    public function processAll(
-        DataNode $previous, DataNode $latest
-    ) {
-        $errorMessages = array();
-        foreach ($this->getRuleClasses() as $assertionName => $classes) {
-            if ( ! isset($errorMessages[$assertionName])) {
-                $errorMessages[$assertionName] = [];
-            }
-
-            foreach ($classes as $className) {
-                /* @var AbstractAssertion $singleRule */
-                $singleRule = new $className($previous, $latest);
-                $singleRule->process();
-
-                $errorMessages[$assertionName] = array_merge(
-                    $errorMessages[$assertionName],
-                    $singleRule->getErrors()
-                );
-            }
-        }
-
-        return $errorMessages;
+    public function processAll(DataNode $previous, DataNode $latest) {
+        // $this->processStmt($stmt, $previous, $latest);
+        return [];
     }
 
     public function getRuleClasses()
