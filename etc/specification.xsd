@@ -9,20 +9,33 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="assertions_type">
+    <xs:complexType name="trigger_type">
         <xs:sequence>
             <xs:element name="Classes" minOccurs="0">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="SomeRemoved" minOccurs="0"/>
+                        <xs:element name="Methods" minOccurs="0">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="IsRemoved" minOccurs="0"/>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="IsRemoved" minOccurs="0"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="Namespaces" minOccurs="0">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="SomeRemoved" minOccurs="0"/>
-                        <xs:element name="SomeAdded" minOccurs="0"/>
+                        <xs:element name="IsRemoved" minOccurs="0"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="Functions" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="IsRemoved" minOccurs="0"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -38,10 +51,9 @@
     <xs:complexType name="ruleSet_type">
         <xs:sequence>
             <xs:element name="Description" type="description_type"/>
-            <xs:element name="Assertions" type="assertions_type"/>
+            <xs:element name="Trigger" type="trigger_type"/>
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required"/>
-        <xs:attribute name="title" type="xs:string"/>
     </xs:complexType>
 
     <xs:complexType name="phpsemver_type">
