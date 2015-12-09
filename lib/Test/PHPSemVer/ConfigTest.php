@@ -12,23 +12,27 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
      */
     public function testItThrowsExceptionForInvalidScopes()
     {
-        $config = $this->makeMinimal();
+        $config = $this->makeFull();
 
-        $config->getSomethingInvalid();
+        $config->somethingInvalid();
     }
 
-    /**
-     * @return Config
-     */
-    protected function makeMinimal()
+    protected function makeFull()
     {
-        return new Config('<?xml version="1.0" ?><phpsemver></phpsemver>');
+        return new Config(simplexml_load_file(__DIR__ . '/Config/full.xml'));
     }
 
-    public function testItIsASimpleXMLElement()
+    public function testItIsASimpleXMLElementFacade()
     {
-        $config = $this->makeMinimal();
+        $config = $this->makeFull();
 
-        $this->assertInstanceOf('\SimpleXMLElement', $config);
+        $this->assertInstanceOf('\SimpleXMLElement', $config->getXml());
+    }
+
+    public function testItHasAttributes()
+    {
+        $config = $this->makeFull();
+
+        $this->assertNotEmpty($config->getTitle());
     }
 }
