@@ -2,8 +2,8 @@
 
 > Check your changes against semantic versions
 
-[![Build Status](https://travis-ci.org/sourcerer-mike/phpsemver.svg?branch=master)](https://travis-ci.org/sourcerer-mike/phpsemver)
-[![Coverage](http://codecov.io/github/sourcerer-mike/phpsemver/coverage.svg?branch=master)](http://codecov.io/github/sourcerer-mike/phpsemver?branch=master)
+[![Build Status](https://travis-ci.org/sourcerer-mike/phpsemver.svg?branch=3.0.0)](https://travis-ci.org/sourcerer-mike/phpsemver)
+[![Coverage](http://codecov.io/github/sourcerer-mike/phpsemver/coverage.svg?branch=3.0.0)](http://codecov.io/github/sourcerer-mike/phpsemver?branch=3.0.0)
 
 ## Yadda
 
