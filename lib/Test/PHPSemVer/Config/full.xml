@@ -1,9 +1,9 @@
 <?xml version="1.0" ?>
-<phpsemver title="SemVer 2.0">
+<PHPSemVer title="SemVer 2.0">
     <RuleSet name="first">
 
     </RuleSet>
     <RuleSet name="last">
 
     </RuleSet>
-</phpsemver>
+</PHPSemVer>
