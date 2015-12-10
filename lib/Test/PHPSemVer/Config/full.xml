@@ -1,7 +1,11 @@
 <?xml version="1.0" ?>
 <PHPSemVer title="SemVer 2.0">
     <RuleSet name="first">
-
+        <Trigger>
+            <Classes>
+                <IsRemoved/>
+            </Classes>
+        </Trigger>
     </RuleSet>
     <RuleSet name="last">
 
