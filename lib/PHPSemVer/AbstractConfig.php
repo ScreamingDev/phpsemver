@@ -31,6 +31,8 @@ class AbstractConfig
 
     protected $attributes = [];
 
+    protected $callBuffer = [];
+
     function __construct(\SimpleXMLElement $nodes)
     {
         $this->xml = $nodes;
@@ -57,9 +59,9 @@ class AbstractConfig
             break;
         }
 
-        $className = __CLASS__ . '\\' . ucfirst($method);
+        $className = get_class($this) . '\\' . ucfirst($method);
 
-        $node = $this->getXml()->xpath($target);
+        $node = $this->getXml()->xpath('./' . ucfirst($method));
 
         if ( ! class_exists($className)) {
             throw new \DomainException(
@@ -77,7 +79,6 @@ class AbstractConfig
         }
 
         return new $className(current($node));
-
     }
 
     /**
