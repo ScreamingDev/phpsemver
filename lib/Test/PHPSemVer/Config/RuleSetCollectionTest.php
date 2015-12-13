@@ -10,9 +10,6 @@ class RuleSetCollectionTest extends \PHPUnit_Framework_TestCase
 {
     public function testItIsInConfig()
     {
-        $this->markTestIncomplete('not valid yet');
-        return;
-
         $collection = $this->getFullCollection();
 
         $this->assertInstanceOf('\\PHPSemVer\\Config\\RuleSetCollection', $collection);
@@ -20,9 +17,6 @@ class RuleSetCollectionTest extends \PHPUnit_Framework_TestCase
 
     public function testCanIterateOverFullConfig()
     {
-        $this->markTestIncomplete('not valid yet');
-        return;
-
         $collection = $this->getFullCollection();
 
         $this->assertInstanceOf('\\PHPSemVer\\Config\\RuleSetCollection', $collection);
@@ -45,7 +39,7 @@ class RuleSetCollectionTest extends \PHPUnit_Framework_TestCase
     {
         $config = new Config(simplexml_load_file(__DIR__ . '/full.xml'));
 
-        $collection = $config->getRuleSet();
+        $collection = $config->ruleSet();
 
         return $collection;
     }

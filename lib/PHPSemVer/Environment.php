@@ -63,6 +63,7 @@ class Environment
      */
     public function compareTrees(DataNode $old, DataNode $new)
     {
+
         return null;
     }
 
