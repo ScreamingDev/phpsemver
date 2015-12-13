@@ -17,6 +17,8 @@
 namespace PHPSemVer;
 
 
+use PHPSemVer\Config\RuleSet;
+use PHPSemVer\Config\RuleSetCollection;
 use PHPSemVer\DataTree\DataNode;
 
 /**
@@ -44,15 +46,6 @@ class Environment
         }
     }
 
-    public function appendErrorMessage($exception, $ruleSet = 'unknown')
-    {
-        if ( ! isset( $this->errorMessages[$ruleSet] )) {
-            $this->errorMessages[$ruleSet] = [];
-        }
-
-        $this->errorMessages[$ruleSet][] = $exception;
-    }
-
     /**
      * Compare two parsed AST.
      *
@@ -63,8 +56,62 @@ class Environment
      */
     public function compareTrees(DataNode $old, DataNode $new)
     {
+        foreach ($old->classes as $class) {
+            $this->handleNode($class, $old->classes, $new->classes);
+        }
+
+        foreach ($old->functions as $class) {
+            $this->handleNode($class, $old->functions, $new->functions);
+        }
+
+        foreach ($old->usages as $class) {
+            $this->handleNode($class, $old->usages, $new->usages);
+        }
+
+        foreach ($old->namespaces as $namespace) {
+            $this->handleNode($namespace, $old->namespaces, $new->namespaces);
+        }
+
+        foreach ($old->namespaces as $key => $namespace) {
+            if ( ! isset( $new->namespaces[$key] )) {
+                continue;
+            }
+
+            $this->compareTrees($namespace, $new->namespaces[$key]);
+        }
 
         return null;
+    }
+
+    protected function handleNode($subject, $old, $new)
+    {
+        /* @var RuleSetCollection $ruleSetCollection */
+        $ruleSetCollection = $this->getConfig()->ruleSet();
+        foreach ($ruleSetCollection->getChildren() as $ruleSet) {
+            /* @var RuleSet\Trigger $trigger */
+            $trigger = $ruleSet->trigger();
+
+            if ( ! $trigger) {
+                // no trigger inside: next!
+                continue;
+            }
+
+            foreach ($trigger->getInstances() as $singleTrigger) {
+                if ( ! $singleTrigger->canHandle($subject)) {
+                    continue;
+                }
+
+                if ($singleTrigger->handle($subject, $old, $new)) {
+                    continue;
+                }
+
+                if ( ! $singleTrigger->hasFailed()) {
+                    continue;
+                }
+
+                $this->appendErrorMessage($singleTrigger->lastException);
+            }
+        }
     }
 
     /**
@@ -85,6 +132,15 @@ class Environment
     public function setConfig(AbstractConfig $config)
     {
         $this->config = $config;
+    }
+
+    public function appendErrorMessage($exception, $ruleSet = 'unknown')
+    {
+        if ( ! isset( $this->errorMessages[$ruleSet] )) {
+            $this->errorMessages[$ruleSet] = [];
+        }
+
+        $this->errorMessages[$ruleSet][] = $exception;
     }
 
     public function getErrorMessages()

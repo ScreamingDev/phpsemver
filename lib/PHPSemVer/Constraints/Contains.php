@@ -45,8 +45,10 @@ class Contains extends AbstractConstraint implements ConstraintInterface
     public function evaluate($other)
     {
         if (isset( $other->stmts )) {
-            return $this->searchInList($other->stmts);
+            $other = $other->stmts;
         }
+
+        return $this->searchInList($other);
 
         throw new \InvalidArgumentException(sprintf('Can not handle "%s".', get_class($other)));
     }

@@ -33,6 +33,22 @@ use PHPSemVer\Config;
 class Trigger extends AbstractConfig
 {
     const XPATH = '//PHPSemVer/RuleSet/Trigger';
+    protected $instances = null;
+
+    public function getInstances()
+    {
+        if (null === $this->instances) {
+            $this->instances = [];
+
+            foreach ($this->getAll() as $className) {
+                $className = '\\PHPSemVer\\Trigger\\' . str_replace('/', '\\', $className);
+
+                $this->instances[] = new $className();
+            }
+        }
+
+        return $this->instances;
+    }
 
     /**
      * Turns all inner trigger into one flat array.
@@ -48,13 +64,13 @@ class Trigger extends AbstractConfig
     {
         $resolved = [];
         foreach ($node->children() as $childNode) {
-            $nodeName = $prefix . $childNode->getName();
+            $nodeName = $prefix.$childNode->getName();
             if ( ! $childNode->count()) {
                 $resolved[] = $nodeName;
                 continue;
             }
 
-            $resolved = $resolved + $this->resolveAll($childNode, $nodeName . '/');
+            $resolved = $resolved + $this->resolveAll($childNode, $nodeName.'/');
         }
 
         return $resolved;

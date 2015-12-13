@@ -27,18 +27,16 @@ namespace PHPSemVer;
  */
 class AbstractConfig
 {
-    protected $xml;
-
     protected $attributes = [];
-
     protected $callBuffer = [];
+    protected $xml;
 
     function __construct(\SimpleXMLElement $nodes)
     {
         $this->xml = $nodes;
 
         foreach ($nodes->attributes() as $name => $value) {
-            $this->attributes[$name] = (string)$value;
+            $this->attributes[$name] = (string) $value;
         }
     }
 
@@ -48,20 +46,20 @@ class AbstractConfig
         $target   = substr($method, 3);
 
         switch ($modifier) {
-        case 'get':
-            $attribute = lcfirst($target);
+            case 'get':
+                $attribute = lcfirst($target);
 
-            if ( ! isset($this->attributes[$attribute])) {
-                return null;
-            }
+                if ( ! isset( $this->attributes[$attribute] )) {
+                    return null;
+                }
 
-            return $this->attributes[$attribute];
-            break;
+                return $this->attributes[$attribute];
+                break;
         }
 
-        $className = get_class($this) . '\\' . ucfirst($method);
+        $className = get_class($this).'\\'.ucfirst($method);
 
-        $node = $this->getXml()->xpath('./' . ucfirst($method));
+        $node = $this->getXml()->xpath('./'.ucfirst($method));
 
         if ( ! class_exists($className)) {
             throw new \DomainException(
@@ -72,7 +70,11 @@ class AbstractConfig
             );
         }
 
-        if (class_exists($className . 'Collection')) {
+        if ( ! $node) {
+            return null;
+        }
+
+        if (class_exists($className.'Collection')) {
             $className .= 'Collection';
 
             return new $className($node);

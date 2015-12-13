@@ -15,7 +15,7 @@
  */
 
 
-namespace PHPSemVer\Events\Classes;
+namespace PHPSemVer\Trigger\Classes;
 
 
 use PhpParser\Node\Stmt\Class_;
@@ -32,18 +32,35 @@ use PHPSemVer\Constraints\FailedConstraint;
  */
 class IsRemoved
 {
+    public $lastException;
+
+    public function canHandle($subject)
+    {
+        return ( $subject instanceof Class_ );
+    }
+
     public function handle($subject, $old, $new)
     {
         if (false == $subject instanceof Class_) {
             return;
         }
 
+        $this->lastException = null;
+
         $constraint = new Contains($subject);
 
         try {
             $constraint->evaluate($old);
-        } catch (FailedConstraint $e) {
 
+            return true;
+        } catch (FailedConstraint $e) {
+            $this->lastException = $e;
         }
+        return false;
+    }
+
+    public function hasFailed()
+    {
+        return ( null != $this->lastException );
     }
 }
