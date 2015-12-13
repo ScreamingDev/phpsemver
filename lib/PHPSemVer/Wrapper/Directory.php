@@ -44,6 +44,11 @@ class Directory extends AbstractWrapper
         foreach ($Regex as $single) {
             if ($this->getExcludePattern()) {
                 foreach ($this->getExcludePattern() as $pattern) {
+                    if (!$pattern) {
+                        // skip empty pattern
+                        continue;
+                    }
+
                     if (false !== strpos($single[0], $pattern)) {
                         continue 2;
                     }
