@@ -17,9 +17,8 @@
 namespace PHPSemVer\Console;
 
 use PDepend\Source\Language\PHP\PHPBuilder;
-use PHPSemVer\Rules\Rule;
-use PHPSemVer\Rules\RuleCollection;
-use PHPSemVer\Rules\RuleFactory;
+use PHPSemVer\Config;
+use PHPSemVer\Environment;
 use PHPSemVer\Wrapper\Directory;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
@@ -155,10 +154,14 @@ class CompareCommand extends AbstractCommand {
 		$previousWrapper->setExcludePattern($input->getOption('exclude'));
 		$latestWrapper->setExcludePattern($input->getOption('exclude'));
 
-		$ruleCollection = new Rule( $xmlFile );
+		$config = new Config(simplexml_load_file($xmlFile));
+
+		$environment = new Environment();
+		$environment->setConfig($config);
+
         $this->appendIgnorePattern($xmlFile, $latestWrapper, $previousWrapper);
 
-		$errorMessages  = $ruleCollection->processAll(
+		$environment->compareTrees(
 			$previousWrapper->getDataTree(),
 			$latestWrapper->getDataTree()
 		);
@@ -175,7 +178,7 @@ class CompareCommand extends AbstractCommand {
 
 		$table->setHeaders( $headers );
 
-		foreach ( $errorMessages as $ruleSet => $messages ) {
+		foreach ( $environment->getErrorMessages() as $ruleSet => $messages ) {
 			if ( ! $messages ) {
 				continue;
 			}
