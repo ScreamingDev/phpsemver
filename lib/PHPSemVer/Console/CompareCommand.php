@@ -109,6 +109,8 @@ class CompareCommand extends AbstractCommand {
 		InputInterface $input,
 		OutputInterface $output
 	) {
+        $totalTime = microtime(true);
+
 		$this->verbose(
 			'Comparing %s "%s" with %s "%s" using "%s" ...',
 			$input->getOption( 'type' ),
@@ -161,10 +163,18 @@ class CompareCommand extends AbstractCommand {
 
         $this->appendIgnorePattern($xmlFile, $latestWrapper, $previousWrapper);
 
-		$environment->compareTrees(
-			$previousWrapper->getDataTree(),
-			$latestWrapper->getDataTree()
-		);
+        $prevTree = $this->parseFiles($previousWrapper, $output, $input->getArgument('previous') . ': ');
+        $newTree = $this->parseFiles($latestWrapper, $output, $input->getArgument('latest') . ': ');
+
+        $output->write('Comparing ...');
+        $time = microtime(true);
+		$environment->compareTrees($prevTree,$newTree);
+        $output->writeln(
+            sprintf(
+                "\rComapred within %0.2f seconds",
+                microtime(true) - $time
+            )
+        );
 
 		$table   = new Table( $output );
 		$headers = array(
@@ -197,9 +207,45 @@ class CompareCommand extends AbstractCommand {
 			}
 		}
 
+        $output->writeln('');
 		$table->render();
-		$output->writeln( 'Done!' );
+        $output->writeln('');
+        $output->writeln(
+            sprintf(
+                'Total time: %.2f',
+                microtime(true) - $totalTime
+            )
+        );
+        $output->writeln('');
 	}
+
+    protected function parseFiles($wrapper, $output, $prefix) {
+        $output->write($prefix . 'Collection files ...');
+        $time = microtime(true);
+        $fileAmount = count($wrapper->getAllFileNames());
+        $output->writeln(
+            sprintf(
+                "\r" . $prefix . "Collected %d files in %0.2f seconds.",
+                $fileAmount,
+                microtime(true) - $time
+            )
+        );
+
+        $output->write($prefix . 'Parsing ' . $fileAmount . ' files ...');
+
+        $time = microtime(true);
+        $dataTree = $wrapper->getDataTree();
+
+        $output->writeln(
+            sprintf(
+                "\r" . $prefix . "Parsed %d files in %0.2f seconds.",
+                $fileAmount,
+                microtime(true) - $time
+            )
+        );
+
+        return $dataTree;
+    }
 
 	public function getWrapperClass( $name ) {
 		$className = '\\PHPSemVer\\Wrapper\\' . ucfirst( $name );

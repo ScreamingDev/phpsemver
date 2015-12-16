@@ -19,6 +19,7 @@ namespace PHPSemVer\Wrapper;
 use PDepend\Source\Language\PHP\PHPParserGeneric;
 use PDepend\Util\Cache\CacheFactory;
 use PDepend\Util\Configuration;
+use PhpParser\Error;
 use PhpParser\Lexer\Emulative;
 use PhpParser\Parser;
 use PHPSemVer\DataTree\DataNode;
@@ -106,10 +107,13 @@ abstract class AbstractWrapper
 
             $sourceFile = realpath($sourceFile);
 
-            $translator->importStmts(
-                $parser->parse(file_get_contents($sourceFile)),
-                $dataTree
-            );
+            try {
+                $tree = $parser->parse(file_get_contents($sourceFile));
+                $translator->importStmts($tree, $dataTree);
+            } catch (Error $e) {
+                $e->setRawMessage($e->getRawMessage() . ' in file ' . $sourceFile);
+                throw $e;
+            }
         }
 
         return $dataTree;
