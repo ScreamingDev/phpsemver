@@ -41,7 +41,7 @@ class IsRemoved
 
     public function handle($subject, $old, $new)
     {
-        if (false == $subject instanceof Class_) {
+        if ( ! $this->canHandle($subject) ) {
             return;
         }
 
@@ -50,12 +50,18 @@ class IsRemoved
         $constraint = new Contains($subject);
 
         try {
-            $constraint->evaluate($old);
+            $constraint->evaluate($new);
 
             return true;
         } catch (FailedConstraint $e) {
-            $this->lastException = $e;
+            $this->lastException = new FailedConstraint(
+                sprintf(
+                    '%s removed.',
+                    $e->getValue()->namespacedName
+                )
+            );
         }
+
         return false;
     }
 

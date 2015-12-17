@@ -24,8 +24,21 @@ namespace PHPSemVer\Config;
  * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.0.0/LICENSE.md MIT License
  * @link      https://github.com/sourcerer-mike/phpsemver/
  */
-abstract class AbstractCollection
+abstract class AbstractCollection implements \IteratorAggregate
 {
+
+    /**
+     * Retrieve an external iterator.
+     *
+     * @link   http://php.net/manual/en/iteratoraggregate.getiterator.php
+     * @return Traversable An instance of an object implementing <b>Iterator</b> or
+     *       <b>Traversable</b>
+     */
+    public function getIterator()
+    {
+        return new \ArrayIterator($this->getChildren());
+    }
+
     protected $children = [];
 
     function __construct($nodeSet)

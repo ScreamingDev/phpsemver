@@ -21,6 +21,8 @@ use PDepend\Util\Cache\CacheFactory;
 use PDepend\Util\Configuration;
 use PhpParser\Error;
 use PhpParser\Lexer\Emulative;
+use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitor\NameResolver;
 use PhpParser\Parser;
 use PHPSemVer\DataTree\DataNode;
 use PHPSemVer\DataTree\Importer\NikicParser;
@@ -100,6 +102,8 @@ abstract class AbstractWrapper
         $translator = new NikicParser();
         $dataTree   = new DataNode();
 
+        $nameResolver = new NodeTraverser();
+        $nameResolver->addVisitor(new NameResolver);
         foreach ($this->getAllFileNames() as $sourceFile) {
             if ( ! preg_match('/\.php$/i', $sourceFile)) {
                 continue;
@@ -109,6 +113,8 @@ abstract class AbstractWrapper
 
             try {
                 $tree = $parser->parse(file_get_contents($sourceFile));
+                $tree = $nameResolver->traverse($tree);
+
                 $translator->importStmts($tree, $dataTree);
             } catch (Error $e) {
                 $e->setRawMessage($e->getRawMessage() . ' in file ' . $sourceFile);
@@ -143,31 +149,5 @@ abstract class AbstractWrapper
     public function getParserExceptions()
     {
         return $this->_parserExceptions;
-    }
-
-    protected function _getCache($key = null)
-    {
-        return $this->_getCacheFactory()->create($key);
-    }
-
-    /**
-     * CacheFactory for parser.
-     *
-     * @deprecated 3.0.0
-     *
-     * @return CacheFactory
-     */
-    protected function _getCacheFactory()
-    {
-        if ( ! $this->_cacheFactory) {
-            $settings                = new \stdClass();
-            $settings->cache         = new \stdClass();
-            $settings->cache->driver = 'memory';
-            $config                  = new Configuration($settings);
-
-            $this->_cacheFactory = new CacheFactory($config);
-        }
-
-        return $this->_cacheFactory;
     }
 }

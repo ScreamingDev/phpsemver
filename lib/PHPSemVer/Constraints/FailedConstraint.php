@@ -16,6 +16,7 @@
 
 
 namespace PHPSemVer\Constraints;
+use PhpParser\Node\Stmt;
 
 /**
  * Marks a constraint as failed.
@@ -27,5 +28,46 @@ namespace PHPSemVer\Constraints;
  */
 class FailedConstraint extends \Exception
 {
+    protected $value;
+    protected $other;
 
+    /**
+     * Get tested entity.
+     *
+     * @return mixed
+     */
+    public function getOther()
+    {
+        return $this->other;
+    }
+
+    /**
+     * Set tested entity.
+     *
+     * @param mixed $other
+     */
+    public function setOther($other)
+    {
+        $this->other = $other;
+    }
+
+    /**
+     * Get tested value.
+     *
+     * @return Stmt
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
+
+    /**
+     * Set tested value.
+     *
+     * @param Stmt $value
+     */
+    public function setValue($value)
+    {
+        $this->value = $value;
+    }
 }

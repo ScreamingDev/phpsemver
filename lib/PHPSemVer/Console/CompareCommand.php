@@ -36,139 +36,141 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.0.0/LICENSE.md MIT License
  * @link      https://github.com/sourcerer-mike/phpsemver/
  */
-class CompareCommand extends AbstractCommand {
-	protected $_cacheFactory;
-	protected $cacheFactory;
-	/**
-	 * Current builder.
-	 *
-	 * @deprecated 3.0.0
-	 *
-	 * @var PHPBuilder
-	 */
-	protected $currentBuilder  = null;
-	protected $parseExceptions = array();
-	/**
-	 * Previous builder
-	 *
-	 * @deprecated 3.0.0
-	 *
-	 * @var PHPBuilder
-	 */
-	protected $previousBuilder = null;
+class CompareCommand extends AbstractCommand
+{
+    protected $_cacheFactory;
+    protected $cacheFactory;
+    /**
+     * Current builder.
+     *
+     * @deprecated 3.0.0
+     *
+     * @var PHPBuilder
+     */
+    protected $currentBuilder = null;
+    protected $parseExceptions = array();
+    /**
+     * Previous builder
+     *
+     * @deprecated 3.0.0
+     *
+     * @var PHPBuilder
+     */
+    protected $previousBuilder = null;
 
-	protected function configure() {
-		$this->setName( 'compare' );
+    protected function configure()
+    {
+        $this->setName('compare');
 
-		$this->addOption(
-			'exclude',
-			null,
-			InputOption::VALUE_OPTIONAL,
-			'Exclude files containing the given string.',
-			''
-		);
+        $this->addOption(
+            'exclude',
+            null,
+            InputOption::VALUE_OPTIONAL,
+            'Exclude files containing the given string.',
+            ''
+        );
 
-		$this->addOption(
-			'type',
-			't',
-			InputArgument::OPTIONAL,
-			'Type of given targets',
-			'git'
-		);
+        $this->addOption(
+            'type',
+            't',
+            InputArgument::OPTIONAL,
+            'Type of given targets',
+            'git'
+        );
 
-		$this->addOption(
-			'print-assertion',
-			null,
-			InputOption::VALUE_NONE,
-			'Print which assertion caused that warning.'
-		);
+        $this->addOption(
+            'print-assertion',
+            null,
+            InputOption::VALUE_NONE,
+            'Print which assertion caused that warning.'
+        );
 
-		$this->addOption(
-			'ruleset',
-			'R',
-			InputArgument::OPTIONAL,
-			'A ruleset (eg. "semver2.0")',
-			'SemVer2'
-		);
+        $this->addOption(
+            'ruleset',
+            'R',
+            InputArgument::OPTIONAL,
+            'A ruleset (eg. "semver2.0")',
+            'SemVer2'
+        );
 
-		$this->addArgument(
-			'previous',
-			InputArgument::REQUIRED,
-			'Place to lookup the old code'
-		);
+        $this->addArgument(
+            'previous',
+            InputArgument::REQUIRED,
+            'Place to lookup the old code'
+        );
 
-		$this->addArgument(
-			'latest',
-			InputArgument::OPTIONAL,
-			'Place to lookup the new code',
-			'HEAD'
-		);
-	}
+        $this->addArgument(
+            'latest',
+            InputArgument::OPTIONAL,
+            'Place to lookup the new code',
+            'HEAD'
+        );
+    }
 
-	protected function execute(
-		InputInterface $input,
-		OutputInterface $output
-	) {
+    protected function execute(
+        InputInterface $input,
+        OutputInterface $output
+    ) {
         $totalTime = microtime(true);
 
-		$this->verbose(
-			'Comparing %s "%s" with %s "%s" using "%s" ...',
-			$input->getOption( 'type' ),
-			$input->getArgument( 'latest' ),
-			$input->getOption( 'type' ),
-			$input->getArgument( 'previous' ),
-			$input->getOption( 'ruleset' )
-		);
+        $this->verbose(
+            'Comparing %s "%s" with %s "%s" using "%s" ...',
+            $input->getOption('type'),
+            $input->getArgument('latest'),
+            $input->getOption('type'),
+            $input->getArgument('previous'),
+            $input->getOption('ruleset')
+        );
 
-		$wrapper = $this->getWrapperClass( $input->getOption( 'type' ) );
+        $wrapper = $this->getWrapperClass($input->getOption('type'));
 
-		if ( ! $wrapper ) {
-			$output->writeln(
-				sprintf(
-					'<error>Unknown wrapper-type "%s"</error>',
-					$input->getOption( 'type' )
-				)
-			);
+        if ( ! $wrapper) {
+            $output->writeln(
+                sprintf(
+                    '<error>Unknown wrapper-type "%s"</error>',
+                    $input->getOption('type')
+                )
+            );
 
-			return;
-		}
+            return;
+        }
 
         $this->debug('Using wrapper ' . $wrapper);
 
-		$previousWrapper = new $wrapper( $input->getArgument( 'previous' ) );
-        $latestWrapper = new $wrapper($input->getArgument('latest'));
+        $previousWrapper = new $wrapper($input->getArgument('previous'));
+        $latestWrapper   = new $wrapper($input->getArgument('latest'));
         if (is_dir($input->getArgument('latest'))) {
             $latestWrapper = new Directory($input->getArgument('latest'));
         }
 
-		if ( $output->isVerbose() ) {
-			$output->writeln(
-				sprintf(
-					'Compare "%s" with "%s"',
-					$input->getArgument( 'previous' ),
-					$input->getArgument( 'latest' )
-				)
-			);
-		}
+        if ($output->isVerbose()) {
+            $output->writeln(
+                sprintf(
+                    'Compare "%s" with "%s"',
+                    $input->getArgument('previous'),
+                    $input->getArgument('latest')
+                )
+            );
+        }
 
-		$xmlFile = PHPSEMVER_LIB_PATH . '/PHPSemVer/Rules/SemVer2.xml';
+        $xmlFile = PHPSEMVER_LIB_PATH . '/PHPSemVer/Rules/SemVer2.xml';
 
-		$previousWrapper->setExcludePattern($input->getOption('exclude'));
-		$latestWrapper->setExcludePattern($input->getOption('exclude'));
+        $previousWrapper->setExcludePattern($input->getOption('exclude'));
+        $latestWrapper->setExcludePattern($input->getOption('exclude'));
 
-		$config = new Config(simplexml_load_file($xmlFile));
-
-		$environment = new Environment();
-		$environment->setConfig($config);
+        $environment = new Environment();
+        $environment->setConfig(new Config(simplexml_load_file($xmlFile)));
 
         $this->appendIgnorePattern($xmlFile, $latestWrapper, $previousWrapper);
 
         $prevTree = $this->parseFiles($previousWrapper, $output, $input->getArgument('previous') . ': ');
-        $newTree = $this->parseFiles($latestWrapper, $output, $input->getArgument('latest') . ': ');
+        $newTree  = $this->parseFiles($latestWrapper, $output, $input->getArgument('latest') . ': ');
 
         $output->write('Comparing ...');
         $time = microtime(true);
-		$environment->compareTrees($prevTree,$newTree);
+
+        $environment->compareTrees($prevTree, $newTree);
+
         $output->writeln(
             sprintf(
                 "\rComapred within %0.2f seconds",
@@ -176,39 +178,8 @@ class CompareCommand extends AbstractCommand {
             )
         );
 
-		$table   = new Table( $output );
-		$headers = array(
-			'Level',
-			'Message',
-		);
+        $this->printTable($input, $output, $environment);
 
-		if ( $input->getOption( 'print-assertion' ) ) {
-			$headers[] = 'Assertion';
-		}
-
-		$table->setHeaders( $headers );
-
-		foreach ( $environment->getErrorMessages() as $ruleSet => $messages ) {
-			if ( ! $messages ) {
-				continue;
-			}
-
-			foreach ( $messages as $message ) {
-				$row = array(
-					$ruleSet,
-					$message->getMessage(),
-				);
-
-				if ( $input->getOption( 'print-assertion' ) ) {
-					$row[] = $message->getRule();
-				}
-
-				$table->addRow( $row );
-			}
-		}
-
-        $output->writeln('');
-		$table->render();
         $output->writeln('');
         $output->writeln(
             sprintf(
@@ -217,11 +188,12 @@ class CompareCommand extends AbstractCommand {
             )
         );
         $output->writeln('');
-	}
+    }
 
-    protected function parseFiles($wrapper, $output, $prefix) {
+    protected function parseFiles($wrapper, $output, $prefix)
+    {
         $output->write($prefix . 'Collection files ...');
-        $time = microtime(true);
+        $time       = microtime(true);
         $fileAmount = count($wrapper->getAllFileNames());
         $output->writeln(
             sprintf(
@@ -233,7 +205,7 @@ class CompareCommand extends AbstractCommand {
 
         $output->write($prefix . 'Parsing ' . $fileAmount . ' files ...');
 
-        $time = microtime(true);
+        $time     = microtime(true);
         $dataTree = $wrapper->getDataTree();
 
         $output->writeln(
@@ -247,15 +219,16 @@ class CompareCommand extends AbstractCommand {
         return $dataTree;
     }
 
-	public function getWrapperClass( $name ) {
-		$className = '\\PHPSemVer\\Wrapper\\' . ucfirst( $name );
+    public function getWrapperClass($name)
+    {
+        $className = '\\PHPSemVer\\Wrapper\\' . ucfirst($name);
 
-		if ( ! class_exists( $className ) ) {
-			return false;
-		}
+        if ( ! class_exists($className)) {
+            return false;
+        }
 
-		return $className;
-	}
+        return $className;
+    }
 
     /**
      * Add pattern to exclude files.
@@ -284,5 +257,39 @@ class CompareCommand extends AbstractCommand {
 
         $latestWrapper->setExcludePattern($ignorePattern);
         $previousWrapper->setExcludePattern($ignorePattern);
+    }
+
+    /**
+     * Print information as table.
+     *
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     * @param Environment     $environment
+     */
+    protected function printTable(InputInterface $input, OutputInterface $output, $environment)
+    {
+        $table   = new Table($output);
+        $headers = array('Level', 'Message');
+
+        if ($input->getOption('print-assertion')) {
+            $headers[] = 'Assertion';
+        }
+
+        $table->setHeaders($headers);
+
+        foreach ($environment->getConfig()->ruleSet() as $ruleSet) {
+            foreach ($ruleSet->getErrorMessages() as $message) {
+                $row = array($ruleSet->getName(), $message->getMessage(),);
+
+                if ($input->getOption('print-assertion')) {
+                    $row[] = $message->getRule();
+                }
+
+                $table->addRow($row);
+            }
+        }
+
+        $output->writeln('');
+        $table->render();
     }
 }

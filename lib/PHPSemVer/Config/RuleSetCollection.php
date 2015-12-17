@@ -19,6 +19,7 @@ namespace PHPSemVer\Config;
 
 use PHPSemVer\AbstractConfig;
 use PHPSemVer\Config;
+use Traversable;
 
 /**
  * Collection of rule sets.
@@ -28,7 +29,5 @@ use PHPSemVer\Config;
  * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.0.0/LICENSE.md MIT License
  * @link      https://github.com/sourcerer-mike/phpsemver/
  */
-class RuleSetCollection extends AbstractCollection
-{
-
+class RuleSetCollection extends AbstractCollection {
 }
