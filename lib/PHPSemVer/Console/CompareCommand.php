@@ -19,7 +19,7 @@ namespace PHPSemVer\Console;
 use PDepend\Source\Language\PHP\PHPBuilder;
 use PHPSemVer\Config;
 use PHPSemVer\Environment;
-use PHPSemVer\Wrapper\Directory;
+use PHPSemVer\Wrapper\AbstractWrapper;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -118,47 +118,49 @@ class CompareCommand extends AbstractCommand {
 			$input->getOption( 'ruleset' )
 		);
 
-		$wrapper = $this->getWrapperClass( $input->getOption( 'type' ) );
-
-		if ( ! $wrapper ) {
-			$output->writeln(
-				sprintf(
-					'<error>Unknown wrapper-type "%s"</error>',
-					$input->getOption( 'type' )
-				)
-			);
-
-			return;
-		}
-
-        $this->debug('Using wrapper ' . $wrapper);
-
-		$previousWrapper = new $wrapper( $input->getArgument( 'previous' ) );
-        $latestWrapper = new $wrapper($input->getArgument('latest'));
-
-        if (is_dir($input->getArgument('latest'))) {
-            $latestWrapper = new Directory($input->getArgument('latest'));
-        }
-
-		if ( $output->isVerbose() ) {
-			$output->writeln(
-				sprintf(
-					'Compare "%s" with "%s"',
-					$input->getArgument( 'previous' ),
-					$input->getArgument( 'latest' )
-				)
-			);
-		}
-
-		$xmlFile = PHPSEMVER_LIB_PATH . '/PHPSemVer/Rules/SemVer2.xml';
-
-		$previousWrapper->setExcludePattern($input->getOption('exclude'));
-		$latestWrapper->setExcludePattern($input->getOption('exclude'));
+		$xmlFile = PHPSEMVER_LIB_PATH.'/PHPSemVer/Rules/SemVer2.xml';
 
 		$config      = $this->makeConfig($xmlFile, $output);
 		$environment = $this->makeEnvironment($config);
 
-        $this->appendIgnorePattern($xmlFile, $latestWrapper, $previousWrapper);
+		$this->verbose(
+			sprintf(
+				'Compare "%s" with "%s"',
+				$input->getArgument('previous'),
+				$input->getArgument('latest')
+			)
+		);
+
+		$previousWrapper = $this->getWrapperInstance(
+			$input->getArgument('previous'),
+			$input->getOption('type')
+		);
+
+		$latestWrapper = $this->getWrapperInstance(
+			$input->getArgument('latest'),
+			$input->getOption('type')
+		);
+
+		$previousWrapper->setExcludePattern($input->getOption('exclude'));
+		$latestWrapper->setExcludePattern($input->getOption('exclude'));
+
+		$this->appendIgnorePattern($xmlFile, $latestWrapper, $previousWrapper);
+
+		if ($output->isVerbose()) {
+			$output->writeln('Fetching previous files ...');
+		}
+
+		$previousWrapper->getAllFileNames();
+
+		if ($output->isVerbose()) {
+			$output->writeln('Fetchting latest files ...');
+		}
+
+		$latestWrapper->getAllFileNames();
+
+		if ($output->isVerbose()) {
+			$output->writeln('Comparing ...');
+		}
 
 		$environment->compareTrees(
 			$previousWrapper->getDataTree(),
@@ -299,5 +301,38 @@ class CompareCommand extends AbstractCommand {
 		$environment->setConfig($config);
 
 		return $environment;
+	}
+
+	/**
+	 * Create a wrapper for the given target.
+	 *
+	 * When the target is a directory,
+	 * then the type overridden with "Directory".
+	 *
+	 * @param string $base
+	 * @param string $type
+	 *
+	 * @return AbstractWrapper
+	 */
+	private function getWrapperInstance($base, $type)
+	{
+		$wrapper = $this->getWrapperClass($type);
+
+		if ( ! $wrapper) {
+			throw new \InvalidArgumentException(
+				sprintf(
+					'<error>Unknown wrapper-type "%s"</error>',
+					$type
+				)
+			);
+		}
+
+		if (is_dir($base)) {
+			$wrapper = $this->getWrapperClass('Directory');
+		}
+
+		$this->debug('Using wrapper "'.$wrapper.'" for "'.$base.'"');
+
+		return new $wrapper($base);
 	}
 }

@@ -102,6 +102,10 @@ class GitTest extends Abstract_TestCase
             ->method( '_getGitWrapper' )
             ->willReturn( $gitWrapper );
 
+        // assert empty dir
+        $fs = new Filesystem();
+        $fs->remove($git->getTempPath());
+
         // create directory
         mkdir( $git->getTempPath(), 0777, true );
 
@@ -151,6 +155,10 @@ class GitTest extends Abstract_TestCase
         $target     = $git->getBasePath() . $targetFile;
 
         $this->assertFileNotExists( $target );
+
+        $fs = new Filesystem();
+        $fs->remove(dirname( $target ));
+
         $this->assertFalse( is_dir( dirname( $target ) ) );
 
         $path = $git->getPath( $targetFile );
@@ -158,53 +166,5 @@ class GitTest extends Abstract_TestCase
         $this->assertSame( $target, $path );
         $this->assertFileExists( $target );
         $this->assertTrue( is_dir( dirname( $target ) ) );
-    }
-
-    /**
-     * @param $data
-     *
-     * @dataProvider dataFileList
-     */
-    public function testTemporaryFilesContainContentsIfFound( $data )
-    {
-        $workingCopy = $this->getMockBuilder( '\\GitWrapper\\GitWorkingCopy' )
-                            ->disableOriginalConstructor()
-                            ->setMethods( array( 'run', 'getOutput' ) )
-                            ->getMock();
-
-        $workingCopy->expects( $this->any() )
-                    ->method( 'getOutput' )
-                    ->willReturn( $data );
-
-        $workingCopy->expects( $this->any() )
-                    ->method( 'run' )
-                    ->willReturn( '' );
-
-        $gitWrapper = $this->getMockBuilder( '\\GitWrapper\\GitWrapper' )
-                           ->disableOriginalConstructor()
-                           ->setMethods( array( 'workingCopy' ) )
-                           ->getMock();
-
-        $gitWrapper->expects( $this->any() )
-                   ->method( 'workingCopy' )
-                   ->willReturn( $workingCopy );
-
-        /** @var Git $git */
-        $git = $this->getTargetMockBuilder( 'HEAD' )
-                    ->setMethods( array( '_getGitWrapper' ) )
-                    ->getMock();
-
-        $git->expects( $this->any() )
-            ->method( '_getGitWrapper' )
-            ->willReturn( $gitWrapper );
-
-        $fileName = 'somefile.txt';
-
-        $filePath = $git->getPath( $fileName );
-
-        $this->assertFileExists( $filePath );
-        $this->assertContains( $fileName, $filePath );
-
-        $this->assertSame( $data, file_get_contents( $filePath ) );
     }
 }

@@ -8,6 +8,10 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class CompareCommandTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Unknown wrapper-type "foo"
+     */
     public function testDispatchesErrorMessageWhenWrapperDoesNotExists()
     {
         $application = new Application();
@@ -20,11 +24,6 @@ class CompareCommandTest extends \PHPUnit_Framework_TestCase
                 '--type'  => 'foo',
                 'previous' => 'HEAD~1',
             )
-        );
-
-        $this->assertContains(
-            'Unknown wrapper',
-            $commandTester->getDisplay()
         );
     }
 

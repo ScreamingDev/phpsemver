@@ -37,7 +37,23 @@ class Git extends AbstractWrapper
 
     public function __construct($base)
     {
-        parent::__construct($base);
+        $git = $this->_getGitWrapper()->workingCopy(getcwd());
+
+        $git->run(
+            array(
+                'rev-list -1 ' . $base
+            )
+        );
+
+        $baseHash = trim($git->getOutput());
+
+        if (!$baseHash) {
+            throw new \InvalidArgumentException(
+                'Could not resolve ref ' . $base
+            );
+        }
+
+        parent::__construct($baseHash);
 
         if ( ! is_dir($this->getTempPath())) {
             mkdir($this->getTempPath(), 0777, true);
@@ -50,7 +66,8 @@ class Git extends AbstractWrapper
     {
         if ( ! $this->_tempPath) {
             $this->_tempPath = sys_get_temp_dir()
-                . DIRECTORY_SEPARATOR . uniqid(PHPSEMVER_ID);
+                               .DIRECTORY_SEPARATOR.PHPSEMVER_ID
+                               .DIRECTORY_SEPARATOR.'git_'.$this->getBase();
         }
 
         return $this->_tempPath;
@@ -58,7 +75,6 @@ class Git extends AbstractWrapper
 
     public function getAllFileNames()
     {
-
         $options = array(
             'with-tree' => $this->getBase(),
         );
@@ -141,12 +157,6 @@ class Git extends AbstractWrapper
     protected function _getFileWrapper()
     {
         return $this->_fileWrapper;
-    }
-
-    function __destruct()
-    {
-        $fileSystem = new Filesystem();
-        $fileSystem->remove($this->getTempPath());
     }
 
     public function getBasePath()
