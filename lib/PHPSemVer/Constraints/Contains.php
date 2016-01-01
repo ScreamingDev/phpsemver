@@ -76,7 +76,7 @@ class Contains extends AbstractConstraint implements ConstraintInterface
         }
 
         $failedConstraint = new FailedConstraint(
-            sprintf('"%s" not found', $node->namespacedName)
+            sprintf('"%s" not found', $this->getValue()->namespacedName)
         );
 
         throw $failedConstraint;

@@ -31,6 +31,9 @@
             <Classes>
                 <IsRemoved />
             </Classes>
+            <Functions>
+                <IsRemoved />
+            </Functions>
         </Trigger>
     </RuleSet>
     <RuleSet name="minor">
@@ -47,6 +50,9 @@
             <Classes>
                 <IsAdded />
             </Classes>
+            <Functions>
+                <IsAdded />
+            </Functions>
         </Trigger>
     </RuleSet>
     <RuleSet name="patch">

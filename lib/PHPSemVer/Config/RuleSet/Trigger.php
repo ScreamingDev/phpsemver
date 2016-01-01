@@ -70,7 +70,10 @@ class Trigger extends AbstractConfig
                 continue;
             }
 
-            $resolved = $resolved + $this->resolveAll($childNode, $nodeName.'/');
+            $resolved = array_merge(
+                $resolved,
+                $this->resolveAll($childNode, $nodeName.'/')
+            );
         }
 
         return $resolved;
