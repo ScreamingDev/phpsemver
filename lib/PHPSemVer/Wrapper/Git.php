@@ -39,19 +39,19 @@ class Git extends AbstractWrapper
     {
         $git = $this->_getGitWrapper()->workingCopy(getcwd());
 
-        $git->run(
-            array(
-                'rev-list -1 ' . $base
-            )
-        );
-
-        $baseHash = trim($git->getOutput());
-
-        if (!$baseHash) {
+        try {
+            $git->run(
+                array(
+                    'rev-list -1 '.$base,
+                )
+            );
+        } catch (GitException $e) {
             throw new \InvalidArgumentException(
                 'Could not resolve ref ' . $base
             );
         }
+
+        $baseHash = trim($git->getOutput());
 
         parent::__construct($baseHash);
 

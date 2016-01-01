@@ -167,4 +167,13 @@ class GitTest extends Abstract_TestCase
         $this->assertFileExists( $target );
         $this->assertTrue( is_dir( dirname( $target ) ) );
     }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessagen Could not resolve ref xyz
+     */
+    public function testItThrowsExceptionWhenBaseIsInvalid()
+    {
+        new Git('xyz');
+    }
 }
