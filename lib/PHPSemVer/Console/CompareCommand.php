@@ -122,10 +122,9 @@ class CompareCommand extends AbstractCommand {
 			$input->getOption( 'ruleset' )
 		);
 
-		$xmlFile = PHPSEMVER_LIB_PATH.'/PHPSemVer/Rules/SemVer2.xml';
+		$xmlFile = $this->resolveConfigFile($input->getOption('ruleset'));
 
-		$config      = $this->makeConfig($xmlFile, $output);
-		$environment = $this->makeEnvironment($config);
+		$this->debug('Using config-file '.$xmlFile);
 
 		$this->verbose(
 			sprintf(
@@ -150,14 +149,13 @@ class CompareCommand extends AbstractCommand {
 
 		$this->appendIgnorePattern($xmlFile, $latestWrapper, $previousWrapper);
 
-		$config = new Config(simplexml_load_file($xmlFile));
+		$config = $this->makeConfig($xmlFile, $output);
 
 		if ($output->isVerbose()) {
 			$this->printConfig($config, $output);
 		}
 
-		$environment = new Environment();
-		$environment->setConfig($config);
+		$environment = $this->makeEnvironment($config);
 
         $this->appendIgnorePattern($xmlFile, $latestWrapper, $previousWrapper);
 
@@ -402,5 +400,29 @@ class CompareCommand extends AbstractCommand {
 		$this->debug('Using wrapper "'.$wrapper.'" for "'.$base.'"');
 
 		return new $wrapper($base);
+	}
+
+	/**
+	 * Resolve path to rule set XML.
+	 * @return string
+	 */
+	protected function resolveConfigFile($ruleSet)
+	{
+		if (file_exists($ruleSet)) {
+			return $ruleSet;
+		}
+
+		$defaultPath = PHPSEMVER_LIB_PATH.'/PHPSemVer/Rules/';
+		if (file_exists($defaultPath.$ruleSet)) {
+			return $defaultPath.$ruleSet;
+		}
+
+		if (file_exists($defaultPath.$ruleSet.'.xml')) {
+			return $defaultPath.$ruleSet.'.xml';
+		}
+
+		throw new \InvalidArgumentException(
+			'Could not find rule set: '.$ruleSet
+		);
 	}
 }
