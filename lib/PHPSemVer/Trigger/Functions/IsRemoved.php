@@ -52,8 +52,6 @@ class IsRemoved
 
         try {
             $constraint->evaluate($new);
-
-            return true;
         } catch (FailedConstraint $e) {
             $this->lastException = new FailedConstraint(
                 sprintf(
@@ -61,6 +59,8 @@ class IsRemoved
                     $e->getValue()->namespacedName
                 )
             );
+
+            return true;
         }
 
         return false;
