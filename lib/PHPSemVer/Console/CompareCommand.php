@@ -152,6 +152,10 @@ class CompareCommand extends AbstractCommand {
 
 		$config = new Config(simplexml_load_file($xmlFile));
 
+		if ($output->isVerbose()) {
+			$this->printConfig($config, $output);
+		}
+
 		$environment = new Environment();
 		$environment->setConfig($config);
 
