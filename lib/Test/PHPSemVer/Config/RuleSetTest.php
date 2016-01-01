@@ -39,4 +39,20 @@ class RuleSetTest extends \PHPUnit_Framework_TestCase
             $this->assertEquals((string)$value, $ruleSet->$method());
         }
     }
+
+    /**
+     * @param \SimpleXMLElement $ruleSetNode
+     *
+     * @dataProvider dataFullNodes
+     */
+    public function testItContainsErrorMessages($ruleSetNode)
+    {
+        $ruleSet = new RuleSet($ruleSetNode);
+
+        $exception = uniqid('err');
+
+        $ruleSet->appendErrorMessage($exception);
+
+        $this->assertEquals([$exception], $ruleSet->getErrorMessages());
+    }
 }
