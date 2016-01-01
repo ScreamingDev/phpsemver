@@ -188,6 +188,15 @@ class CompareCommand extends AbstractCommand {
         $output->writeln('');
     }
 
+	/**
+	 * Parse files within a wrapper.
+	 *
+	 * @param AbstractWrapper $wrapper
+	 * @param OutputInterface $output
+	 * @param string          $prefix
+	 *
+	 * @return mixed
+	 */
     protected function parseFiles($wrapper, $output, $prefix)
     {
         $output->write($prefix . 'Collection files ...');
@@ -201,14 +210,22 @@ class CompareCommand extends AbstractCommand {
             )
         );
 
-        $output->write($prefix . 'Parsing ' . $fileAmount . ' files ...');
+        $output->write($prefix . 'Parsing ' . $fileAmount . ' files ');
+
+	    if ($output->isDebug()) {
+		    $output->write(
+			    'in ' . $wrapper->getBasePath()
+		    );
+	    }
+
+	    $output->writeln('');
 
         $time     = microtime(true);
         $dataTree = $wrapper->getDataTree();
 
 	    $output->writeln(
 		    sprintf(
-			    "\r" . $prefix . "Parsed %d files in %0.2f seconds.",
+			    $prefix . "Parsed %d files in %0.2f seconds.",
 			    $fileAmount,
 			    microtime(true) - $time
 		    )
@@ -363,7 +380,7 @@ class CompareCommand extends AbstractCommand {
 	 *
 	 * @return AbstractWrapper
 	 */
-	private function getWrapperInstance($base, $type)
+	private function getWrapperInstance($base, $type = 'Directory')
 	{
 		$wrapper = $this->getWrapperClass($type);
 

@@ -66,6 +66,15 @@ class Environment
             $this->compareTrees($namespace, $new->namespaces[$key]);
         }
 
+        foreach ($new->namespaces as $key => $namespace) {
+            if ( isset( $old->namespaces[$key] )) {
+                continue;
+            }
+
+            $old->namespaces[$key] = new DataNode();
+            $this->compareTrees($old->namespaces[$key], $namespace);
+        }
+
         return null;
     }
 
