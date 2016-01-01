@@ -19,6 +19,7 @@ namespace PHPSemVer\Config;
 
 use PHPSemVer\AbstractConfig;
 use PHPSemVer\Config;
+use PHPSemVer\Config\RuleSet\Trigger;
 
 /**
  * Config > RuleSet.
@@ -29,6 +30,7 @@ use PHPSemVer\Config;
  * @link      https://github.com/sourcerer-mike/phpsemver/
  *
  * @method string getName()
+ * @method Trigger trigger()
  */
 class RuleSet extends AbstractConfig
 {

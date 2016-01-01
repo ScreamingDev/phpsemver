@@ -135,6 +135,7 @@ class CompareCommand extends AbstractCommand {
 
 		$previousWrapper = new $wrapper( $input->getArgument( 'previous' ) );
         $latestWrapper = new $wrapper($input->getArgument('latest'));
+
         if (is_dir($input->getArgument('latest'))) {
             $latestWrapper = new Directory($input->getArgument('latest'));
         }
@@ -154,10 +155,8 @@ class CompareCommand extends AbstractCommand {
 		$previousWrapper->setExcludePattern($input->getOption('exclude'));
 		$latestWrapper->setExcludePattern($input->getOption('exclude'));
 
-		$config = new Config(simplexml_load_file($xmlFile));
-
-		$environment = new Environment();
-		$environment->setConfig($config);
+		$config      = $this->makeConfig($xmlFile, $output);
+		$environment = $this->makeEnvironment($config);
 
         $this->appendIgnorePattern($xmlFile, $latestWrapper, $previousWrapper);
 
@@ -239,4 +238,66 @@ class CompareCommand extends AbstractCommand {
         $latestWrapper->setExcludePattern($ignorePattern);
         $previousWrapper->setExcludePattern($ignorePattern);
     }
+
+	/**
+	 * Print debug information of the used config.
+	 *
+	 * @param Config          $config
+	 * @param OutputInterface $output
+	 */
+	protected function printConfig(Config $config, OutputInterface $output)
+	{
+		foreach ($config->ruleSet()->getChildren() as $ruleSet) {
+			$output->writeln('Using ruleset '.$ruleSet->getName());
+
+			if ( ! $output->isDebug()) {
+				continue;
+			}
+
+			if ( ! $ruleSet->trigger()) {
+				$output->writeln('  No triggers found.');
+				continue;
+			}
+
+			foreach ($ruleSet->trigger()->getAll() as $singleTrigger) {
+				$output->writeln('  Contains trigger '.$singleTrigger);
+			}
+		}
+	}
+
+	/**
+	 * Generate config class from XML-File.
+	 *
+	 * @param string          $xmlFile
+	 * @param OutputInterface $output
+	 *
+	 * @return Config
+	 */
+	protected function makeConfig($xmlFile, OutputInterface $output)
+	{
+		$config = new Config(simplexml_load_file($xmlFile));
+
+		if ($output->isVerbose()) {
+			$this->printConfig($config, $output);
+
+			return $config;
+		}
+
+		return $config;
+	}
+
+	/**
+	 * Generate environment from config.
+	 *
+	 * @param $config
+	 *
+	 * @return Environment
+	 */
+	protected function makeEnvironment($config)
+	{
+		$environment = new Environment();
+		$environment->setConfig($config);
+
+		return $environment;
+	}
 }
