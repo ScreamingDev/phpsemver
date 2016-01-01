@@ -58,6 +58,14 @@ class Environment
         $this->iterate($old, $old, $new);
         $this->iterate($new, $old, $new);
 
+        foreach ($old->namespaces as $key => $namespace) {
+            if ( ! isset( $new->namespaces[$key] )) {
+                continue;
+            }
+
+            $this->compareTrees($namespace, $new->namespaces[$key]);
+        }
+
         return null;
     }
 
@@ -129,14 +137,6 @@ class Environment
 
         foreach ($subject->namespaces as $namespace) {
             $this->handleNode($namespace, $old->namespaces, $new->namespaces);
-        }
-
-        foreach ($old->namespaces as $key => $namespace) {
-            if ( ! isset( $new->namespaces[$key] )) {
-                continue;
-            }
-
-            $this->compareTrees($namespace, $new->namespaces[$key]);
         }
     }
 }
