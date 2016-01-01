@@ -4,6 +4,7 @@ namespace Test\PHPSemVer\Console;
 
 
 use PHPSemVer\Console\Application;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class CompareCommandTest extends \PHPUnit_Framework_TestCase
@@ -39,7 +40,10 @@ class CompareCommandTest extends \PHPUnit_Framework_TestCase
                 '--type'   => 'directory',
                 'previous' => __DIR__,
                 'latest'   => __DIR__,
-            )
+            ),
+            [
+                'verbosity' => OutputInterface::VERBOSITY_DEBUG
+            ]
         );
 
         $argument = $command->getDefinition()->getOption( 'type' );

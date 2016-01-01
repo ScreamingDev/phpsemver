@@ -52,23 +52,6 @@ abstract class AbstractWrapper
         $this->_base = $base;
     }
 
-    public function getAllPaths()
-    {
-        $allPaths = array();
-
-        foreach ($this->getAllFileNames() as $fileName) {
-            foreach ($this->getExcludePattern() as $pattern) {
-                if (preg_match($pattern, $fileName)) {
-                    continue 2;
-                }
-            }
-
-            $allPaths[$fileName] = $this->getBasePath() . $fileName;
-        }
-
-        return $allPaths;
-    }
-
     abstract public function getAllFileNames();
 
     public function getExcludePattern()
