@@ -11,7 +11,7 @@ status+=$?
 bin/phpmd --exclude Test lib text etc/phpmd.xml
 status+=$?
 
-bin/phpunit -c etc/phpunit.xml --disallow-test-output lib/Test
+bin/phpunit -c etc/phpunit.xml --disallow-test-output --coverage-text lib/Test
 status+=$?
 
 exit ${status}
