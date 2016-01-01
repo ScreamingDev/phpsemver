@@ -248,8 +248,8 @@ class CompareCommand extends AbstractCommand {
      * Add pattern to exclude files.
      *
      * @param $xmlFile
-     * @param $latestWrapper
-     * @param $previousWrapper
+     * @param AbstractWrapper $latestWrapper
+     * @param AbstractWrapper $previousWrapper
      */
     protected function appendIgnorePattern(
         $xmlFile, $latestWrapper, $previousWrapper
@@ -264,7 +264,9 @@ class CompareCommand extends AbstractCommand {
                         continue;
                     }
 
-                    $ignorePattern[] = (string)$node->Pattern;
+	                foreach ($node->Pattern as $pattern) {
+		                $ignorePattern[] = (string) $pattern;
+	                }
                 }
             }
         }
