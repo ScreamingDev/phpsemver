@@ -55,29 +55,8 @@ class Environment
      */
     public function compareTrees(DataNode $old, DataNode $new)
     {
-        foreach ($old->classes as $class) {
-            $this->handleNode($class, $old->classes, $new->classes);
-        }
-
-        foreach ($old->functions as $class) {
-            $this->handleNode($class, $old->functions, $new->functions);
-        }
-
-        foreach ($old->usages as $class) {
-            $this->handleNode($class, $old->usages, $new->usages);
-        }
-
-        foreach ($old->namespaces as $namespace) {
-            $this->handleNode($namespace, $old->namespaces, $new->namespaces);
-        }
-
-        foreach ($old->namespaces as $key => $namespace) {
-            if ( ! isset( $new->namespaces[$key] )) {
-                continue;
-            }
-
-            $this->compareTrees($namespace, $new->namespaces[$key]);
-        }
+        $this->iterate($old, $old, $new);
+        $this->iterate($new, $old, $new);
 
         return null;
     }
@@ -89,6 +68,7 @@ class Environment
         foreach ($ruleSetCollection->getChildren() as $ruleSet) {
             /* @var RuleSet\Trigger $trigger */
             $trigger = $ruleSet->trigger();
+
 
             if ( ! $trigger) {
                 // no trigger inside: next!
@@ -131,5 +111,32 @@ class Environment
     public function setConfig(AbstractConfig $config)
     {
         $this->config = $config;
+    }
+
+    private function iterate($subject, $old, $new)
+    {
+        foreach ($subject->classes as $class) {
+            $this->handleNode($class, $old->classes, $new->classes);
+        }
+
+        foreach ($subject->functions as $func) {
+            $this->handleNode($func, $old->functions, $new->functions);
+        }
+
+        foreach ($subject->usages as $use) {
+            $this->handleNode($use, $old->usages, $new->usages);
+        }
+
+        foreach ($subject->namespaces as $namespace) {
+            $this->handleNode($namespace, $old->namespaces, $new->namespaces);
+        }
+
+        foreach ($old->namespaces as $key => $namespace) {
+            if ( ! isset( $new->namespaces[$key] )) {
+                continue;
+            }
+
+            $this->compareTrees($namespace, $new->namespaces[$key]);
+        }
     }
 }
