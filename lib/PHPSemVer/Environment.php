@@ -60,7 +60,7 @@ class Environment
 
         foreach ($old->namespaces as $key => $namespace) {
             if ( ! isset( $new->namespaces[$key] )) {
-                continue;
+                $new->namespaces[$key] = new DataNode();
             }
 
             $this->compareTrees($namespace, $new->namespaces[$key]);
