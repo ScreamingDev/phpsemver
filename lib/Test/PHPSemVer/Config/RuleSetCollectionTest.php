@@ -29,7 +29,14 @@ class RuleSetCollectionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertGreaterThan(0, $i);
 
-        $this->markTestIncomplete('One RuleSet might be missing (compare count and xml).');
+        // Assert that all nodes have been parsed.
+        $fullConfig = $this->makeFullConfig();
+        $amount = 0;
+        foreach ($fullConfig->getXml()->xpath('RuleSet') as $ruleSet) {
+            $amount++;
+        }
+
+        $this->assertEquals($amount, $i);
     }
 
     /**
@@ -37,10 +44,14 @@ class RuleSetCollectionTest extends \PHPUnit_Framework_TestCase
      */
     protected function getFullCollection()
     {
-        $config = new Config(simplexml_load_file(__DIR__ . '/full.xml'));
+        return $this->makeFullConfig()->ruleSet();
+    }
 
-        $collection = $config->ruleSet();
-
-        return $collection;
+    /**
+     * @return Config
+     */
+    protected function makeFullConfig()
+    {
+        return new Config(simplexml_load_file(__DIR__.'/full.xml'));
     }
 }

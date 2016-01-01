@@ -14,8 +14,15 @@ class TriggerTest extends \PHPUnit_Framework_TestCase
             'first' => [
                 [
                     'Classes/IsRemoved',
+                    'Functions/IsRemoved',
                 ],
             ],
+            'second' => [
+                [
+                    'Classes/IsAdded',
+                    'Functions/IsAdded',
+                ]
+            ]
         ];
 
         $xml = simplexml_load_file(__DIR__ . '/../full.xml');
@@ -59,7 +66,6 @@ class TriggerTest extends \PHPUnit_Framework_TestCase
         }
 
         $underflow = array_diff($innerClasses, $allTrigger);
-
         $this->assertEmpty(
             $underflow,
             sprintf(

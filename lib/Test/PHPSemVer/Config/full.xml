@@ -5,9 +5,21 @@
             <Classes>
                 <IsRemoved/>
             </Classes>
+            <Functions>
+                <IsRemoved/>
+            </Functions>
+        </Trigger>
+    </RuleSet>
+    <RuleSet name="second">
+        <Trigger>
+            <Classes>
+                <IsAdded/>
+            </Classes>
+            <Functions>
+                <IsAdded/>
+            </Functions>
         </Trigger>
     </RuleSet>
     <RuleSet name="last">
-
     </RuleSet>
 </PHPSemVer>
