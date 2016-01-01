@@ -18,6 +18,7 @@ namespace PHPSemVer\Constraints;
 
 
 use PhpParser\Node\Stmt;
+use PhpParser\Node\Stmt\Class_;
 
 /**
  * Check if statement exists in list via name.
@@ -48,9 +49,16 @@ class Contains extends AbstractConstraint implements ConstraintInterface
             $other = $other->stmts;
         }
 
-        return $this->searchInList($other);
+        try {
+            $searchInList = $this->searchInList($other);
+        } catch (FailedConstraint $e) {
+            $e->setValue($this->getValue());
+            $e->setOther($other);
 
-        throw new \InvalidArgumentException(sprintf('Can not handle "%s".', get_class($other)));
+            throw $e;
+        }
+
+        return $searchInList;
     }
 
     protected function searchInList($stmtList)
@@ -67,6 +75,10 @@ class Contains extends AbstractConstraint implements ConstraintInterface
             }
         }
 
-        throw new FailedConstraint(sprintf('"%s" not found', $name));
+        $failedConstraint = new FailedConstraint(
+            sprintf('"%s" not found', $node->namespacedName)
+        );
+
+        throw $failedConstraint;
     }
 }

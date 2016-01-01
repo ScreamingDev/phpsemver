@@ -16,6 +16,7 @@
 
 
 namespace PHPSemVer\Constraints;
+use PhpParser\Node\Stmt;
 
 /**
  * Basic functionality for constraints.
@@ -50,7 +51,7 @@ abstract class AbstractConstraint
      *
      * All checks are done against this value.
      *
-     * @return mixed
+     * @return Stmt
      */
     public function getValue()
     {

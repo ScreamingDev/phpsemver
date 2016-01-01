@@ -39,6 +39,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class CompareCommand extends AbstractCommand {
 	protected $_cacheFactory;
 	protected $cacheFactory;
+	
 	/**
 	 * Current builder.
 	 *
@@ -48,6 +49,7 @@ class CompareCommand extends AbstractCommand {
 	 */
 	protected $currentBuilder  = null;
 	protected $parseExceptions = array();
+	
 	/**
 	 * Previous builder
 	 *
@@ -148,28 +150,21 @@ class CompareCommand extends AbstractCommand {
 
 		$this->appendIgnorePattern($xmlFile, $latestWrapper, $previousWrapper);
 
-		if ($output->isVerbose()) {
-			$output->writeln('Fetching previous files ...');
-		}
+		$config = new Config(simplexml_load_file($xmlFile));
 
-		$previousWrapper->getAllFileNames();
+		$environment = new Environment();
+		$environment->setConfig($config);
 
-		if ($output->isVerbose()) {
-			$output->writeln('Fetchting latest files ...');
-		}
-
-		$latestWrapper->getAllFileNames();
-
-		if ($output->isVerbose()) {
-			$output->writeln('Comparing ...');
-		}
+        $this->appendIgnorePattern($xmlFile, $latestWrapper, $previousWrapper);
 
         $prevTree = $this->parseFiles($previousWrapper, $output, $input->getArgument('previous') . ': ');
-        $newTree = $this->parseFiles($latestWrapper, $output, $input->getArgument('latest') . ': ');
+        $newTree  = $this->parseFiles($latestWrapper, $output, $input->getArgument('latest') . ': ');
 
         $output->write('Comparing ...');
         $time = microtime(true);
-		$environment->compareTrees($prevTree,$newTree);
+
+        $environment->compareTrees($prevTree, $newTree);
+
         $output->writeln(
             sprintf(
                 "\rComapred within %0.2f seconds",
@@ -177,39 +172,8 @@ class CompareCommand extends AbstractCommand {
             )
         );
 
-		$table   = new Table( $output );
-		$headers = array(
-			'Level',
-			'Message',
-		);
+        $this->printTable($input, $output, $environment);
 
-		if ( $input->getOption( 'print-assertion' ) ) {
-			$headers[] = 'Assertion';
-		}
-
-		$table->setHeaders( $headers );
-
-		foreach ( $environment->getErrorMessages() as $ruleSet => $messages ) {
-			if ( ! $messages ) {
-				continue;
-			}
-
-			foreach ( $messages as $message ) {
-				$row = array(
-					$ruleSet,
-					$message->getMessage(),
-				);
-
-				if ( $input->getOption( 'print-assertion' ) ) {
-					$row[] = $message->getRule();
-				}
-
-				$table->addRow( $row );
-			}
-		}
-
-        $output->writeln('');
-		$table->render();
         $output->writeln('');
         $output->writeln(
             sprintf(
@@ -218,11 +182,12 @@ class CompareCommand extends AbstractCommand {
             )
         );
         $output->writeln('');
-	}
+    }
 
-    protected function parseFiles($wrapper, $output, $prefix) {
+    protected function parseFiles($wrapper, $output, $prefix)
+    {
         $output->write($prefix . 'Collection files ...');
-        $time = microtime(true);
+        $time       = microtime(true);
         $fileAmount = count($wrapper->getAllFileNames());
         $output->writeln(
             sprintf(
@@ -234,18 +199,18 @@ class CompareCommand extends AbstractCommand {
 
         $output->write($prefix . 'Parsing ' . $fileAmount . ' files ...');
 
-        $time = microtime(true);
+        $time     = microtime(true);
         $dataTree = $wrapper->getDataTree();
 
-        $output->writeln(
-            sprintf(
-                "\r" . $prefix . "Parsed %d files in %0.2f seconds.",
-                $fileAmount,
-                microtime(true) - $time
-            )
-        );
+	    $output->writeln(
+		    sprintf(
+			    "\r" . $prefix . "Parsed %d files in %0.2f seconds.",
+			    $fileAmount,
+			    microtime(true) - $time
+		    )
+	    );
 
-        return $dataTree;
+	    return $dataTree;
     }
 
 	public function getWrapperClass( $name ) {
@@ -285,6 +250,40 @@ class CompareCommand extends AbstractCommand {
 
         $latestWrapper->setExcludePattern($ignorePattern);
         $previousWrapper->setExcludePattern($ignorePattern);
+    }
+
+    /**
+     * Print information as table.
+     *
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     * @param Environment     $environment
+     */
+    protected function printTable(InputInterface $input, OutputInterface $output, $environment)
+    {
+        $table   = new Table($output);
+        $headers = array('Level', 'Message');
+
+        if ($input->getOption('print-assertion')) {
+            $headers[] = 'Assertion';
+        }
+
+        $table->setHeaders($headers);
+
+        foreach ($environment->getConfig()->ruleSet() as $ruleSet) {
+            foreach ($ruleSet->getErrorMessages() as $message) {
+                $row = array($ruleSet->getName(), $message->getMessage(),);
+
+                if ($input->getOption('print-assertion')) {
+                    $row[] = $message->getRule();
+                }
+
+                $table->addRow($row);
+            }
+        }
+
+        $output->writeln('');
+        $table->render();
     }
 
 	/**

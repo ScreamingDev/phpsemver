@@ -37,7 +37,6 @@ class Environment
      * @var AbstractConfig
      */
     protected $config;
-    protected $errorMessages = [];
 
     public function __construct(AbstractConfig $config = null)
     {
@@ -109,7 +108,7 @@ class Environment
                     continue;
                 }
 
-                $this->appendErrorMessage($singleTrigger->lastException);
+                $ruleSet->appendErrorMessage($singleTrigger->lastException);
             }
         }
     }
@@ -132,19 +131,5 @@ class Environment
     public function setConfig(AbstractConfig $config)
     {
         $this->config = $config;
-    }
-
-    public function appendErrorMessage($exception, $ruleSet = 'unknown')
-    {
-        if ( ! isset( $this->errorMessages[$ruleSet] )) {
-            $this->errorMessages[$ruleSet] = [];
-        }
-
-        $this->errorMessages[$ruleSet][] = $exception;
-    }
-
-    public function getErrorMessages()
-    {
-        return $this->errorMessages;
     }
 }

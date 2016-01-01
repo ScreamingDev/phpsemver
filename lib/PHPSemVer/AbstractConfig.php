@@ -42,6 +42,9 @@ class AbstractConfig
 
     public function __call($method, $arguments)
     {
+        if (isset($this->callBuffer[$method])) {
+            return $this->callBuffer[$method];
+        }
         $modifier = substr($method, 0, 3);
         $target   = substr($method, 3);
 
@@ -77,10 +80,13 @@ class AbstractConfig
         if (class_exists($className.'Collection')) {
             $className .= 'Collection';
 
-            return new $className($node);
+            $this->callBuffer[$method] = new $className($node);
+            return $this->callBuffer[$method];
         }
 
-        return new $className(current($node));
+        $this->callBuffer[$method] = new $className(current($node));
+
+        return $this->callBuffer[$method];
     }
 
     /**

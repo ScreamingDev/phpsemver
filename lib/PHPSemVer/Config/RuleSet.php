@@ -40,4 +40,16 @@ class RuleSet extends AbstractConfig
         = [
             'name' => ''
         ];
+
+    protected $errorMessages = [];
+
+    public function appendErrorMessage($exception)
+    {
+        $this->errorMessages[] = $exception;
+    }
+
+    public function getErrorMessages()
+    {
+        return $this->errorMessages;
+    }
 }
