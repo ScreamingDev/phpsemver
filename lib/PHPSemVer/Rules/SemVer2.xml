@@ -43,6 +43,11 @@
             It MAY include patch level changes.
             Patch version MUST be reset to 0 when minor version is incremented.
         </Description>
+        <Trigger>
+            <Classes>
+                <IsAdded />
+            </Classes>
+        </Trigger>
     </RuleSet>
     <RuleSet name="patch">
 
