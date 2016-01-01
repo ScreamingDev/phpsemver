@@ -52,8 +52,6 @@ class IsAdded
 
         try {
             $constraint->evaluate($old);
-
-            return true;
         } catch (FailedConstraint $e) {
             $this->lastException = new FailedConstraint(
                 sprintf(
@@ -61,6 +59,8 @@ class IsAdded
                     $e->getValue()->namespacedName
                 )
             );
+
+            return true;
         }
 
         return false;
