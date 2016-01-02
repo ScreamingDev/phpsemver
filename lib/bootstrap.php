@@ -41,7 +41,7 @@ function phpsemverLoader() {
 		return (require_once $projectAutoloadFile);
 	}
 
-	return (require_once dirname(__DIR__) . '/vendor/autoload.php');
+	return (require_once PHPSEMVER_BASE_PATH . '/vendor/autoload.php');
 }
 
 $loader = phpsemverLoader();
