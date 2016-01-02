@@ -19,6 +19,7 @@
                             <xs:complexType>
                                 <xs:sequence>
                                     <xs:element name="ReturnTypeChanged" minOccurs="0"/>
+                                    <xs:element name="ReturnTypeRemoved" minOccurs="0"/>
                                     <xs:element name="IsAdded" minOccurs="0"/>
                                     <xs:element name="IsRemoved" minOccurs="0"/>
                                 </xs:sequence>

@@ -46,15 +46,19 @@ class ReturnTypeRemoved extends AbstractTrigger
             return null;
         }
 
-        if ((string) $old->getReturnType() == (string) $new->getReturnType()) {
+        if (((string) $new->getReturnType())) {
+            return false;
+        }
+
+        if (((string) $new->getReturnType()) == ((string) $old->getReturnType())) {
             return false;
         }
 
         $this->lastException = new FailedConstraint(
             sprintf(
-                '%s::%s() changed return type from "%s" to "%s".',
-                $new->getAttribute('parent')->namespacedName,
-                $new->name,
+                '%s::%s() return type "%s" were removed.',
+                $old->getAttribute('parent')->namespacedName,
+                $old->name,
                 $old->getReturnType(),
                 $new->getReturnType()
             )
