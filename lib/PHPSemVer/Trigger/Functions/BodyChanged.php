@@ -17,6 +17,8 @@
 
 namespace PHPSemVer\Trigger\Functions;
 
+use PhpParser\Node;
+use PhpParser\Node\Expr;
 use PhpParser\Node\Stmt\Function_;
 use PHPSemVer\Constraints\FailedConstraint;
 use PHPSemVer\Trigger\AbstractTrigger;
@@ -52,7 +54,7 @@ class BodyChanged extends AbstractTrigger
             return null;
         }
 
-        if ($old->stmts === $new->stmts) {
+        if ($this->equals($old, $new)) {
             return false;
         }
 
@@ -69,5 +71,50 @@ class BodyChanged extends AbstractTrigger
     public function canHandle($subject)
     {
         return ( $subject instanceof Function_ );
+    }
+
+    /**
+     * Check if two Node trees are equal.
+     *
+     * @param Node $old
+     * @param Node $new
+     *
+     * @return bool
+     */
+    private function equals($old, $new)
+    {
+        if (is_array($old)) {
+            // compare arrays
+            if (array_keys($old) != array_keys($new)) {
+                return false;
+            }
+
+            foreach (array_keys($old) as $key) {
+                if ( ! $this->equals($old[$key], $new[$key])) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        if ( ! is_object($old) ) {
+            // compare non-array scalars
+            return ($old == $new);
+        }
+
+        if (get_class($old) != get_class($new)) {
+            // compare object by class name
+            return false;
+        }
+
+        // compare each sub-node
+        foreach ($old->getSubNodeNames() as $property) {
+            if ( ! $this->equals($old->$property, $new->$property)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
