@@ -55,6 +55,7 @@ class KeyVisitor extends NodeVisitorAbstract
 
             if ( ! method_exists($this, $hashFunc)) {
                 $keyedNodes[] = $node;
+
                 continue;
             }
 

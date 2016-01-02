@@ -18,6 +18,7 @@
                         <xs:element name="Methods" minOccurs="0">
                             <xs:complexType>
                                 <xs:sequence>
+                                    <xs:element name="BodyChanged" minOccurs="0"/>
                                     <xs:element name="ReturnTypeChanged" minOccurs="0"/>
                                     <xs:element name="ReturnTypeRemoved" minOccurs="0"/>
                                     <xs:element name="IsAdded" minOccurs="0"/>

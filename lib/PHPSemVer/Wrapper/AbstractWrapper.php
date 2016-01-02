@@ -96,10 +96,46 @@ abstract class AbstractWrapper
                 $tree = $parser->parse(file_get_contents($sourceFile));
                 $tree = $nameResolver->traverse($tree);
 
-                $dataTree = array_merge($dataTree, $tree);
+                $dataTree = $this->mergeTrees($dataTree, $tree);
             } catch (Error $e) {
                 $e->setRawMessage($e->getRawMessage() . ' in file ' . $sourceFile);
                 throw $e;
+            }
+        }
+
+        return $dataTree;
+    }
+
+    /**
+     * Merge two Node trees.
+     *
+     * @param $tree
+     * @param $dataTree
+     *
+     * @return mixed
+     */
+    protected function mergeTrees($dataTree, $tree)
+    {
+        foreach ($tree as $key => $node) {
+            if ( ! isset( $dataTree[$key] )) {
+                $dataTree[$key] = $node;
+            }
+
+            foreach ($node->getSubNodeNames() as $subNode) {
+                if ( ! isset( $dataTree[$key]->$subNode )) {
+                    $dataTree[$key]->$subNode = $node->$subNode;
+                }
+
+                if ( ! is_array($dataTree[$key]->$subNode)
+                     && ! is_array($node->$subNode)
+                ) {
+                    continue;
+                }
+
+                $dataTree[$key]->$subNode = array_merge(
+                    (array) $dataTree[$key]->$subNode,
+                    (array) $node->$subNode
+                );
             }
         }
 

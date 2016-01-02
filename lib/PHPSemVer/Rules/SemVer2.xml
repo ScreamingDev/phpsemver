@@ -65,6 +65,11 @@
     </RuleSet>
     <RuleSet name="patch">
         <Trigger>
+            <Classes>
+                <Methods>
+                    <BodyChanged />
+                </Methods>
+            </Classes>
             <Functions>
                 <BodyChanged />
             </Functions>
