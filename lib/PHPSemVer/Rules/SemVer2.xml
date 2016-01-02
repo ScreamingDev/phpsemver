@@ -53,6 +53,7 @@
             <Classes>
                 <IsAdded />
                 <Methods>
+                    <ReturnTypeChanged />
                     <IsAdded />
                 </Methods>
             </Classes>
