@@ -49,7 +49,7 @@ class Directory extends AbstractWrapper
                         continue;
                     }
 
-                    if (false !== strpos($single[0], $pattern)) {
+                    if (preg_match($pattern, $single[0])) {
                         continue 2;
                     }
 

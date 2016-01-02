@@ -31,7 +31,12 @@ class DirectoryTest extends Abstract_TestCase
 
         // And ignore all files containing "ignoreMe"
         $regexp = '@ignoreMe@';
-        $fileWrapper->setExcludePattern($regexp);
+        $fileWrapper->setExcludePattern(
+            [
+                $regexp,
+                '',
+            ]
+        );
 
         // And fetch all file names
         $allFileNames = $fileWrapper->getAllFileNames();
