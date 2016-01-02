@@ -88,11 +88,6 @@ abstract class AbstractCommand extends Command
         return parent::getApplication();
     }
 
-    public function getPrdPath()
-    {
-        return $this->getInput()->getOption( 'prd-path' );
-    }
-
     /**
      * Get input interface.
      *

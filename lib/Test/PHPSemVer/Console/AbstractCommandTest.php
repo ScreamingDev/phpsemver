@@ -4,10 +4,21 @@ namespace Test\PHPSemVer\Console;
 
 
 use PHPSemVer\Console\AbstractCommand;
+use PHPSemVer\Console\Application;
 
 class AbstractCommandTest extends \PHPUnit_Framework_TestCase
 {
-    public function testSomething()
+    public function testContainsApplication()
+    {
+        $subject = new AbstractCommandTest_Subject();
+        $app = new Application();
+        $app->addCommands([$subject]);
+
+        $this->assertNotNull($subject->getApplication());
+        $this->assertInstanceOf('PHPSemVer\\Console\\Application', $subject->getApplication());
+    }
+
+    public function testDebugMessagesCanBeFormatted()
     {
         $subject = new AbstractCommandTest_Subject();
 
