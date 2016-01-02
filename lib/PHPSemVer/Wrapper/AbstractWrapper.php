@@ -1,18 +1,37 @@
 <?php
+/**
+ * Abstract wrapper.
+ *
+ * LICENSE: This source file is subject to the MIT license
+ * that is available through the world-wide-web at the following URI:
+ * https://opensource.org/licenses/MIT. If you did not receive a copy
+ * of the PHP License and are unable to obtain it through the web, please send
+ * a note to pretzlaw@gmail.com so we can mail you a copy immediately.
+ *
+ * @author    Mike Pretzlaw <pretzlaw@gmail.com>
+ * @copyright 2015 Mike Pretzlaw
+ * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.0.0/LICENSE.md MIT License
+ * @link      https://github.com/sourcerer-mike/phpsemver/
+ */
 
 namespace PHPSemVer\Wrapper;
 
-use PDepend\Source\Language\PHP\PHPBuilder;
-use PDepend\Source\Language\PHP\PHPParserGeneric;
-use PDepend\Source\Language\PHP\PHPTokenizerInternal;
-use PDepend\Source\Parser\ParserException;
-use PDepend\Util\Cache\CacheFactory;
-use PDepend\Util\Configuration;
-use PhpParser\Lexer\Emulative;
+use PhpParser\Error;
+use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitor\NameResolver;
 use PhpParser\Parser;
-use PHPSemVer\DataTree\DataNode;
-use PHPSemVer\DataTree\Importer\NikicParser;
+use PhpParser\ParserFactory;
+use PHPSemVer\DataTree\Importer\KeyVisitor;
+use PHPSemVer\DataTree\Importer\ParentVisitor;
 
+/**
+ * Basic functionality for wrapper.
+ *
+ * @author    Mike Pretzlaw <pretzlaw@gmail.com>
+ * @copyright 2015 Mike Pretzlaw
+ * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.0.0/LICENSE.md MIT License
+ * @link      https://github.com/sourcerer-mike/phpsemver/
+ */
 abstract class AbstractWrapper
 {
     protected $_base;
@@ -30,22 +49,23 @@ abstract class AbstractWrapper
         $this->_base = $base;
     }
 
-    public function getAllPaths()
+    abstract public function getAllFileNames();
+
+    public function getExcludePattern()
     {
-        $allPaths = array();
-
-        foreach ($this->getAllFileNames() as $fileName) {
-            $allPaths[$fileName] = $this->getBasePath().$fileName;
-        }
-
-        return $allPaths;
+        return (array)$this->excludePattern;
     }
 
-    abstract public function getAllFileNames();
+    public function setExcludePattern($pattern)
+    {
+        $this->excludePattern = $pattern;
+    }
 
     abstract public function getBasePath();
 
     /**
+     * Get version.
+     *
      * @return mixed
      */
     public function getBase()
@@ -57,11 +77,14 @@ abstract class AbstractWrapper
     {
         ini_set('xdebug.max_nesting_level', 3000);
 
-        $parser = new Parser(new Emulative);
+        $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP5);
 
-        $translator = new NikicParser();
-        $dataTree   = new DataNode();
+        $dataTree = [];
 
+        $nameResolver = new NodeTraverser();
+        $nameResolver->addVisitor(new NameResolver);
+        $nameResolver->addVisitor(new ParentVisitor());
+        $nameResolver->addVisitor(new KeyVisitor());
         foreach ($this->getAllFileNames() as $sourceFile) {
             if ( ! preg_match('/\.php$/i', $sourceFile)) {
                 continue;
@@ -69,64 +92,53 @@ abstract class AbstractWrapper
 
             $sourceFile = realpath($sourceFile);
 
-            $translator->importStmts(
-                $parser->parse(file_get_contents($sourceFile)),
-                $dataTree
-            );
+            try {
+                $tree = $parser->parse(file_get_contents($sourceFile));
+                $tree = $nameResolver->traverse($tree);
+
+                $dataTree = $this->mergeTrees($dataTree, $tree);
+            } catch (Error $e) {
+                $e->setRawMessage($e->getRawMessage() . ' in file ' . $sourceFile);
+                throw $e;
+            }
         }
 
         return $dataTree;
     }
 
     /**
-     * @param $tokenizer
-     * @param $builder
-     * @param $cache
+     * Merge two Node trees.
      *
-     * @return PHPParserGeneric
-     */
-    public function getParser($tokenizer, $builder, $cache)
-    {
-        return new PHPParserGeneric($tokenizer, $builder, $cache);
-    }
-
-    /**
+     * @param $tree
+     * @param $dataTree
+     *
      * @return mixed
      */
-    public function getParserExceptions()
+    protected function mergeTrees($dataTree, $tree)
     {
-        return $this->_parserExceptions;
-    }
+        foreach ($tree as $key => $node) {
+            if ( ! isset( $dataTree[$key] )) {
+                $dataTree[$key] = $node;
+            }
 
-    public function setExcludePattern($pattern)
-    {
-        $this->excludePattern = $pattern;
-    }
+            foreach ($node->getSubNodeNames() as $subNode) {
+                if ( ! isset( $dataTree[$key]->$subNode )) {
+                    $dataTree[$key]->$subNode = $node->$subNode;
+                }
 
-    public function getExcludePattern()
-    {
-        return (array) $this->excludePattern;
-    }
+                if ( ! is_array($dataTree[$key]->$subNode)
+                     && ! is_array($node->$subNode)
+                ) {
+                    continue;
+                }
 
-    protected function _getCache($key = null)
-    {
-        return $this->_getCacheFactory()->create($key);
-    }
-
-    /**
-     * @return CacheFactory
-     */
-    protected function _getCacheFactory()
-    {
-        if ( ! $this->_cacheFactory) {
-            $settings                = new \stdClass();
-            $settings->cache         = new \stdClass();
-            $settings->cache->driver = 'memory';
-            $config                  = new Configuration($settings);
-
-            $this->_cacheFactory = new CacheFactory($config);
+                $dataTree[$key]->$subNode = array_merge(
+                    (array) $dataTree[$key]->$subNode,
+                    (array) $node->$subNode
+                );
+            }
         }
 
-        return $this->_cacheFactory;
+        return $dataTree;
     }
 }
