@@ -64,7 +64,11 @@
         </Trigger>
     </RuleSet>
     <RuleSet name="patch">
-
+        <Trigger>
+            <Functions>
+                <BodyChanged />
+            </Functions>
+        </Trigger>
     </RuleSet>
     <Filter>
         <Blacklist>
