@@ -70,11 +70,4 @@
             </Functions>
         </Trigger>
     </RuleSet>
-    <Filter>
-        <Blacklist>
-            <Pattern>@vendor/.*@</Pattern>
-            <Pattern>@lib/Test/.*@</Pattern>
-            <Pattern>@spec/.*@</Pattern>
-        </Blacklist>
-    </Filter>
 </phpsemver>
