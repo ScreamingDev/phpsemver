@@ -162,14 +162,14 @@ class CompareCommand extends AbstractCommand {
         $prevTree = $this->parseFiles($previousWrapper, $output, $input->getArgument('previous') . ': ');
         $newTree  = $this->parseFiles($latestWrapper, $output, $input->getArgument('latest') . ': ');
 
-        $output->write('Comparing ...');
+        $output->write('');
         $time = microtime(true);
 
         $environment->compareTrees($prevTree, $newTree);
 
-        $output->writeln(
+        $this->verbose(
             sprintf(
-                "\rComapred within %0.2f seconds",
+                "\rCompared within %0.2f seconds",
                 microtime(true) - $time
             )
         );
@@ -177,13 +177,13 @@ class CompareCommand extends AbstractCommand {
         $this->printTable($input, $output, $environment);
 
         $output->writeln('');
-        $output->writeln(
+        $this->verbose(
             sprintf(
                 'Total time: %.2f',
                 microtime(true) - $totalTime
             )
         );
-        $output->writeln('');
+        $this->verbose('');
     }
 
 	/**
@@ -197,10 +197,10 @@ class CompareCommand extends AbstractCommand {
 	 */
     protected function parseFiles($wrapper, $output, $prefix)
     {
-        $output->write($prefix . 'Collection files ...');
+        $this->verbose($prefix . 'Fetching files ...');
         $time       = microtime(true);
         $fileAmount = count($wrapper->getAllFileNames());
-        $output->writeln(
+        $this->verbose(
             sprintf(
                 "\r" . $prefix . "Collected %d files in %0.2f seconds.",
                 $fileAmount,
@@ -208,20 +208,13 @@ class CompareCommand extends AbstractCommand {
             )
         );
 
-        $output->write($prefix . 'Parsing ' . $fileAmount . ' files ');
-
-	    if ($output->isDebug()) {
-		    $output->write(
-			    'in ' . $wrapper->getBasePath()
-		    );
-	    }
-
-	    $output->writeln('');
+        $this->verbose($prefix . 'Parsing ' . $fileAmount . ' files ');
+	    $this->debug('  in ' . $wrapper->getBasePath());
 
         $time     = microtime(true);
         $dataTree = $wrapper->getDataTree();
 
-	    $output->writeln(
+	    $this->verbose(
 		    sprintf(
 			    $prefix . "Parsed %d files in %0.2f seconds.",
 			    $fileAmount,

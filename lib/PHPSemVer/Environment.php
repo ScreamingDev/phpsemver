@@ -97,11 +97,9 @@ class Environment
                     continue;
                 }
 
-                if ($singleTrigger->handle($subject, $old, $new)) {
-                    continue;
-                }
+                $singleTrigger->handle($subject, $old, $new);
 
-                if ( ! $singleTrigger->hasFailed()) {
+                if ( ! $singleTrigger->isTriggered()) {
                     continue;
                 }
 

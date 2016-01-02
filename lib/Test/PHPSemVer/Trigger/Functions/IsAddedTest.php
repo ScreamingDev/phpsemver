@@ -30,7 +30,7 @@ class IsAddedTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue($test->handle($func, $old, $new));
 
-        $this->assertTrue($test->hasFailed());
+        $this->assertTrue($test->isTriggered());
 
         $this->assertInstanceOf(
             'PHPSemVer\Constraints\FailedConstraint',

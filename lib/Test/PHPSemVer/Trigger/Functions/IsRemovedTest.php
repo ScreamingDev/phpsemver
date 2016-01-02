@@ -33,7 +33,7 @@ class IsRemovedTest extends \PHPUnit_Framework_TestCase
             $test->handle($func, $old, $new)
         );
 
-        $this->assertTrue($test->hasFailed());
+        $this->assertTrue($test->isTriggered());
 
         $this->assertInstanceOf(
             'PHPSemVer\Constraints\FailedConstraint',

@@ -22,6 +22,7 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Function_;
 use PHPSemVer\Constraints\Contains;
 use PHPSemVer\Constraints\FailedConstraint;
+use PHPSemVer\Trigger\AbstractTrigger;
 
 /**
  * Check if class is removed.
@@ -31,10 +32,8 @@ use PHPSemVer\Constraints\FailedConstraint;
  * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.0.0/LICENSE.md MIT License
  * @link      https://github.com/sourcerer-mike/phpsemver/
  */
-class IsRemoved
+class IsRemoved extends AbstractTrigger
 {
-    public $lastException;
-
     public function canHandle($subject)
     {
         return ( $subject instanceof Function_ );
@@ -64,10 +63,5 @@ class IsRemoved
         }
 
         return false;
-    }
-
-    public function hasFailed()
-    {
-        return ( null != $this->lastException );
     }
 }

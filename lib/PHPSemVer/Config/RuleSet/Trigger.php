@@ -19,6 +19,7 @@ namespace PHPSemVer\Config\RuleSet;
 
 use PHPSemVer\AbstractConfig;
 use PHPSemVer\Config;
+use PHPSemVer\Trigger\AbstractTrigger;
 
 /**
  * Wrapper for the config node "RuleSet/Trigger".
@@ -35,6 +36,11 @@ class Trigger extends AbstractConfig
     const XPATH = '//PHPSemVer/RuleSet/Trigger';
     protected $instances = null;
 
+    /**
+     * Get all trigger instances from the config.
+     *
+     * @return AbstractTrigger[]
+     */
     public function getInstances()
     {
         if (null === $this->instances) {
