@@ -79,13 +79,6 @@ class CompareCommand extends AbstractCommand {
 		);
 
 		$this->addOption(
-			'print-assertion',
-			null,
-			InputOption::VALUE_NONE,
-			'Print which assertion caused that warning.'
-		);
-
-		$this->addOption(
 			'ruleSet',
 			'R',
 			InputArgument::OPTIONAL,
@@ -275,21 +268,16 @@ class CompareCommand extends AbstractCommand {
         $table   = new Table($output);
         $headers = array('Level', 'Message');
 
-        if ($input->getOption('print-assertion')) {
-            $headers[] = 'Assertion';
-        }
-
         $table->setHeaders($headers);
 
         foreach ($environment->getConfig()->ruleSet() as $ruleSet) {
             foreach ($ruleSet->getErrorMessages() as $message) {
-                $row = array($ruleSet->getName(), $message->getMessage(),);
-
-                if ($input->getOption('print-assertion')) {
-                    $row[] = $message->getRule();
-                }
-
-                $table->addRow($row);
+                $table->addRow(
+	                [
+		                $ruleSet->getName(),
+		                $message->getMessage(),
+	                ]
+                );
             }
         }
 
