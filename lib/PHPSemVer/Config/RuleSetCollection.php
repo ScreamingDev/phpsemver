@@ -17,9 +17,7 @@
 
 namespace PHPSemVer\Config;
 
-use PHPSemVer\AbstractConfig;
 use PHPSemVer\Config;
-use Traversable;
 
 /**
  * Collection of rule sets.

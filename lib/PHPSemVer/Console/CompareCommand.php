@@ -86,10 +86,10 @@ class CompareCommand extends AbstractCommand {
 		);
 
 		$this->addOption(
-			'ruleset',
+			'ruleSet',
 			'R',
 			InputArgument::OPTIONAL,
-			'A ruleset (eg. "semver2.0")',
+			'A predefined rule set or XML file.',
 			'SemVer2'
 		);
 
@@ -119,10 +119,10 @@ class CompareCommand extends AbstractCommand {
 			$input->getArgument( 'latest' ),
 			$input->getOption( 'type' ),
 			$input->getArgument( 'previous' ),
-			$input->getOption( 'ruleset' )
+			$input->getOption( 'ruleSet' )
 		);
 
-		$xmlFile = $this->resolveConfigFile($input->getOption('ruleset'));
+		$xmlFile = $this->resolveConfigFile($input->getOption('ruleSet'));
 
 		$this->debug('Using config-file '.$xmlFile);
 
@@ -159,8 +159,8 @@ class CompareCommand extends AbstractCommand {
 
         $this->appendIgnorePattern($xmlFile, $latestWrapper, $previousWrapper);
 
-        $prevTree = $this->parseFiles($previousWrapper, $output, $input->getArgument('previous') . ': ');
-        $newTree  = $this->parseFiles($latestWrapper, $output, $input->getArgument('latest') . ': ');
+        $prevTree = $this->parseFiles($previousWrapper, $input->getArgument('previous') . ': ');
+        $newTree  = $this->parseFiles($latestWrapper, $input->getArgument('latest') . ': ');
 
         $output->write('');
         $time = microtime(true);
@@ -190,12 +190,11 @@ class CompareCommand extends AbstractCommand {
 	 * Parse files within a wrapper.
 	 *
 	 * @param AbstractWrapper $wrapper
-	 * @param OutputInterface $output
 	 * @param string          $prefix
 	 *
 	 * @return mixed
 	 */
-    protected function parseFiles($wrapper, $output, $prefix)
+    protected function parseFiles($wrapper, $prefix)
     {
         $this->verbose($prefix . 'Fetching files ...');
         $time       = microtime(true);
@@ -309,7 +308,7 @@ class CompareCommand extends AbstractCommand {
 	protected function printConfig(Config $config, OutputInterface $output)
 	{
 		foreach ($config->ruleSet()->getChildren() as $ruleSet) {
-			$output->writeln('Using ruleset '.$ruleSet->getName());
+			$output->writeln('Using rule set '.$ruleSet->getName());
 
 			if ( ! $output->isDebug()) {
 				continue;
@@ -397,6 +396,9 @@ class CompareCommand extends AbstractCommand {
 
 	/**
 	 * Resolve path to rule set XML.
+	 *
+	 * @param string $ruleSet Path to XML config file.
+	 *
 	 * @return string
 	 */
 	protected function resolveConfigFile($ruleSet)

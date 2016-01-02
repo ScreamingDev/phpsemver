@@ -21,7 +21,7 @@ use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
 
 /**
- * Connect statments with their parent.
+ * Connect statements with their parent.
  *
  * @author    Mike Pretzlaw <pretzlaw@gmail.com>
  * @copyright 2016 Mike Pretzlaw

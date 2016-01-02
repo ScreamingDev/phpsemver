@@ -18,7 +18,6 @@ namespace PHPSemVer\Constraints;
 
 
 use PhpParser\Node\Stmt;
-use PhpParser\Node\Stmt\Class_;
 
 /**
  * Check if statement exists in list via name.

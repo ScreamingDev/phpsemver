@@ -18,9 +18,7 @@
 namespace PHPSemVer\Trigger\Functions;
 
 
-use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Function_;
-use PHPSemVer\Constraints\Contains;
 use PHPSemVer\Constraints\FailedConstraint;
 use PHPSemVer\Trigger\AbstractTrigger;
 

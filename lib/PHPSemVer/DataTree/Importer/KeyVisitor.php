@@ -42,7 +42,7 @@ class KeyVisitor extends NodeVisitorAbstract
     /**
      * Turn numbers into unique string.
      *
-     * @param array $nodes
+     * @param NodeAbstract[] $nodes
      *
      * @return NodeAbstract[]
      */

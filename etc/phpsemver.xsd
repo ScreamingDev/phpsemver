@@ -46,6 +46,18 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="filter_type">
+        <xs:sequence>
+            <xs:element name="Blacklist" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Pattern" minOccurs="0"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
     <xs:complexType name="description_type">
         <xs:simpleContent>
             <xs:extension base="common_text"/>
@@ -54,8 +66,8 @@
 
     <xs:complexType name="ruleSet_type">
         <xs:sequence>
-            <xs:element name="Description" type="description_type"/>
-            <xs:element name="Trigger" type="trigger_type"/>
+            <xs:element name="Description" type="description_type" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="Trigger" type="trigger_type"minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required"/>
     </xs:complexType>
@@ -64,6 +76,7 @@
         <xs:sequence>
             <xs:element name="Description" type="description_type" maxOccurs="1"/>
             <xs:element name="RuleSet" type="ruleSet_type" maxOccurs="unbounded"/>
+            <xs:element name="Filter" type="filter_type"/>
         </xs:sequence>
         <xs:attribute name="title" type="xs:string"/>
     </xs:complexType>

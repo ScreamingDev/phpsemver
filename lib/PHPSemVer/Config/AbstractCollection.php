@@ -16,6 +16,8 @@
 
 namespace PHPSemVer\Config;
 
+use Traversable;
+
 /**
  * Base for configuration collections.
  *

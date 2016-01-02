@@ -119,6 +119,60 @@ class GitTest extends Abstract_TestCase
 
     }
 
+    /**
+     * @param $data
+     *
+     * @dataProvider getGitLsFilesOutputData
+     */
+    public function testItCanFilterSomeFileNames( $data )
+    {
+        $gitWrapper = $this->getMockBuilder( '\\GitWrapper\\GitWrapper' )
+                           ->disableOriginalConstructor()
+                           ->setMethods( array( 'run' ) )
+                           ->getMock();
+
+        $terminalOutput = implode( PHP_EOL, $data );
+        $gitWrapper->expects( $this->any() )
+                   ->method( 'run' )
+                   ->withAnyParameters()
+                   ->willReturn( $terminalOutput );
+
+        $command = GitCommand::getInstance();
+        $command->setFlag( 'version' )
+                ->setDirectory( '.' );
+
+        $this->assertSame( $terminalOutput, $gitWrapper->run( $command ) );
+
+        $git = $this->getTargetMockBuilder()
+                    ->disableOriginalConstructor()
+                    ->setMethods( array( '_getGitWrapper' ) )
+                    ->getMock();
+
+        $git->expects( $this->any() )
+            ->method( '_getGitWrapper' )
+            ->willReturn( $gitWrapper );
+
+        // assert empty dir
+        $fs = new Filesystem();
+        $fs->remove($git->getTempPath());
+
+        // create directory
+        mkdir( $git->getTempPath(), 0777, true );
+
+        // set wrapper for temporary path
+        $reflectObject = new \ReflectionObject( $git );
+        $property      = $reflectObject->getProperty( '_fileWrapper' );
+        $property->setAccessible( true );
+        $property->setValue( $git, new Directory( $git->getTempPath() ) );
+
+        $git->setExcludePattern(['@.*xml$@i']);
+
+        array_pop($data);
+
+        $this->assertEquals( $data, array_keys( $git->getAllFileNames() ) );
+
+    }
+
     public function testItSupportsTheTemporaryPathForAFile()
     {
         $git = $this->getTargetInstance( 'HEAD' );

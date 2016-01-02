@@ -18,9 +18,9 @@
 namespace PHPSemVer\Trigger\Classes\Methods;
 
 
-use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\ClassMethod;
-use PHPSemVer\Constraints\Contains;
+use PhpParser\NodeAbstract;
 use PHPSemVer\Constraints\FailedConstraint;
 use PHPSemVer\Trigger\AbstractTrigger;
 
@@ -34,6 +34,14 @@ use PHPSemVer\Trigger\AbstractTrigger;
  */
 class IsAdded extends AbstractTrigger
 {
+    /**
+     * Check if class method has been added.
+     *
+     * @param null $old
+     * @param ClassMethod $new
+     *
+     * @return bool|null
+     */
     public function handle($old, $new)
     {
         $this->lastException = null;

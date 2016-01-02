@@ -19,7 +19,6 @@ namespace PHPSemVer;
 
 use PHPSemVer\Config\RuleSet;
 use PHPSemVer\Config\RuleSetCollection;
-use PHPSemVer\DataTree\DataNode;
 
 /**
  * Environment to work with.
@@ -124,7 +123,7 @@ class Environment
     /**
      * Get environment configuration.
      *
-     * @return AbstractConfig
+     * @return Config
      */
     public function getConfig()
     {

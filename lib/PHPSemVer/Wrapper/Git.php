@@ -18,7 +18,6 @@ namespace PHPSemVer\Wrapper;
 
 use GitWrapper\GitException;
 use GitWrapper\GitWrapper;
-use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Wrapper for GIT context.

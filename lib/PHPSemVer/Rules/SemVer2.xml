@@ -2,7 +2,7 @@
 <phpsemver
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="../../../etc/phpsemver.xsd"
-        title="Semantic Versioning 2.0.0">
+        title="Semantic Versions 2.0.0">
     <Description>
         Given a version number MAJOR.MINOR.PATCH, increment the:
         <br/>

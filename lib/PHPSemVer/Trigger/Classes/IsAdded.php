@@ -19,7 +19,6 @@ namespace PHPSemVer\Trigger\Classes;
 
 
 use PhpParser\Node\Stmt\Class_;
-use PHPSemVer\Constraints\Contains;
 use PHPSemVer\Constraints\FailedConstraint;
 use PHPSemVer\Trigger\AbstractTrigger;
 

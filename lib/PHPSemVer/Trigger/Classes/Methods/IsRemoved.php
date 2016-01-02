@@ -18,9 +18,8 @@
 namespace PHPSemVer\Trigger\Classes\Methods;
 
 
-use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
-use PHPSemVer\Constraints\Contains;
+use PhpParser\NodeAbstract;
 use PHPSemVer\Constraints\FailedConstraint;
 use PHPSemVer\Trigger\AbstractTrigger;
 
@@ -34,6 +33,14 @@ use PHPSemVer\Trigger\AbstractTrigger;
  */
 class IsRemoved extends AbstractTrigger
 {
+    /**
+     * Check if class method has been removed.
+     *
+     * @param ClassMethod $old
+     * @param null $new
+     *
+     * @return bool|null
+     */
     public function handle($old, $new)
     {
         $this->lastException = null;

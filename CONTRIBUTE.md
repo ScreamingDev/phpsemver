@@ -35,6 +35,7 @@ Are made using semantic versions.
 Those releases are incompatible with their previous.
 Migration is only guaranteed from one specific minor version.
 
+- [ ] Issues: There must be no bug remaining in the according milestone.
 - [ ] Doc: There should be an API documentation.
 - [ ] PHPUnit: No incomplete tests
 - [ ] PHPUnit: No skipped tests

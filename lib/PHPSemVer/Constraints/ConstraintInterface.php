@@ -17,7 +17,7 @@
 namespace PHPSemVer\Constraints;
 
 /**
- * Public interface for all contraints.
+ * Public interface for all constraints.
  *
  * @author    Mike Pretzlaw <pretzlaw@gmail.com>
  * @copyright 2015 Mike Pretzlaw
