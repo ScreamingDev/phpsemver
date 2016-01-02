@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-
     <!-- Complex types -->
     <xs:complexType name="common_text" abstract="true">
         <xs:sequence>
@@ -14,13 +13,7 @@
             <xs:element name="Classes" minOccurs="0">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="Methods" minOccurs="0">
-                            <xs:complexType>
-                                <xs:sequence>
-                                    <xs:element name="IsRemoved" minOccurs="0"/>
-                                </xs:sequence>
-                            </xs:complexType>
-                        </xs:element>
+                        <xs:element name="IsAdded" minOccurs="0"/>
                         <xs:element name="IsRemoved" minOccurs="0"/>
                     </xs:sequence>
                 </xs:complexType>
@@ -35,6 +28,7 @@
             <xs:element name="Functions" minOccurs="0">
                 <xs:complexType>
                     <xs:sequence>
+                        <xs:element name="IsAdded" minOccurs="0"/>
                         <xs:element name="IsRemoved" minOccurs="0"/>
                     </xs:sequence>
                 </xs:complexType>
@@ -42,7 +36,7 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="description_type" xml:base="common_text">
+    <xs:complexType name="description_type">
         <xs:simpleContent>
             <xs:extension base="common_text"/>
         </xs:simpleContent>
