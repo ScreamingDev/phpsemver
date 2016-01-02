@@ -16,17 +16,12 @@
 
 namespace PHPSemVer\Wrapper;
 
-use PDepend\Source\Language\PHP\PHPParserGeneric;
-use PDepend\Util\Cache\CacheFactory;
-use PDepend\Util\Configuration;
 use PhpParser\Error;
 use PhpParser\Lexer\Emulative;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\NameResolver;
 use PhpParser\Parser;
-use PHPSemVer\DataTree\DataNode;
 use PHPSemVer\DataTree\Importer\KeyVisitor;
-use PHPSemVer\DataTree\Importer\NikicParser;
 use PHPSemVer\DataTree\Importer\ParentVisitor;
 
 /**
@@ -109,22 +104,6 @@ abstract class AbstractWrapper
         }
 
         return $dataTree;
-    }
-
-    /**
-     * Get parser for files.
-     *
-     * @param $tokenizer
-     * @param $builder
-     * @param $cache
-     *
-     * @deprecated 3.0.0
-     *
-     * @return PHPParserGeneric
-     */
-    public function getParser($tokenizer, $builder, $cache)
-    {
-        return new PHPParserGeneric($tokenizer, $builder, $cache);
     }
 
     /**
