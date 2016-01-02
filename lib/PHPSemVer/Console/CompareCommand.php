@@ -157,8 +157,6 @@ class CompareCommand extends AbstractCommand {
 
 		$environment = $this->makeEnvironment($config);
 
-        $this->appendIgnorePattern($xmlFile, $latestWrapper, $previousWrapper);
-
         $prevTree = $this->parseFiles($previousWrapper, $input->getArgument('previous') . ': ');
         $newTree  = $this->parseFiles($latestWrapper, $input->getArgument('latest') . ': ');
 
