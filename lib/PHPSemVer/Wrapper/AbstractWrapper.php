@@ -105,14 +105,4 @@ abstract class AbstractWrapper
 
         return $dataTree;
     }
-
-    /**
-     * Get all errors.
-     *
-     * @return mixed
-     */
-    public function getParserExceptions()
-    {
-        return $this->_parserExceptions;
-    }
 }

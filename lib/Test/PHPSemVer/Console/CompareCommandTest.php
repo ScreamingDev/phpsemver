@@ -42,8 +42,8 @@ class CompareCommandTest extends \PHPUnit_Framework_TestCase
             array(
                 'command'  => $command->getName(),
                 '--type'   => 'directory',
-                'previous' => dirname(__DIR__),
-                'latest'   => dirname(__DIR__),
+                'previous' => __DIR__,
+                'latest'   => __DIR__,
             ),
             [
                 'verbosity' => OutputInterface::VERBOSITY_DEBUG
