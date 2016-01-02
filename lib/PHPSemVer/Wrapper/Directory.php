@@ -66,10 +66,6 @@ class Directory extends AbstractWrapper
 
     public function getBasePath()
     {
-        if ( ! $this->getBase()) {
-            return '';
-        }
-
         return realpath($this->getBase()).DIRECTORY_SEPARATOR;
     }
 

@@ -3,7 +3,6 @@
 namespace Test\PHPSemVer\Wrapper;
 
 
-use Symfony\Component\Filesystem\Filesystem;
 use Test\Abstract_TestCase;
 
 class DirectoryTest extends Abstract_TestCase
