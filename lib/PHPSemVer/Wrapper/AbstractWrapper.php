@@ -17,10 +17,10 @@
 namespace PHPSemVer\Wrapper;
 
 use PhpParser\Error;
-use PhpParser\Lexer\Emulative;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\NameResolver;
 use PhpParser\Parser;
+use PhpParser\ParserFactory;
 use PHPSemVer\DataTree\Importer\KeyVisitor;
 use PHPSemVer\DataTree\Importer\ParentVisitor;
 
@@ -77,7 +77,7 @@ abstract class AbstractWrapper
     {
         ini_set('xdebug.max_nesting_level', 3000);
 
-        $parser = new Parser(new Emulative);
+        $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP5);
 
         $dataTree = [];
 

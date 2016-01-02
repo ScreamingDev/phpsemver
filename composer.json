@@ -38,10 +38,11 @@
     "cpliakas/git-wrapper": "~1.4",
     "symfony/console": "~2",
     "symfony/class-loader": "~2",
-    "nikic/php-parser": "~1"
+    "nikic/php-parser": "~2"
   },
   "config": {
     "bin-dir": "bin"
+
   },
   "autoload": {
     "psr-4": {
