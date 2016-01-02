@@ -52,7 +52,7 @@ class BodyChanged extends AbstractTrigger
             return null;
         }
 
-        if ($old->stmts == $new->stmts) {
+        if ($old->stmts === $new->stmts) {
             return false;
         }
 
