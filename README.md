@@ -2,8 +2,8 @@
 
 > Check your changes against semantic versions
 
-[![Build Status](https://travis-ci.org/sourcerer-mike/phpsemver.svg?branch=release%2F3.0.0)](https://travis-ci.org/sourcerer-mike/phpsemver)
-[![Coverage](https://codecov.io/github/sourcerer-mike/phpsemver/coverage.svg?branch=release%2F3.0.0)](http://codecov.io/github/sourcerer-mike/phpsemver?branch=release/3.0.0)
+[![Build Status](https://travis-ci.org/sourcerer-mike/phpsemver.svg?branch=master)](https://travis-ci.org/sourcerer-mike/phpsemver)
+[![Coverage](https://codecov.io/github/sourcerer-mike/phpsemver/coverage.svg?branch=master)](http://codecov.io/github/sourcerer-mike/phpsemver?branch=master)
 
 Install it via composer
 
@@ -19,16 +19,18 @@ Compare the last commit with your current work:
 
     ./bin/phpsemver compare HEAD .
     
-    +-------+-----------------------------------------------------------------+
-    | Level | Message                                                         |
-    +-------+-----------------------------------------------------------------+
-    | major | Removed class "PHPSemVer\Assertions\ErrorMessage".              |
-    | major | Removed method "PHPSemVer\Wrapper\AbstractWrapper::getBuilder". |
-    | minor | Added namespace "PHPSemVer\DataTree".                           |
-    | minor | Added class "PHPSemVer\Console\ParseCommand".                   |
-    | minor | Added method "PHPSemVer\Wrapper\AbstractWrapper::getDataTree".  |
-    +-------+-----------------------------------------------------------------+
-    Done!
+    +-------+-------------------------------------------------------------------+
+    | Level | Message                                                           |
+    +-------+-------------------------------------------------------------------+
+    | major | phpsemver_get_composer_config() removed.                          |
+    | major | PHPSemVer\Specification removed.                                  |
+    | minor | PHPSemVer\Config added.                                           |
+    | minor | PHPSemVer\Wrapper\AbstractWrapper::mergeTrees() added.            |
+    | patch | PHPSemVer\Wrapper\Directory::getAllFileNames() body changed.      |
+    | patch | PHPSemVer\Wrapper\Git::getAllFileNames() body changed.            |
+    +-------+-------------------------------------------------------------------+
+    
+    Total time: 0.94
 
 Or some version (git-tag) against the latest changes:
 
@@ -51,14 +53,19 @@ If one argument is a directory, then the system will work on the file system.
 
 Make assertions on:
 
-- Namespaces
-- Classes
-    - Added
-    - Removed
-- Methods
-    - Added
-    - Removed
 - Functions
+	- IsAdded: Check if a function is new.
+	- IsRemoved: Check if a functions is removed.
+	- BodyChanged: Check if someone changed the behaviour of a function.
+- Classes
+	- IsAdded: Check if a classes is new.
+	- IsRemoved: Check if a classes is removed.
+- Methods
+	- IsAdded: Check if a method is new.
+	- IsRemoved: Check if a method is removed.
+	- BodyChanged: Check if someone changed the behaviour of a method.
+	- ReturnTypeChanged: Watch for changed return types.
+	- ReturnTypeRemoved: Watch for incompatible changes on methods.
 
 Tells you which are major, minor or patch changes.
 
