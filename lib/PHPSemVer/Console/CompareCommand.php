@@ -355,8 +355,7 @@ class CompareCommand extends AbstractCommand {
 	 */
 	protected function makeEnvironment($config)
 	{
-		$environment = new Environment();
-		$environment->setConfig($config);
+		$environment = new Environment($config);
 
 		return $environment;
 	}

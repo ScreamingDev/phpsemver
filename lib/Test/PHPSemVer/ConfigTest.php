@@ -6,6 +6,12 @@ namespace PHPSemVer;
 
 class ConfigTest extends \PHPUnit_Framework_TestCase
 {
+    public function testGetterReturnNullWhenAttributeNotExists()
+    {
+        $config = $this->makeFull();
+
+        $this->assertNull($config->getSomeFooBarBaz());
+    }
 
     /**
      * @expectedException \DomainException

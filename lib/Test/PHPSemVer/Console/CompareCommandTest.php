@@ -7,6 +7,10 @@ use PHPSemVer\Console\Application;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 
+function testFunction() {
+    return 'to see what the parser does.';
+}
+
 class CompareCommandTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -38,8 +42,8 @@ class CompareCommandTest extends \PHPUnit_Framework_TestCase
             array(
                 'command'  => $command->getName(),
                 '--type'   => 'directory',
-                'previous' => __DIR__,
-                'latest'   => __DIR__,
+                'previous' => dirname(__DIR__),
+                'latest'   => dirname(__DIR__),
             ),
             [
                 'verbosity' => OutputInterface::VERBOSITY_DEBUG
