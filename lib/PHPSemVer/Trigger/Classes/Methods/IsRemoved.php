@@ -15,10 +15,11 @@
  */
 
 
-namespace PHPSemVer\Trigger\Classes;
+namespace PHPSemVer\Trigger\Classes\Methods;
 
 
 use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassMethod;
 use PHPSemVer\Constraints\Contains;
 use PHPSemVer\Constraints\FailedConstraint;
 use PHPSemVer\Trigger\AbstractTrigger;
@@ -33,11 +34,6 @@ use PHPSemVer\Trigger\AbstractTrigger;
  */
 class IsRemoved extends AbstractTrigger
 {
-    public function canHandle($subject)
-    {
-        return ( $subject instanceof Class_ );
-    }
-
     public function handle($old, $new)
     {
         $this->lastException = null;
@@ -52,11 +48,17 @@ class IsRemoved extends AbstractTrigger
 
         $this->lastException = new FailedConstraint(
             sprintf(
-                '%s removed.',
-                $old->namespacedName
+                '%s::%s() removed.',
+                $old->getAttribute('parent')->namespacedName,
+                $old->name
             )
         );
 
         return true;
+    }
+
+    public function canHandle($subject)
+    {
+        return ( $subject instanceof ClassMethod );
     }
 }

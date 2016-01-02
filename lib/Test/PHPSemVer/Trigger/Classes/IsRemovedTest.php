@@ -15,7 +15,7 @@ class IsRemovedTest extends \PHPUnit_Framework_TestCase
     {
         $test = new IsRemoved();
 
-        $this->assertNull($test->handle(null, [], []));
+        $this->assertNull($test->handle(null, null));
     }
 
     public function testItContainsErrorMessageWhenSubjectNotFound()
@@ -25,11 +25,11 @@ class IsRemovedTest extends \PHPUnit_Framework_TestCase
         $func                 = new Class_('some_class');
         $func->namespacedName = $func->name;
 
-        $old = [$func];
-        $new = [];
+        $old = $func;
+        $new = null;
 
         $this->assertTrue(
-            $test->handle($func, $old, $new)
+            $test->handle($old, $new)
         );
 
         $this->assertTrue($test->isTriggered());
@@ -58,9 +58,9 @@ class IsRemovedTest extends \PHPUnit_Framework_TestCase
 
         $func = new Class_('some_class');
 
-        $old = [$func];
-        $new = [$func];
+        $old = $func;
+        $new = $func;
 
-        $this->assertFalse($test->handle($func, $old, $new));
+        $this->assertFalse($test->handle($old, $new));
     }
 }

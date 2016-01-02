@@ -30,6 +30,9 @@
         <Trigger>
             <Classes>
                 <IsRemoved />
+                <Methods>
+                    <IsRemoved />
+                </Methods>
             </Classes>
             <Functions>
                 <IsRemoved />
@@ -49,6 +52,9 @@
         <Trigger>
             <Classes>
                 <IsAdded />
+                <Methods>
+                    <IsAdded />
+                </Methods>
             </Classes>
             <Functions>
                 <IsAdded />

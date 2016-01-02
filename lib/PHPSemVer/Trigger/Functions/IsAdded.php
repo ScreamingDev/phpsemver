@@ -39,29 +39,25 @@ class IsAdded extends AbstractTrigger
         return ( $subject instanceof Function_ );
     }
 
-    public function handle($subject, $old, $new)
+    public function handle($old, $new)
     {
-        if ( ! $this->canHandle($subject) ) {
-            return;
-        }
-
         $this->lastException = null;
 
-        $constraint = new Contains($subject);
-
-        try {
-            $constraint->evaluate($old);
-        } catch (FailedConstraint $e) {
-            $this->lastException = new FailedConstraint(
-                sprintf(
-                    '%s() added.',
-                    $e->getValue()->namespacedName
-                )
-            );
-
-            return true;
+        if ( ! $this->canHandle($new)) {
+            return null;
         }
 
-        return false;
+        if ($old) {
+            return false;
+        }
+
+        $this->lastException = new FailedConstraint(
+            sprintf(
+                '%s() added.',
+                $new->name
+            )
+        );
+
+        return true;
     }
 }

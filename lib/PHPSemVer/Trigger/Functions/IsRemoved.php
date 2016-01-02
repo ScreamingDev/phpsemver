@@ -39,29 +39,25 @@ class IsRemoved extends AbstractTrigger
         return ( $subject instanceof Function_ );
     }
 
-    public function handle($subject, $old, $new)
+    public function handle($old, $new)
     {
-        if ( ! $this->canHandle($subject) ) {
-            return;
-        }
-
         $this->lastException = null;
 
-        $constraint = new Contains($subject);
-
-        try {
-            $constraint->evaluate($new);
-        } catch (FailedConstraint $e) {
-            $this->lastException = new FailedConstraint(
-                sprintf(
-                    '%s() removed.',
-                    $e->getValue()->namespacedName
-                )
-            );
-
-            return true;
+        if ( ! $this->canHandle($old)) {
+            return null;
         }
 
-        return false;
+        if ($new) {
+            return false;
+        }
+
+        $this->lastException = new FailedConstraint(
+            sprintf(
+                '%s() removed.',
+                $old->name
+            )
+        );
+
+        return true;
     }
 }

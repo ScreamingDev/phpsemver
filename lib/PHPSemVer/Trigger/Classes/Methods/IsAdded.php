@@ -15,48 +15,50 @@
  */
 
 
-namespace PHPSemVer\Trigger\Classes;
+namespace PHPSemVer\Trigger\Classes\Methods;
 
 
 use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassMethod;
 use PHPSemVer\Constraints\Contains;
 use PHPSemVer\Constraints\FailedConstraint;
 use PHPSemVer\Trigger\AbstractTrigger;
 
 /**
- * Check if class is removed.
+ * Check if class is added.
  *
  * @author    Mike Pretzlaw <pretzlaw@gmail.com>
  * @copyright 2015 Mike Pretzlaw
  * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.0.0/LICENSE.md MIT License
  * @link      https://github.com/sourcerer-mike/phpsemver/
  */
-class IsRemoved extends AbstractTrigger
+class IsAdded extends AbstractTrigger
 {
-    public function canHandle($subject)
-    {
-        return ( $subject instanceof Class_ );
-    }
-
     public function handle($old, $new)
     {
         $this->lastException = null;
 
-        if ( ! $this->canHandle($old)) {
+        if ( ! $this->canHandle($new)) {
             return null;
         }
 
-        if ($new) {
+        if ($old) {
             return false;
         }
 
         $this->lastException = new FailedConstraint(
             sprintf(
-                '%s removed.',
-                $old->namespacedName
+                '%s::%s() added.',
+                $new->getAttribute('parent')->namespacedName,
+                $new->name
             )
         );
 
         return true;
+    }
+
+    public function canHandle($subject)
+    {
+        return ( $subject instanceof ClassMethod );
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Contains abstract trigger.
+ * Class for parent visitor.
  *
  * LICENSE: This source file is subject to the MIT license
  * that is available through the world-wide-web at the following URI:
@@ -14,32 +14,32 @@
  * @link      http://github.com/sourcerer-mike/phpsemver
  */
 
-namespace PHPSemVer\Trigger;
+namespace PHPSemVer\DataTree\Importer;
 
-use PHPSemVer\Constraints\FailedConstraint;
+
+use PhpParser\Node;
+use PhpParser\NodeVisitorAbstract;
 
 /**
- * Abstract trigger.
+ * Connect statments with their parent.
  *
  * @author    Mike Pretzlaw <pretzlaw@gmail.com>
  * @copyright 2016 Mike Pretzlaw
  * @license   http://github.com/sourcerer-mike/phpsemver/LICENSE.md MIT License
  * @link      http://github.com/sourcerer-mike/phpsemver
  */
-abstract class AbstractTrigger
-{
-    /**
-     * Contains the last thrown exception.
-     *
-     * @var null|FailedConstraint
-     */
-    public $lastException;
-
-    abstract public function canHandle($subject);
-    abstract public function handle($old, $new);
-
-    public function isTriggered()
-    {
-        return ( null != $this->lastException );
+class ParentVisitor extends NodeVisitorAbstract {
+    private $stack;
+    public function beginTraverse(array $nodes) {
+        $this->stack = [];
+    }
+    public function enterNode(Node $node) {
+        if (!empty($this->stack)) {
+            $node->setAttribute('parent', $this->stack[count($this->stack)-1]);
+        }
+        $this->stack[] = $node;
+    }
+    public function leaveNode(Node $node) {
+        array_pop($this->stack);
     }
 }

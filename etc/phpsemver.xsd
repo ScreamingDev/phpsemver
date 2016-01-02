@@ -16,6 +16,14 @@
                         <xs:element name="IsAdded" minOccurs="0"/>
                         <xs:element name="IsRemoved" minOccurs="0"/>
                     </xs:sequence>
+                    <xs:element name="Methods" minOccurs="0">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="IsAdded" minOccurs="0"/>
+                                <xs:element name="IsRemoved" minOccurs="0"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
                 </xs:complexType>
             </xs:element>
             <xs:element name="Namespaces" minOccurs="0">

@@ -25,7 +25,9 @@ use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\NameResolver;
 use PhpParser\Parser;
 use PHPSemVer\DataTree\DataNode;
+use PHPSemVer\DataTree\Importer\KeyVisitor;
 use PHPSemVer\DataTree\Importer\NikicParser;
+use PHPSemVer\DataTree\Importer\ParentVisitor;
 
 /**
  * Basic functionality for wrapper.
@@ -82,11 +84,12 @@ abstract class AbstractWrapper
 
         $parser = new Parser(new Emulative);
 
-        $translator = new NikicParser();
-        $dataTree   = new DataNode();
+        $dataTree = [];
 
         $nameResolver = new NodeTraverser();
         $nameResolver->addVisitor(new NameResolver);
+        $nameResolver->addVisitor(new ParentVisitor());
+        $nameResolver->addVisitor(new KeyVisitor());
         foreach ($this->getAllFileNames() as $sourceFile) {
             if ( ! preg_match('/\.php$/i', $sourceFile)) {
                 continue;
@@ -98,7 +101,7 @@ abstract class AbstractWrapper
                 $tree = $parser->parse(file_get_contents($sourceFile));
                 $tree = $nameResolver->traverse($tree);
 
-                $translator->importStmts($tree, $dataTree);
+                $dataTree = array_merge($dataTree, $tree);
             } catch (Error $e) {
                 $e->setRawMessage($e->getRawMessage() . ' in file ' . $sourceFile);
                 throw $e;

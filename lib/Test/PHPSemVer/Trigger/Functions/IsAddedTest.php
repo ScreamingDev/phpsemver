@@ -15,7 +15,7 @@ class IsAddedTest extends \PHPUnit_Framework_TestCase
     {
         $test = new IsAdded();
 
-        $this->assertNull($test->handle(null, [], []));
+        $this->assertNull($test->handle(null, null));
     }
 
     public function testItContainsErrorMessageWhenSubjectFound()
@@ -25,10 +25,10 @@ class IsAddedTest extends \PHPUnit_Framework_TestCase
         $func                 = new Function_('some_func');
         $func->namespacedName = $func->name;
 
-        $old = [];
-        $new = [$func];
+        $old = null;
+        $new = $func;
 
-        $this->assertTrue($test->handle($func, $old, $new));
+        $this->assertTrue($test->handle($old, $new));
 
         $this->assertTrue($test->isTriggered());
 
@@ -56,8 +56,8 @@ class IsAddedTest extends \PHPUnit_Framework_TestCase
 
         $func = new Function_('some_func');
 
-        $old = [$func];
-        $new = [$func];
+        $old = $func;
+        $new = $func;
 
         $this->assertFalse($test->handle($func, $old, $new));
     }

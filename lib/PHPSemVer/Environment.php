@@ -48,38 +48,50 @@ class Environment
     /**
      * Compare two parsed AST.
      *
-     * @param DataNode $old
-     * @param DataNode $new
+     * @param array $previous
+     * @param array $latest
      *
      * @return null
      */
-    public function compareTrees(DataNode $old, DataNode $new)
+    public function compareTrees(array $previous, array $latest)
     {
-        $this->iterate($old, $old, $new);
-        $this->iterate($new, $old, $new);
+        $sum = array_merge(
+            array_keys($previous),
+            array_keys($latest)
+        );
 
-        foreach ($old->namespaces as $key => $namespace) {
-            if ( ! isset( $new->namespaces[$key] )) {
-                $new->namespaces[$key] = new DataNode();
+        $sum = array_filter($sum, 'is_string');
+        $sum = array_unique($sum);
+        asort($sum);
+
+        foreach ($sum as $key) {
+            $old = null;
+            if (isset( $previous[$key] )) {
+                $old = $previous[$key];
             }
 
-            $this->compareTrees($namespace, $new->namespaces[$key]);
-        }
-
-        foreach ($new->namespaces as $key => $namespace) {
-            if ( isset( $old->namespaces[$key] )) {
-                continue;
+            $new = null;
+            if (isset( $latest[$key] )) {
+                $new = $latest[$key];
             }
 
-            $old->namespaces[$key] = new DataNode();
-            $this->compareTrees($old->namespaces[$key], $namespace);
+            $this->handleNode($old, $new);
+
+            if ($old && $new && isset( $old->stmts ) && isset( $new->stmts )) {
+                $this->compareTrees($old->stmts, $new->stmts);
+            }
         }
 
         return null;
     }
 
-    protected function handleNode($subject, $old, $new)
+    protected function handleNode($old, $new)
     {
+        $subject = $old;
+        if ( ! $old) {
+            $subject = $new;
+        }
+
         /* @var RuleSetCollection $ruleSetCollection */
         $ruleSetCollection = $this->getConfig()->ruleSet();
         foreach ($ruleSetCollection->getChildren() as $ruleSet) {
@@ -97,7 +109,8 @@ class Environment
                     continue;
                 }
 
-                $singleTrigger->handle($subject, $old, $new);
+                $singleTrigger->lastException = null;
+                $singleTrigger->handle($old, $new);
 
                 if ( ! $singleTrigger->isTriggered()) {
                     continue;
@@ -126,24 +139,5 @@ class Environment
     public function setConfig(AbstractConfig $config)
     {
         $this->config = $config;
-    }
-
-    private function iterate($subject, $old, $new)
-    {
-        foreach ($subject->classes as $class) {
-            $this->handleNode($class, $old->classes, $new->classes);
-        }
-
-        foreach ($subject->functions as $func) {
-            $this->handleNode($func, $old->functions, $new->functions);
-        }
-
-        foreach ($subject->usages as $use) {
-            $this->handleNode($use, $old->usages, $new->usages);
-        }
-
-        foreach ($subject->namespaces as $namespace) {
-            $this->handleNode($namespace, $old->namespaces, $new->namespaces);
-        }
     }
 }
