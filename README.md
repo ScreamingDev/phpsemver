@@ -1,4 +1,4 @@
-# PHPSemVer 2
+# PHPSemVer
 
 > Check your changes against semantic versions
 
