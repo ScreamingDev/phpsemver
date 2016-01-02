@@ -4,10 +4,19 @@ namespace Test\PHPSemVer\Console;
 
 
 use PHPSemVer\Console\Application;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
+
+function testFunction() {
+    return 'to see what the parser does.';
+}
 
 class CompareCommandTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Unknown wrapper-type "foo"
+     */
     public function testDispatchesErrorMessageWhenWrapperDoesNotExists()
     {
         $application = new Application();
@@ -18,13 +27,8 @@ class CompareCommandTest extends \PHPUnit_Framework_TestCase
             array(
                 'command' => $command->getName(),
                 '--type'  => 'foo',
-                'HEAD^1'
+                'previous' => 'HEAD~1',
             )
-        );
-
-        $this->assertContains(
-            'Unknown wrapper',
-            $commandTester->getDisplay()
         );
     }
 
@@ -40,7 +44,10 @@ class CompareCommandTest extends \PHPUnit_Framework_TestCase
                 '--type'   => 'directory',
                 'previous' => __DIR__,
                 'latest'   => __DIR__,
-            )
+            ),
+            [
+                'verbosity' => OutputInterface::VERBOSITY_DEBUG
+            ]
         );
 
         $argument = $command->getDefinition()->getOption( 'type' );
@@ -56,7 +63,7 @@ class CompareCommandTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertContains(
-            'Done',
+            'Total time',
             $commandTester->getDisplay()
         );
     }

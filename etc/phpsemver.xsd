@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <!-- Complex types -->
+    <xs:complexType name="common_text" abstract="true">
+        <xs:sequence>
+            <xs:element name="br" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="trigger_type">
+        <xs:sequence>
+            <xs:element name="Classes" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="IsAdded" minOccurs="0"/>
+                        <xs:element name="IsRemoved" minOccurs="0"/>
+                        <xs:element name="Methods" minOccurs="0">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="BodyChanged" minOccurs="0"/>
+                                    <xs:element name="ReturnTypeChanged" minOccurs="0"/>
+                                    <xs:element name="ReturnTypeRemoved" minOccurs="0"/>
+                                    <xs:element name="IsAdded" minOccurs="0"/>
+                                    <xs:element name="IsRemoved" minOccurs="0"/>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="Namespaces" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="IsRemoved" minOccurs="0"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="Functions" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="BodyChanged" minOccurs="0"/>
+                        <xs:element name="IsAdded" minOccurs="0"/>
+                        <xs:element name="IsRemoved" minOccurs="0"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="filter_type">
+        <xs:sequence>
+            <xs:element name="Blacklist" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Pattern" minOccurs="0"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="description_type">
+        <xs:simpleContent>
+            <xs:extension base="common_text"/>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="ruleSet_type">
+        <xs:sequence>
+            <xs:element name="Description" type="description_type" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="Trigger" type="trigger_type"minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="phpsemver_type">
+        <xs:sequence>
+            <xs:element name="Description" type="description_type" maxOccurs="1"/>
+            <xs:element name="RuleSet" type="ruleSet_type" maxOccurs="unbounded"/>
+            <xs:element name="Filter" type="filter_type"/>
+        </xs:sequence>
+        <xs:attribute name="title" type="xs:string"/>
+    </xs:complexType>
+
+    <!-- Root node -->
+    <xs:element name="phpsemver" type="phpsemver_type"/>
+
+</xs:schema>

@@ -2,18 +2,23 @@ language: php
 
 os:
   - linux
-  - osx
 
 php:
-  - 5.4
   - 5.5
   - 5.6
+  - 7.0
+
 before_install:
   - pip install --user codecov
+
 before_script:
+  - composer self-update
+  - composer install
   - ./bin/post-update.sh
+
 after_success:
+  - cp var/phpunit/coverage.xml .
   - codecov
+
 script:
-  - ./bin/pre-commit.sh
-  - ./bin/post-commit.sh
+  - ./bin/test-ci.sh

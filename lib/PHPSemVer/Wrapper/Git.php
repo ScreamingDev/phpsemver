@@ -1,11 +1,32 @@
 <?php
+/**
+ * Contains wrapper.
+ *
+ * LICENSE: This source file is subject to the MIT license
+ * that is available through the world-wide-web at the following URI:
+ * https://opensource.org/licenses/MIT. If you did not receive a copy
+ * of the PHP License and are unable to obtain it through the web, please send
+ * a note to pretzlaw@gmail.com so we can mail you a copy immediately.
+ *
+ * @author    Mike Pretzlaw <pretzlaw@gmail.com>
+ * @copyright 2015 Mike Pretzlaw
+ * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.0.0/LICENSE.md MIT License
+ * @link      https://github.com/sourcerer-mike/phpsemver/
+ */
 
 namespace PHPSemVer\Wrapper;
 
 use GitWrapper\GitException;
 use GitWrapper\GitWrapper;
-use Symfony\Component\Filesystem\Filesystem;
 
+/**
+ * Wrapper for GIT context.
+ *
+ * @author    Mike Pretzlaw <pretzlaw@gmail.com>
+ * @copyright 2015 Mike Pretzlaw
+ * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.0.0/LICENSE.md MIT License
+ * @link      https://github.com/sourcerer-mike/phpsemver/
+ */
 class Git extends AbstractWrapper
 {
 
@@ -15,7 +36,23 @@ class Git extends AbstractWrapper
 
     public function __construct($base)
     {
-        parent::__construct($base);
+        $git = $this->_getGitWrapper()->workingCopy(getcwd());
+
+        try {
+            $git->run(
+                array(
+                    'rev-list -1 '.$base,
+                )
+            );
+        } catch (GitException $e) {
+            throw new \InvalidArgumentException(
+                'Could not resolve ref ' . $base
+            );
+        }
+
+        $baseHash = trim($git->getOutput());
+
+        parent::__construct($baseHash);
 
         if ( ! is_dir($this->getTempPath())) {
             mkdir($this->getTempPath(), 0777, true);
@@ -28,7 +65,8 @@ class Git extends AbstractWrapper
     {
         if ( ! $this->_tempPath) {
             $this->_tempPath = sys_get_temp_dir()
-                . DIRECTORY_SEPARATOR . uniqid(PHPSEMVER_ID);
+                               .DIRECTORY_SEPARATOR.PHPSEMVER_ID
+                               .DIRECTORY_SEPARATOR.'git_'.$this->getBase();
         }
 
         return $this->_tempPath;
@@ -36,7 +74,6 @@ class Git extends AbstractWrapper
 
     public function getAllFileNames()
     {
-
         $options = array(
             'with-tree' => $this->getBase(),
         );
@@ -55,19 +92,22 @@ class Git extends AbstractWrapper
 
         $allFileNames = array();
         foreach ($allPrevious as $singleFile) {
+            foreach ($this->getExcludePattern() as $exclude) {
+                if (preg_match($exclude, $singleFile)) {
+                    continue 2;
+                }
+            }
+
+
             $allFileNames[$singleFile] = $this->getPath($singleFile);
         }
 
         return $allFileNames;
     }
 
-    function __destruct()
-    {
-        $fs = new Filesystem();
-        $fs->remove($this->getTempPath());
-    }
-
     /**
+     * Get internal wrapper.
+     *
      * @return GitWrapper
      */
     protected function _getGitWrapper()
@@ -77,11 +117,6 @@ class Git extends AbstractWrapper
         }
 
         return $this->_gitWrapper;
-    }
-
-    public function getBasePath()
-    {
-        return $this->_getFileWrapper()->getBasePath();
     }
 
     public function getPath($fileName)
@@ -121,10 +156,17 @@ class Git extends AbstractWrapper
     }
 
     /**
+     * Get internal wrapper for files.
+     *
      * @return Directory
      */
     protected function _getFileWrapper()
     {
         return $this->_fileWrapper;
+    }
+
+    public function getBasePath()
+    {
+        return $this->_getFileWrapper()->getBasePath();
     }
 }

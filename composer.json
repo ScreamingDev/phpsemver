@@ -1,7 +1,7 @@
 {
   "name": "sourcerer-mike/phpsemver",
   "description": "Compare two version and check for semantic versioning.",
-  "version": "2.1.1",
+  "version": "3.0.0",
   "type": "library",
   "keywords": [
     "Code analysis",
@@ -9,6 +9,7 @@
     "Semantic version",
     "Static code analysis"
   ],
+  "license": "MIT",
   "homepage": "https://github.com/sourcerer-mike/phpsemver",
   "authors": [
     {
@@ -28,19 +29,20 @@
     "bin/phpsemver"
   ],
   "require-dev": {
+    "phpmd/phpmd": "~2.3",
+    "phpspec/phpspec": "~2.0",
     "phpunit/phpunit": "~4.4",
-    "phpspec/phpspec": "~2.0"
+    "squizlabs/php_codesniffer": "2.4.*"
   },
   "require": {
     "cpliakas/git-wrapper": "~1.4",
-    "phpmd/phpmd": "~2.3",
     "symfony/console": "~2",
     "symfony/class-loader": "~2",
-    "nikic/php-parser": "~1"
+    "nikic/php-parser": "~2"
   },
   "config": {
-    "bin-dir": "bin",
-    "vendor-dir": "opt"
+    "bin-dir": "bin"
+
   },
   "autoload": {
     "psr-4": {
