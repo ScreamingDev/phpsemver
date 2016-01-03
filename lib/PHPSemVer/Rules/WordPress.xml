@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<phpsemver
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/sourcerer-mike/phpsemver/support/3.x.x/etc/phpsemver.xsd"
+        title="WordPress version semantics">
+
+    <RuleSet name="feature">
+        <Description>Increase second number with each new feature and reset the third.</Description>
+        <Trigger>
+            <Classes>
+                <IsAdded />
+                <Methods>
+                    <IsAdded />
+                    <BodyChanged />
+                </Methods>
+            </Classes>
+            <Functions>
+                <IsAdded />
+            </Functions>
+        </Trigger>
+    </RuleSet>
+
+    <RuleSet name="fix">
+        <Description>Increase third number with each new fix.</Description>
+        <Trigger>
+            <Classes>
+                <Methods>
+                    <BodyChanged />
+                </Methods>
+            </Classes>
+            <Functions>
+                <BodyChanged />
+            </Functions>
+        </Trigger>
+    </RuleSet>
+
+</phpsemver>
