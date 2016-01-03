@@ -77,7 +77,7 @@ The delivered XSD file makes it easy to write your own configuration (in a prope
     <?xml version="1.0"?>
     <phpsemver
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/sourcerer-mike/phpsemver/3.0.0/etc/phpsemver.xsd"
+            xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/sourcerer-mike/phpsemver/3.1.0/etc/phpsemver.xsd"
             title="My own versioning">
         <RuleSet name="major">
             <Trigger>
