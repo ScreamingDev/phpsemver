@@ -106,3 +106,4 @@ The delivered XSD file makes it easy to write your own configuration (in a prope
     </phpsemver>
 
 Write your own and use it with the `--ruleset` option.
+See the wiki entry for more information: https://github.com/sourcerer-mike/phpsemver/wiki/Configuration
