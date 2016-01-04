@@ -42,6 +42,28 @@ class AbstractCommandTest extends Abstract_TestCase
         $this->assertNull($subject->getConfig()->ruleSet());
     }
 
+    public function testItGeneratesTheEnvironment()
+    {
+        $subject = new AbstractCommandTest_Subject();
+
+        $subject->setInput(
+            new ArrayInput(
+                [
+                    '--ruleSet' => $this->getResourcePath('Rules/Empty.xml'),
+                    'previous' => 'HEAD~1'
+                ],
+                $subject->getDefinition()
+            )
+        );
+
+        $subject->setOutput(new NullOutput());
+
+        $this->assertInstanceOf('PHPSemVer\\Environment', $subject->getEnvironment());
+        $this->assertInstanceOf('PHPSemVer\\Config', $subject->getEnvironment()->getConfig());
+
+        $this->assertNull($subject->getEnvironment()->getConfig()->ruleSet());
+    }
+
     public function testDebugMessagesCanBeFormatted()
     {
         $subject = new AbstractCommandTest_Subject();
