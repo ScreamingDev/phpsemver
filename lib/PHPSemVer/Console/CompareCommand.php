@@ -39,7 +39,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class CompareCommand extends AbstractCommand {
 	protected $_cacheFactory;
 	protected $cacheFactory;
-	
+
 	/**
 	 * Current builder.
 	 *
@@ -49,7 +49,7 @@ class CompareCommand extends AbstractCommand {
 	 */
 	protected $currentBuilder  = null;
 	protected $parseExceptions = array();
-	
+
 	/**
 	 * Previous builder
 	 *
@@ -59,7 +59,36 @@ class CompareCommand extends AbstractCommand {
 	 */
 	protected $previousBuilder = null;
 
-	protected function configure() {
+    /**
+     * Add pattern to exclude files.
+     *
+     * @param Config          $config
+     * @param AbstractWrapper $latestWrapper
+     * @param AbstractWrapper $previousWrapper
+     */
+    protected function appendIgnorePattern($config, $latestWrapper, $previousWrapper) {
+        $config = $config->getXml();
+
+        $ignorePattern = [];
+        if (isset($config->Filter)) {
+            if (isset($config->Filter->Blacklist)) {
+                foreach ($config->Filter->Blacklist as $node) {
+                    if ( ! isset($node->Pattern)) {
+                        continue;
+                    }
+
+                    foreach ($node->Pattern as $pattern) {
+                        $ignorePattern[] = (string)$pattern;
+                    }
+                }
+            }
+        }
+
+        $latestWrapper->setExcludePattern($ignorePattern);
+        $previousWrapper->setExcludePattern($ignorePattern);
+    }
+
+    protected function configure() {
 		$this->setName( 'compare' );
 
 		$this->addOption(
@@ -115,10 +144,6 @@ class CompareCommand extends AbstractCommand {
 			$input->getOption( 'ruleSet' )
 		);
 
-		$xmlFile = $this->resolveConfigFile($input->getOption('ruleSet'));
-
-		$this->debug('Using config-file '.$xmlFile);
-
 		$this->verbose(
 			sprintf(
 				'Compare "%s" with "%s"',
@@ -140,15 +165,9 @@ class CompareCommand extends AbstractCommand {
 		$previousWrapper->setExcludePattern($input->getOption('exclude'));
 		$latestWrapper->setExcludePattern($input->getOption('exclude'));
 
-		$this->appendIgnorePattern($xmlFile, $latestWrapper, $previousWrapper);
+        $this->appendIgnorePattern($this->getConfig(), $latestWrapper, $previousWrapper);
 
-		$config = $this->makeConfig($xmlFile, $output);
-
-		if ($output->isVerbose()) {
-			$this->printConfig($config, $output);
-		}
-
-		$environment = $this->makeEnvironment($config);
+		$environment = $this->makeEnvironment($this->getConfig());
 
         $prevTree = $this->parseFiles($previousWrapper, $input->getArgument('previous') . ': ');
         $newTree  = $this->parseFiles($latestWrapper, $input->getArgument('latest') . ': ');
@@ -177,13 +196,70 @@ class CompareCommand extends AbstractCommand {
         $this->verbose('');
     }
 
+	public function getWrapperClass( $name ) {
+		$className = '\\PHPSemVer\\Wrapper\\' . ucfirst( $name );
+
+		if ( ! class_exists( $className ) ) {
+			return false;
+		}
+
+		return $className;
+	}
+
+    /**
+     * Create a wrapper for the given target.
+     *
+     * When the target is a directory,
+     * then the type overridden with "Directory".
+     *
+     * @param string $base
+     * @param string $type
+     *
+     * @return AbstractWrapper
+     */
+    private function getWrapperInstance($base, $type = 'Directory')
+    {
+        $wrapper = $this->getWrapperClass($type);
+
+        if ( ! $wrapper) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    '<error>Unknown wrapper-type "%s"</error>',
+                    $type
+                )
+            );
+        }
+
+        if (is_dir($base)) {
+            $wrapper = $this->getWrapperClass('Directory');
+        }
+
+        $this->debug('Using wrapper "' . $wrapper . '" for "' . $base . '"');
+
+        return new $wrapper($base);
+    }
+
+    /**
+     * Generate environment from config.
+     *
+     * @param $config
+     *
+     * @return Environment
+     */
+    protected function makeEnvironment($config)
+    {
+        $environment = new Environment($config);
+
+        return $environment;
+    }
+
 	/**
-	 * Parse files within a wrapper.
+     * Parse files within a wrapper.
 	 *
-	 * @param AbstractWrapper $wrapper
-	 * @param string          $prefix
-	 *
-	 * @return mixed
+     * @param AbstractWrapper $wrapper
+     * @param string          $prefix
+     *
+     * @return mixed
 	 */
     protected function parseFiles($wrapper, $prefix)
     {
@@ -199,61 +275,20 @@ class CompareCommand extends AbstractCommand {
         );
 
         $this->verbose($prefix . 'Parsing ' . $fileAmount . ' files ');
-	    $this->debug('  in ' . $wrapper->getBasePath());
+        $this->debug('  in ' . $wrapper->getBasePath());
 
         $time     = microtime(true);
         $dataTree = $wrapper->getDataTree();
 
-	    $this->verbose(
-		    sprintf(
-			    $prefix . "Parsed %d files in %0.2f seconds.",
-			    $fileAmount,
-			    microtime(true) - $time
-		    )
-	    );
+        $this->verbose(
+            sprintf(
+                $prefix . "Parsed %d files in %0.2f seconds.",
+                $fileAmount,
+                microtime(true) - $time
+            )
+        );
 
-	    return $dataTree;
-    }
-
-	public function getWrapperClass( $name ) {
-		$className = '\\PHPSemVer\\Wrapper\\' . ucfirst( $name );
-
-		if ( ! class_exists( $className ) ) {
-			return false;
-		}
-
-		return $className;
-	}
-
-    /**
-     * Add pattern to exclude files.
-     *
-     * @param $xmlFile
-     * @param AbstractWrapper $latestWrapper
-     * @param AbstractWrapper $previousWrapper
-     */
-    protected function appendIgnorePattern(
-        $xmlFile, $latestWrapper, $previousWrapper
-    ) {
-        $config = simplexml_load_file($xmlFile);
-
-        $ignorePattern = [];
-        if (isset($config->Filter)) {
-            if (isset($config->Filter->Blacklist)) {
-                foreach ($config->Filter->Blacklist as $node) {
-                    if ( ! isset($node->Pattern)) {
-                        continue;
-                    }
-
-	                foreach ($node->Pattern as $pattern) {
-		                $ignorePattern[] = (string) $pattern;
-	                }
-                }
-            }
-        }
-
-        $latestWrapper->setExcludePattern($ignorePattern);
-        $previousWrapper->setExcludePattern($ignorePattern);
+        return $dataTree;
     }
 
     /**
@@ -273,10 +308,10 @@ class CompareCommand extends AbstractCommand {
         foreach ($environment->getConfig()->ruleSet() as $ruleSet) {
             foreach ($ruleSet->getErrorMessages() as $message) {
                 $table->addRow(
-	                [
-		                $ruleSet->getName(),
-		                $message->getMessage(),
-	                ]
+                    [
+                        $ruleSet->getName(),
+                        $message->getMessage(),
+                    ]
                 );
             }
         }
@@ -284,125 +319,4 @@ class CompareCommand extends AbstractCommand {
         $output->writeln('');
         $table->render();
     }
-
-	/**
-	 * Print debug information of the used config.
-	 *
-	 * @param Config          $config
-	 * @param OutputInterface $output
-	 */
-	protected function printConfig(Config $config, OutputInterface $output)
-	{
-		foreach ($config->ruleSet()->getChildren() as $ruleSet) {
-			$output->writeln('Using rule set '.$ruleSet->getName());
-
-			if ( ! $output->isDebug()) {
-				continue;
-			}
-
-			if ( ! $ruleSet->trigger()) {
-				$output->writeln('  No triggers found.');
-				continue;
-			}
-
-			foreach ($ruleSet->trigger()->getAll() as $singleTrigger) {
-				$output->writeln('  Contains trigger '.$singleTrigger);
-			}
-		}
-	}
-
-	/**
-	 * Generate config class from XML-File.
-	 *
-	 * @param string          $xmlFile
-	 * @param OutputInterface $output
-	 *
-	 * @return Config
-	 */
-	protected function makeConfig($xmlFile, OutputInterface $output)
-	{
-		$config = new Config(simplexml_load_file($xmlFile));
-
-		if ($output->isVerbose()) {
-			$this->printConfig($config, $output);
-
-			return $config;
-		}
-
-		return $config;
-	}
-
-	/**
-	 * Generate environment from config.
-	 *
-	 * @param $config
-	 *
-	 * @return Environment
-	 */
-	protected function makeEnvironment($config)
-	{
-		$environment = new Environment($config);
-
-		return $environment;
-	}
-
-	/**
-	 * Create a wrapper for the given target.
-	 *
-	 * When the target is a directory,
-	 * then the type overridden with "Directory".
-	 *
-	 * @param string $base
-	 * @param string $type
-	 *
-	 * @return AbstractWrapper
-	 */
-	private function getWrapperInstance($base, $type = 'Directory')
-	{
-		$wrapper = $this->getWrapperClass($type);
-
-		if ( ! $wrapper) {
-			throw new \InvalidArgumentException(
-				sprintf(
-					'<error>Unknown wrapper-type "%s"</error>',
-					$type
-				)
-			);
-		}
-
-		if (is_dir($base)) {
-			$wrapper = $this->getWrapperClass('Directory');
-		}
-
-		$this->debug('Using wrapper "'.$wrapper.'" for "'.$base.'"');
-
-		return new $wrapper($base);
-	}
-
-	/**
-	 * Resolve path to rule set XML.
-	 *
-	 * @param string $ruleSet Path to XML config file.
-	 *
-	 * @return string
-	 */
-	protected function resolveConfigFile($ruleSet)
-	{
-		if (file_exists($ruleSet)) {
-			return $ruleSet;
-		}
-
-		$defaultPath = PHPSEMVER_LIB_PATH.'/PHPSemVer/Rules/';
-		if (file_exists($defaultPath.$ruleSet)) {
-			return $defaultPath.$ruleSet;
-		}
-
-		if (file_exists($defaultPath.$ruleSet.'.xml')) {
-			return $defaultPath.$ruleSet.'.xml';
-		}
-
-		throw new \InvalidArgumentException(
-			'Could not find rule set: '.$ruleSet
-		);
-	}
 }

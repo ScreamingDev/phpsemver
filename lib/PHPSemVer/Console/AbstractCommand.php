@@ -16,6 +16,7 @@
 
 namespace PHPSemVer\Console;
 
+use PHPSemVer\Config;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -30,6 +31,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 abstract class AbstractCommand extends Command
 {
+    protected $_config;
     protected $_input;
     protected $_output;
     protected $_outputDocument;
@@ -44,48 +46,50 @@ abstract class AbstractCommand extends Command
      *
      * @return null
      */
-    public function debug( $message )
+    public function debug($message)
     {
-        if ( ! $this->getOutput()->isDebug() )
-        {
+        if ( ! $this->getOutput()->isDebug()) {
             return null;
         }
 
-        if ( func_num_args() > 1 )
-        {
-            $message = vsprintf( $message, array_slice( func_get_args(), 1 ) );
+        if (func_num_args() > 1) {
+            $message = vsprintf($message, array_slice(func_get_args(), 1));
         }
 
-        $this->getOutput()->writeln( $message );
+        $this->getOutput()->writeln($message);
     }
 
-    /**
-     * Get output interface.
-     *
-     * @return OutputInterface
-     */
-    public function getOutput()
+    protected function fetchConfig()
     {
-        return $this->_output;
-    }
+        $xmlFile = $this->resolveConfigFile($this->getInput()->getOption('ruleSet'));
 
-    /**
-     * Set output interface.
-     *
-     * @param OutputInterface $output
-     */
-    public function setOutput( $output )
-    {
-        $this->_output = $output;
+        $this->debug('Using config-file ' . $xmlFile);
+
+        $this->_config = new Config(simplexml_load_file($xmlFile));
+
+        if ($this->getOutput()->isVerbose()) {
+            $this->printConfig();
+        }
     }
 
     /**
      * Get Symfony application instance.
+     *
      * @return \PHPSemVer\Console\Application
      */
     public function getApplication()
     {
         return parent::getApplication();
+    }
+
+    /**
+     * Get configuration of this command.
+     *
+     * @return mixed
+     */
+    public function getConfig()
+    {
+        return $this->_config;
     }
 
     /**
@@ -99,40 +103,123 @@ abstract class AbstractCommand extends Command
     }
 
     /**
-     * Set input interface.
+     * Get output interface.
      *
-     * @param InputInterface $input
+     * @return OutputInterface
      */
-    public function setInput( $input )
+    public function getOutput()
     {
-        $this->_input = $input;
+        return $this->_output;
     }
 
     protected function initialize(
         InputInterface $input,
         OutputInterface $output
     ) {
-        $this->setInput( $input );
-        $this->setOutput( $output );
+        $this->setInput($input);
+        $this->setOutput($output);
 
-        parent::initialize(
-            $input,
-            $output
+        $this->fetchConfig();
+
+        parent::initialize($input, $output);
+    }
+
+    /**
+     * Print debug information of the used config.
+     *
+     * @param Config          $config
+     * @param OutputInterface $output
+     */
+    protected function printConfig()
+    {
+        $config = $this->getConfig();
+        $output = $this->getOutput();
+
+        foreach ($config->ruleSet()->getChildren() as $ruleSet) {
+            $output->writeln('Using rule set ' . $ruleSet->getName());
+
+            if ( ! $output->isDebug()) {
+                continue;
+            }
+
+            if ( ! $ruleSet->trigger()) {
+                $output->writeln('  No triggers found.');
+                continue;
+            }
+
+            foreach ($ruleSet->trigger()->getAll() as $singleTrigger) {
+                $output->writeln('  Contains trigger ' . $singleTrigger);
+            }
+        }
+    }
+
+    /**
+     * Resolve path to rule set XML.
+     *
+     * @param string $ruleSet Path to XML config file.
+     *
+     * @return string
+     */
+    protected function resolveConfigFile($ruleSet)
+    {
+        if (file_exists($ruleSet)) {
+            return $ruleSet;
+        }
+
+        $defaultPath = PHPSEMVER_LIB_PATH . '/PHPSemVer/Rules/';
+        if (file_exists($defaultPath . $ruleSet)) {
+            return $defaultPath . $ruleSet;
+        }
+
+        if (file_exists($defaultPath . $ruleSet . '.xml')) {
+            return $defaultPath . $ruleSet . '.xml';
+        }
+
+        throw new \InvalidArgumentException(
+            'Could not find rule set: ' . $ruleSet
         );
     }
 
-    public function verbose( $message )
+    /**
+     * Set configuration for this command.
+     *
+     * @param mixed $config
+     */
+    public function setConfig($config)
     {
-        if ( ! $this->getOutput()->isVerbose() )
-        {
+        $this->_config = $config;
+    }
+
+    /**
+     * Set input interface.
+     *
+     * @param InputInterface $input
+     */
+    public function setInput($input)
+    {
+        $this->_input = $input;
+    }
+
+    /**
+     * Set output interface.
+     *
+     * @param OutputInterface $output
+     */
+    public function setOutput($output)
+    {
+        $this->_output = $output;
+    }
+
+    public function verbose($message)
+    {
+        if ( ! $this->getOutput()->isVerbose()) {
             return null;
         }
 
-        if ( func_num_args() > 1 )
-        {
-            $message = vsprintf( $message, array_slice( func_get_args(), 1 ) );
+        if (func_num_args() > 1) {
+            $message = vsprintf($message, array_slice(func_get_args(), 1));
         }
 
-        $this->getOutput()->writeln( '<info>' . $message . '</info>' );
+        $this->getOutput()->writeln('<info>' . $message . '</info>');
     }
 }
