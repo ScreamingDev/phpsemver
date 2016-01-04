@@ -166,6 +166,10 @@ abstract class AbstractCommand extends Command
             return $ruleSet;
         }
 
+        if (file_exists($ruleSet . '.xml')) {
+            return $ruleSet;
+        }
+
         $defaultPath = PHPSEMVER_LIB_PATH . '/PHPSemVer/Rules/';
         if (file_exists($defaultPath . $ruleSet)) {
             return $defaultPath . $ruleSet;
