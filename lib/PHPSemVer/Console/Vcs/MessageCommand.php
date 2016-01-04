@@ -18,7 +18,9 @@
 namespace PHPSemVer\Console\Vcs;
 
 
+use PHPSemVer\Config\RuleSet;
 use PHPSemVer\Console\AbstractCommand;
+use PHPSemVer\Constraints\FailedConstraint;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -33,7 +35,21 @@ use Symfony\Component\Console\Output\OutputInterface;
 class MessageCommand extends AbstractCommand {
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $output->writeln('hi');
+        $this->compareTrees();
+
+        $out = [];
+
+        foreach ($this->getEnvironment()->getConfig()->ruleSet() as $ruleSet) {
+            /* @var RuleSet $ruleSet */
+            foreach ($ruleSet->getErrorMessages() as $message) {
+                /* @var FailedConstraint $message */
+                $out[] = '- ' . $message->getMessage();
+            }
+        }
+
+        natsort($out);
+
+        $output->writeln($out);
     }
 
     protected function fetchResult()

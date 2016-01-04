@@ -20,7 +20,9 @@ use PHPSemVer\Config;
 use PHPSemVer\Environment;
 use PHPSemVer\Wrapper\AbstractWrapper;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -279,6 +281,47 @@ abstract class AbstractCommand extends Command
 
         return new $wrapper($base);
     }
+
+    protected function configure()
+    {
+        $this->addOption(
+            'exclude',
+            null,
+            InputOption::VALUE_OPTIONAL,
+            'Exclude files containing the given regexp (extends the XML config).',
+            ''
+        );
+
+        $this->addOption(
+            'type',
+            't',
+            InputOption::VALUE_OPTIONAL,
+            'Type of given targets',
+            'git'
+        );
+
+        $this->addOption(
+            'ruleSet',
+            'R',
+            InputOption::VALUE_OPTIONAL,
+            'A predefined rule set or XML file.',
+            'SemVer2'
+        );
+
+        $this->addArgument(
+            'previous',
+            InputArgument::REQUIRED,
+            'Place to lookup the old code'
+        );
+
+        $this->addArgument(
+            'latest',
+            InputArgument::OPTIONAL,
+            'Place to lookup the new code',
+            'HEAD'
+        );
+    }
+
 
     protected function initialize(
         InputInterface $input,
