@@ -149,10 +149,14 @@ abstract class AbstractCommand extends Command
     /**
      * Get configuration of this command.
      *
-     * @return mixed
+     * @return Config
      */
     public function getConfig()
     {
+        if (!$this->_config) {
+            $this->fetchConfig();
+        }
+
         return $this->_config;
     }
 

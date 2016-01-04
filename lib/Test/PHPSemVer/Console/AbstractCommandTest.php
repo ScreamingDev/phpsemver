@@ -5,8 +5,11 @@ namespace Test\PHPSemVer\Console;
 
 use PHPSemVer\Console\AbstractCommand;
 use PHPSemVer\Console\Application;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\NullOutput;
+use Test\Abstract_TestCase;
 
-class AbstractCommandTest extends \PHPUnit_Framework_TestCase
+class AbstractCommandTest extends Abstract_TestCase
 {
     public function testContainsApplication()
     {
@@ -16,6 +19,27 @@ class AbstractCommandTest extends \PHPUnit_Framework_TestCase
 
         $this->assertNotNull($subject->getApplication());
         $this->assertInstanceOf('PHPSemVer\\Console\\Application', $subject->getApplication());
+    }
+
+    public function testItParsesTheConfiguration()
+    {
+        $subject = new AbstractCommandTest_Subject();
+
+        $subject->setInput(
+            new ArrayInput(
+                [
+                    '--ruleSet' => $this->getResourcePath('Rules/Empty.xml'),
+                    'previous' => 'HEAD~1'
+                ],
+                $subject->getDefinition()
+            )
+        );
+
+        $subject->setOutput(new NullOutput());
+
+        $this->assertInstanceOf('PHPSemVer\\Config', $subject->getConfig());
+
+        $this->assertNull($subject->getConfig()->ruleSet());
     }
 
     public function testDebugMessagesCanBeFormatted()
@@ -48,6 +72,8 @@ class AbstractCommandTest_Subject extends AbstractCommand
 {
     protected function configure()
     {
+        parent::configure();
+
         $this->setName('phpunit:phpsemver:console:abstractcommandtest_subject');
     }
 
