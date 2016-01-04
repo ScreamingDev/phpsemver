@@ -49,6 +49,11 @@ abstract class AbstractWrapper
         $this->_base = $base;
     }
 
+    public function addExcludePattern($getRegExp)
+    {
+        $this->excludePattern[] = $getRegExp;
+    }
+
     abstract public function getAllFileNames();
 
     public function getExcludePattern()

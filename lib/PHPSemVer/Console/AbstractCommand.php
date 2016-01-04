@@ -17,6 +17,8 @@
 namespace PHPSemVer\Console;
 
 use PHPSemVer\Config;
+use PHPSemVer\Environment;
+use PHPSemVer\Wrapper\AbstractWrapper;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -35,6 +37,66 @@ abstract class AbstractCommand extends Command
     protected $_input;
     protected $_output;
     protected $_outputDocument;
+    protected $environment;
+    protected $latestWrapper;
+    protected $previousWrapper;
+
+    /**
+     * Add pattern to exclude files.
+     *
+     * @param Config          $config
+     * @param AbstractWrapper $latestWrapper
+     * @param AbstractWrapper $previousWrapper
+     */
+    protected function appendIgnorePattern($config, $latestWrapper, $previousWrapper)
+    {
+        $config = $config->getXml();
+
+        $ignorePattern = [];
+        if (isset($config->Filter)) {
+            if (isset($config->Filter->Blacklist)) {
+                foreach ($config->Filter->Blacklist as $node) {
+                    if ( ! isset($node->Pattern)) {
+                        continue;
+                    }
+
+                    foreach ($node->Pattern as $pattern) {
+                        $ignorePattern[] = (string)$pattern;
+                    }
+                }
+            }
+        }
+
+        $latestWrapper->setExcludePattern($ignorePattern);
+        $previousWrapper->setExcludePattern($ignorePattern);
+    }
+
+    protected function compareTrees()
+    {
+
+        $prevTree = $this->parseFiles(
+            $this->getPreviousWrapper(),
+            $this->getInput()->getArgument('previous') . ': '
+        );
+
+        $newTree = $this->parseFiles(
+            $this->getLatestWrapper(),
+            $this->getInput()->getArgument('latest') . ': '
+        );
+
+        $this->getOutput()->write('');
+
+        $time = microtime(true);
+
+        $this->getEnvironment()->compareTrees($prevTree, $newTree);
+
+        $this->verbose(
+            sprintf(
+                "\rCompared within %0.2f seconds",
+                microtime(true) - $time
+            )
+        );
+    }
 
     /**
      * Print debug message.
@@ -93,6 +155,26 @@ abstract class AbstractCommand extends Command
     }
 
     /**
+     * Get environment object.
+     *
+     * @param Config $config Deprecated 4.0.0, command config will be used instead.
+     *
+     * @return Environment
+     */
+    public function getEnvironment($config = null)
+    {
+        if ( ! $this->environment) {
+            if (null == $config) {
+                $config = $this->getConfig();
+            }
+
+            $this->environment = new Environment($config);
+        }
+
+        return $this->environment;
+    }
+
+    /**
      * Get input interface.
      *
      * @return InputInterface
@@ -100,6 +182,27 @@ abstract class AbstractCommand extends Command
     public function getInput()
     {
         return $this->_input;
+    }
+
+    /**
+     * Get wrapper for VCS.
+     *
+     * @return AbstractWrapper
+     */
+    protected function getLatestWrapper()
+    {
+        if ($this->latestWrapper) {
+            return $this->latestWrapper;
+        }
+
+        $input = $this->getInput();
+
+        $this->latestWrapper = $this->getWrapperInstance(
+            $input->getArgument('latest'),
+            $input->getOption('type')
+        );
+
+        return $this->latestWrapper;
     }
 
     /**
@@ -112,16 +215,147 @@ abstract class AbstractCommand extends Command
         return $this->_output;
     }
 
+    /**
+     * Get the wrapper for the VCS.
+     *
+     * @return AbstractWrapper
+     */
+    protected function getPreviousWrapper()
+    {
+        if ($this->previousWrapper) {
+            return $this->previousWrapper;
+        }
+
+        $input = $this->getInput();
+
+        $this->previousWrapper = $this->getWrapperInstance(
+            $input->getArgument('previous'),
+            $input->getOption('type')
+        );
+
+        return $this->previousWrapper;
+    }
+
+    public function getWrapperClass($name)
+    {
+        $className = '\\PHPSemVer\\Wrapper\\' . ucfirst($name);
+
+        if ( ! class_exists($className)) {
+            return false;
+        }
+
+        return $className;
+    }
+
+    /**
+     * Create a wrapper for the given target.
+     *
+     * When the target is a directory,
+     * then the type overridden with "Directory".
+     *
+     * @param string $base
+     * @param string $type
+     *
+     * @return AbstractWrapper
+     */
+    protected function getWrapperInstance($base, $type = 'Directory')
+    {
+        $wrapper = $this->getWrapperClass($type);
+
+        if ( ! $wrapper) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    '<error>Unknown wrapper-type "%s"</error>',
+                    $type
+                )
+            );
+        }
+
+        if (is_dir($base)) {
+            $wrapper = $this->getWrapperClass('Directory');
+        }
+
+        $this->debug('Using wrapper "' . $wrapper . '" for "' . $base . '"');
+
+        return new $wrapper($base);
+    }
+
     protected function initialize(
         InputInterface $input,
         OutputInterface $output
     ) {
+        parent::initialize($input, $output);
+
         $this->setInput($input);
         $this->setOutput($output);
 
+        $this->verbose(
+            'Comparing %s "%s" with %s "%s" using "%s" ...',
+            $input->getOption( 'type' ),
+            $input->getArgument( 'latest' ),
+            $input->getOption( 'type' ),
+            $input->getArgument( 'previous' ),
+            $input->getOption( 'ruleSet' )
+        );
+
         $this->fetchConfig();
 
-        parent::initialize($input, $output);
+        $this->getPreviousWrapper()->addExcludePattern($input->getOption('exclude'));
+        $this->getLatestWrapper()->addExcludePattern($input->getOption('exclude'));
+
+        $this->appendIgnorePattern($this->getConfig(), $this->getPreviousWrapper(), $this->getLatestWrapper());
+    }
+
+    /**
+     * Generate environment from config.
+     *
+     * @param $config
+     *
+     * @deprecated 4.0.0 Use ::getEnvironment instead.
+     *
+     * @return Environment
+     */
+    protected function makeEnvironment($config)
+    {
+        return $this->getEnvironment($config);
+    }
+
+    /**
+     * Parse files within a wrapper.
+     *
+     * @param AbstractWrapper $wrapper
+     * @param string          $prefix
+     *
+     * @return mixed
+     */
+    protected function parseFiles($wrapper, $prefix)
+    {
+        $this->verbose($prefix . 'Fetching files ...');
+        $time       = microtime(true);
+        $fileAmount = count($wrapper->getAllFileNames());
+        $this->verbose(
+            sprintf(
+                "\r" . $prefix . "Collected %d files in %0.2f seconds.",
+                $fileAmount,
+                microtime(true) - $time
+            )
+        );
+
+        $this->verbose($prefix . 'Parsing ' . $fileAmount . ' files ');
+        $this->debug('  in ' . $wrapper->getBasePath());
+
+        $time     = microtime(true);
+        $dataTree = $wrapper->getDataTree();
+
+        $this->verbose(
+            sprintf(
+                $prefix . "Parsed %d files in %0.2f seconds.",
+                $fileAmount,
+                microtime(true) - $time
+            )
+        );
+
+        return $dataTree;
     }
 
     /**

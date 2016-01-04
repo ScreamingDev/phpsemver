@@ -48,45 +48,7 @@ class CompareCommand extends AbstractCommand {
 	 * @var PHPBuilder
 	 */
 	protected $currentBuilder  = null;
-	protected $parseExceptions = array();
-
-	/**
-	 * Previous builder
-	 *
-	 * @deprecated 3.0.0
-	 *
-	 * @var PHPBuilder
-	 */
-	protected $previousBuilder = null;
-
-    /**
-     * Add pattern to exclude files.
-     *
-     * @param Config          $config
-     * @param AbstractWrapper $latestWrapper
-     * @param AbstractWrapper $previousWrapper
-     */
-    protected function appendIgnorePattern($config, $latestWrapper, $previousWrapper) {
-        $config = $config->getXml();
-
-        $ignorePattern = [];
-        if (isset($config->Filter)) {
-            if (isset($config->Filter->Blacklist)) {
-                foreach ($config->Filter->Blacklist as $node) {
-                    if ( ! isset($node->Pattern)) {
-                        continue;
-                    }
-
-                    foreach ($node->Pattern as $pattern) {
-                        $ignorePattern[] = (string)$pattern;
-                    }
-                }
-            }
-        }
-
-        $latestWrapper->setExcludePattern($ignorePattern);
-        $previousWrapper->setExcludePattern($ignorePattern);
-    }
+    protected $parseExceptions = array();
 
     protected function configure() {
 		$this->setName( 'compare' );
@@ -95,7 +57,7 @@ class CompareCommand extends AbstractCommand {
 			'exclude',
 			null,
 			InputOption::VALUE_OPTIONAL,
-			'Exclude files containing the given string.',
+			'Exclude files containing the given regexp (extends the XML config).',
 			''
 		);
 
@@ -135,56 +97,9 @@ class CompareCommand extends AbstractCommand {
 	) {
         $totalTime = microtime(true);
 
-		$this->verbose(
-			'Comparing %s "%s" with %s "%s" using "%s" ...',
-			$input->getOption( 'type' ),
-			$input->getArgument( 'latest' ),
-			$input->getOption( 'type' ),
-			$input->getArgument( 'previous' ),
-			$input->getOption( 'ruleSet' )
-		);
+        $this->compareTrees();
 
-		$this->verbose(
-			sprintf(
-				'Compare "%s" with "%s"',
-				$input->getArgument('previous'),
-				$input->getArgument('latest')
-			)
-		);
-
-		$previousWrapper = $this->getWrapperInstance(
-			$input->getArgument('previous'),
-			$input->getOption('type')
-		);
-
-		$latestWrapper = $this->getWrapperInstance(
-			$input->getArgument('latest'),
-			$input->getOption('type')
-		);
-
-		$previousWrapper->setExcludePattern($input->getOption('exclude'));
-		$latestWrapper->setExcludePattern($input->getOption('exclude'));
-
-        $this->appendIgnorePattern($this->getConfig(), $latestWrapper, $previousWrapper);
-
-		$environment = $this->makeEnvironment($this->getConfig());
-
-        $prevTree = $this->parseFiles($previousWrapper, $input->getArgument('previous') . ': ');
-        $newTree  = $this->parseFiles($latestWrapper, $input->getArgument('latest') . ': ');
-
-        $output->write('');
-        $time = microtime(true);
-
-        $environment->compareTrees($prevTree, $newTree);
-
-        $this->verbose(
-            sprintf(
-                "\rCompared within %0.2f seconds",
-                microtime(true) - $time
-            )
-        );
-
-        $this->printTable($input, $output, $environment);
+        $this->printTable($input, $output, $this->getEnvironment());
 
         $output->writeln('');
         $this->verbose(
@@ -193,103 +108,10 @@ class CompareCommand extends AbstractCommand {
                 microtime(true) - $totalTime
             )
         );
+
         $this->verbose('');
     }
 
-	public function getWrapperClass( $name ) {
-		$className = '\\PHPSemVer\\Wrapper\\' . ucfirst( $name );
-
-		if ( ! class_exists( $className ) ) {
-			return false;
-		}
-
-		return $className;
-	}
-
-    /**
-     * Create a wrapper for the given target.
-     *
-     * When the target is a directory,
-     * then the type overridden with "Directory".
-     *
-     * @param string $base
-     * @param string $type
-     *
-     * @return AbstractWrapper
-     */
-    private function getWrapperInstance($base, $type = 'Directory')
-    {
-        $wrapper = $this->getWrapperClass($type);
-
-        if ( ! $wrapper) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    '<error>Unknown wrapper-type "%s"</error>',
-                    $type
-                )
-            );
-        }
-
-        if (is_dir($base)) {
-            $wrapper = $this->getWrapperClass('Directory');
-        }
-
-        $this->debug('Using wrapper "' . $wrapper . '" for "' . $base . '"');
-
-        return new $wrapper($base);
-    }
-
-    /**
-     * Generate environment from config.
-     *
-     * @param $config
-     *
-     * @return Environment
-     */
-    protected function makeEnvironment($config)
-    {
-        $environment = new Environment($config);
-
-        return $environment;
-    }
-
-	/**
-     * Parse files within a wrapper.
-	 *
-     * @param AbstractWrapper $wrapper
-     * @param string          $prefix
-     *
-     * @return mixed
-	 */
-    protected function parseFiles($wrapper, $prefix)
-    {
-        $this->verbose($prefix . 'Fetching files ...');
-        $time       = microtime(true);
-        $fileAmount = count($wrapper->getAllFileNames());
-        $this->verbose(
-            sprintf(
-                "\r" . $prefix . "Collected %d files in %0.2f seconds.",
-                $fileAmount,
-                microtime(true) - $time
-            )
-        );
-
-        $this->verbose($prefix . 'Parsing ' . $fileAmount . ' files ');
-        $this->debug('  in ' . $wrapper->getBasePath());
-
-        $time     = microtime(true);
-        $dataTree = $wrapper->getDataTree();
-
-        $this->verbose(
-            sprintf(
-                $prefix . "Parsed %d files in %0.2f seconds.",
-                $fileAmount,
-                microtime(true) - $time
-            )
-        );
-
-        return $dataTree;
-    }
 
     /**
      * Print information as table.
