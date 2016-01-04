@@ -12,8 +12,13 @@ class ListCommandTest extends \PHPUnit_Framework_TestCase {
 
 		$command       = $application->find( 'list' );
 		$commandTester = new CommandTester( $command );
-		$commandTester->execute( array( 'command' => $command->getName() ) );
+		$commandTester->execute( array(  ) );
 
-		$this->assertRegExp( '/list\s*Lists/', $commandTester->getDisplay() );
+        $output = $commandTester->getDisplay();
+
+        $this->assertRegExp( '/list\s*Lists/', $output);
+
+        $this->assertContains('compare', $output);
+        $this->assertContains('vcs:message', $output);
 	}
 }

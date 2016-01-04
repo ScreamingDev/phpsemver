@@ -15,6 +15,9 @@
  */
 
 namespace PHPSemVer\Console;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Finder\SplFileInfo;
+use Symfony\Component\Finder\Finder;
 
 /**
  * Console application.
@@ -26,8 +29,7 @@ namespace PHPSemVer\Console;
  */
 class Application extends \Symfony\Component\Console\Application
 {
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct( PHPSEMVER_NAME, PHPSEMVER_VERSION );
 
         $this->fetchCommands();
@@ -39,40 +41,58 @@ class Application extends \Symfony\Component\Console\Application
 
     public function fetchCommands()
     {
-        $Directory = new \RecursiveDirectoryIterator(__DIR__);
-        $Iterator  = new \RecursiveIteratorIterator($Directory);
+        $finder = new Finder();
+        $finder->in( __DIR__ )->files()->name( '*Command.php' );
 
-        // try to find all commands
-        $Regex = new \RegexIterator(
-            $Iterator,
-            '@.*Command.php@',
-            \RecursiveRegexIterator::GET_MATCH
-        );
+        foreach ( $finder as $commandFile ) {
+            /* @var SplFileInfo $commandFile */
 
-        // add if is command
-        foreach ($Regex as $single) {
-            $file = preg_replace(
-                '@' . preg_quote(PHPSEMVER_LIB_PATH, '@') . '@',
-                '',
-                $single[0],
-                1
+            $currentClass = strtr(
+                $commandFile->getRealPath(),
+                [
+                    rtrim(PHPSEMVER_LIB_PATH, DIRECTORY_SEPARATOR) => '',
+                    '/' => '\\',
+                    $commandFile->getBasename() => $commandFile->getBasename('.php')
+                ]
             );
 
-
-            // skip abstracts
-            if (false !== strpos($file, '/Abstract')) {
+            if ( ! class_exists($currentClass)) {
                 continue;
             }
 
-            $class = str_replace(DIRECTORY_SEPARATOR, '\\', dirname($file))
-                     . '\\' . basename($file, '.php');
-
-            // skip false positives
-            if (!class_exists($class)) {
+            if (false !== strpos($currentClass, '\\Abstract')) {
                 continue;
             }
 
-            $this->add(new $class);
+
+            $name = str_replace( __NAMESPACE__ . '\\', '', $currentClass );
+            $name = preg_replace( '/Command$/', '', $name );
+            $name = str_replace( '\\', ':', $name );
+            $name = trim( $name, ':' );
+            $name = strtolower( $name );
+
+            /* @var AbstractCommand $command */
+            $command = new $currentClass( $name );
+
+            if (false == $command instanceof Command) {
+                continue;
+            }
+
+            $reflectClass = new \ReflectionClass( $currentClass );
+            $comment      = $reflectClass->getDocComment();
+            preg_match( '/\s\*\s.*\./', $comment, $description );
+            $description = preg_replace( '/^\s\*\s/', '', current( $description ) );
+
+            $command->setDescription( $description );
+
+            preg_match( '/(?<=\/\*\*).*(?=\n\s*\*\s@)/s', $comment, $help );      // get long description
+            $help = preg_replace( '/\s*\*\s*/s', "\n", current( $help ) );          // remove comment-star
+            $help = preg_replace( '/([^\n])\n{1}([^\n])/s', '$1 $2', $help );     // remove single new-lines
+            $help = str_replace( "\n", "\n ", $help );                            // indent a bit
+
+            $command->setHelp( $help );
+
+            $this->add( $command );
         }
     }
 }

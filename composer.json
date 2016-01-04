@@ -38,6 +38,7 @@
     "cpliakas/git-wrapper": "~1.4",
     "symfony/console": "~2",
     "symfony/class-loader": "~2",
+    "symfony/finder": "~2",
     "nikic/php-parser": "~2"
   },
   "config": {
