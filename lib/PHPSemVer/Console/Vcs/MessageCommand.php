@@ -51,10 +51,4 @@ class MessageCommand extends AbstractCommand {
 
         $output->writeln($out);
     }
-
-    protected function fetchResult()
-    {
-        $this->getConfig();
-    }
-
 }
