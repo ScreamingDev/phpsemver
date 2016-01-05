@@ -8,6 +8,19 @@ use PHPSemVer\Trigger\Functions\BodyChanged;
 
 class BodyChangedTest extends \PHPUnit_Framework_TestCase
 {
+    public function testDifferentClassesAreDifferent()
+    {
+        $test = new BodyChanged();
+
+        $mock = $this->getMock(get_class($test), ['canHandle']);
+
+        $mock->expects($this->any())
+            ->method('canHandle')
+            ->willReturn(true);
+
+        $this->assertFalse($mock->handle([new \stdClass()], [new \ArrayObject()]));
+    }
+
     public function testHandleNullWhenInvalidArgument()
     {
         $test = new BodyChanged();

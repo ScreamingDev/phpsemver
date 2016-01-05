@@ -105,7 +105,7 @@ class BodyChanged extends AbstractTrigger
 
         if (get_class($old) != get_class($new)) {
             // compare object by class name
-            return false;
+            return true;
         }
 
         // compare each sub-node
