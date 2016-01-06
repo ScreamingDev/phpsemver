@@ -22,6 +22,7 @@ use PHPSemVer\Config\RuleSet;
 use PHPSemVer\Console\AbstractCommand;
 use PHPSemVer\Constraints\FailedConstraint;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -33,6 +34,19 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @link      https://github.com/sourcerer-mike/phpsemver/
  */
 class MessageCommand extends AbstractCommand {
+    protected function configure()
+    {
+        parent::configure();
+
+        $this->addOption(
+            'include',
+            'i',
+            InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
+            'Name the rule sets that shall be printed.'
+        );
+    }
+
+
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->compareTrees();
@@ -41,6 +55,12 @@ class MessageCommand extends AbstractCommand {
 
         foreach ($this->getEnvironment()->getConfig()->ruleSet() as $ruleSet) {
             /* @var RuleSet $ruleSet */
+
+            if ($input->getOption('include')
+                && ! in_array($ruleSet->getName(), (array) $input->getOption('include'))) {
+                continue;
+            }
+
             foreach ($ruleSet->getErrorMessages() as $message) {
                 /* @var FailedConstraint $message */
                 $out[] = '- ' . $message->getMessage();

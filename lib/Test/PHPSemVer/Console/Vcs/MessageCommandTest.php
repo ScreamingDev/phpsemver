@@ -26,4 +26,23 @@ class MessageCommandTest extends Abstract_TestCase {
 
         $this->assertContains('resource\RemovedClass::foo() added', $commandTester->getDisplay());
     }
+
+    public function testItCanBeCutDownToOnlySomeRuleSets()
+    {
+        $application = new \PHPSemVer\Console\Application();
+
+        $command       = $application->find( 'vcs:message' );
+
+        $commandTester = new CommandTester( $command );
+        $commandTester->execute(
+            array(
+                'command' => $command->getName(),
+                'previous' => $this->getResourcePath('v1'),
+                'latest' => $this->getResourcePath('v2'),
+                '--include' => 'major'
+            )
+        );
+
+        $this->assertNotContains('resource\RemovedClass::foo() added', $commandTester->getDisplay());
+    }
 }
