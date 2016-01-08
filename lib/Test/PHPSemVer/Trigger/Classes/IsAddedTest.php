@@ -38,7 +38,7 @@ class IsAddedTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertEquals(
-            'some_class added.',
+            'some_class added',
             $test->lastException->getMessage()
         );
     }

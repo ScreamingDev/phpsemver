@@ -29,7 +29,7 @@ class ReturnTypeRemovedTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($test->handle($old, $new));
 
         $this->assertContains('return type', $test->lastException->getMessage());
-        $this->assertContains('were removed.', $test->lastException->getMessage());
+        $this->assertContains('were removed', $test->lastException->getMessage());
     }
 
     public function testItReturnFalseWhenNothingChanged()

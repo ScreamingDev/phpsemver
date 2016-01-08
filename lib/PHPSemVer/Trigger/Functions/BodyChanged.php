@@ -60,7 +60,7 @@ class BodyChanged extends AbstractTrigger
 
         $this->lastException = new FailedConstraint(
             sprintf(
-                '%s() body changed.',
+                '%s() body changed',
                 $new->name
             )
         );

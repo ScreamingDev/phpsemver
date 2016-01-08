@@ -52,7 +52,7 @@ class ReturnTypeChanged extends AbstractTrigger
 
         $this->lastException = new FailedConstraint(
             sprintf(
-                '%s::%s() changed return type from "%s" to "%s".',
+                '%s::%s() changed return type from "%s" to "%s"',
                 $old->getAttribute('parent')->namespacedName,
                 $old->name,
                 $old->getReturnType(),

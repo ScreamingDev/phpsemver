@@ -56,7 +56,7 @@ class ReturnTypeRemoved extends AbstractTrigger
 
         $this->lastException = new FailedConstraint(
             sprintf(
-                '%s::%s() return type "%s" were removed.',
+                '%s::%s() return type "%s" were removed',
                 $old->getAttribute('parent')->namespacedName,
                 $old->name,
                 $old->getReturnType(),

@@ -51,7 +51,7 @@ class IsRemoved extends AbstractTrigger
 
         $this->lastException = new FailedConstraint(
             sprintf(
-                '%s removed.',
+                '%s removed',
                 $old->namespacedName
             )
         );

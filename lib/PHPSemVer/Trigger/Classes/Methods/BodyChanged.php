@@ -61,7 +61,7 @@ class BodyChanged extends FunctionBodyChanged
 
         $this->lastException = new FailedConstraint(
             sprintf(
-                '%s::%s() body changed.',
+                '%s::%s() body changed',
                 $new->getAttribute('parent')->namespacedName,
                 $new->name
             )

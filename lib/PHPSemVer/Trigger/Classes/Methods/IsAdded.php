@@ -56,7 +56,7 @@ class IsAdded extends AbstractTrigger
 
         $this->lastException = new FailedConstraint(
             sprintf(
-                '%s::%s() added.',
+                '%s::%s() added',
                 $new->getAttribute('parent')->namespacedName,
                 $new->name
             )

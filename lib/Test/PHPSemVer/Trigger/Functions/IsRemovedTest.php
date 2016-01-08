@@ -41,7 +41,7 @@ class IsRemovedTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertEquals(
-            'some_func() removed.',
+            'some_func() removed',
             $test->lastException->getMessage()
         );
     }

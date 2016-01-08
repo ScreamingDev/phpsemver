@@ -51,7 +51,7 @@ class BodyChangedTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertEquals(
-            'some_func() body changed.',
+            'some_func() body changed',
             $test->lastException->getMessage()
         );
     }
