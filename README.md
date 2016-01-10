@@ -2,8 +2,8 @@
 
 > Check your changes against semantic versions
 
-[![Build Status](https://travis-ci.org/sourcerer-mike/phpsemver.svg?branch=master)](https://travis-ci.org/sourcerer-mike/phpsemver)
-[![Coverage](https://codecov.io/github/sourcerer-mike/phpsemver/coverage.svg?branch=master)](http://codecov.io/github/sourcerer-mike/phpsemver?branch=master)
+[![Build Status](https://travis-ci.org/sourcerer-mike/phpsemver.svg?branch=3.1.0)](https://travis-ci.org/sourcerer-mike/phpsemver)
+[![Coverage](https://codecov.io/github/sourcerer-mike/phpsemver/coverage.svg?branch=3.1.0)](http://codecov.io/github/sourcerer-mike/phpsemver?branch=3.1.0)
 
 Install it via composer
 
@@ -34,11 +34,18 @@ Compare the last commit with your current work:
 
 Or some version (git-tag) against the latest changes:
 
-    bin/phpsemver compare 1.0.0 HEAD
+    bin/phpsemver compare 3.1.0 HEAD
 
 You're welcome!
 
 ## Features
+
+### Commands
+
+Try the several possibilities:
+
+- Use `compare` to check for changes.
+- Use `vcs:message` to enhance your commit messages.
 
 ### Wrapper
 
