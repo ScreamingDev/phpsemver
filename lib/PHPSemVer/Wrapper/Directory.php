@@ -17,10 +17,8 @@
 namespace PHPSemVer\Wrapper;
 
 
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
-use RecursiveRegexIterator;
-use RegexIterator;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 
 /**
  * Wrapper for directories.
@@ -34,14 +32,14 @@ class Directory extends AbstractWrapper
 {
     function getAllFileNames()
     {
-        $Directory = new RecursiveDirectoryIterator($this->getBasePath());
-        $Iterator  = new RecursiveIteratorIterator($Directory);
-        $Regex     = new RegexIterator(
-            $Iterator, '/^.+\.php$/i', RecursiveRegexIterator::GET_MATCH
-        );
+        $finder = new Finder();
+        $finder->in($this->getBasePath())
+               ->files()
+               ->name('*.php');
 
         $allFileNames = array();
-        foreach ($Regex as $single) {
+        foreach ($finder as $single) {
+            /* @var SplFileInfo $single */
             if ($this->getExcludePattern()) {
                 foreach ($this->getExcludePattern() as $pattern) {
                     if (!$pattern) {
@@ -49,16 +47,14 @@ class Directory extends AbstractWrapper
                         continue;
                     }
 
-                    if (preg_match($pattern, $single[0])) {
+                    if (preg_match($pattern, $single->getRelativePathname())) {
                         continue 2;
                     }
 
                 }
             }
 
-            $short = str_replace($this->getBasePath(), '', $single[0]);
-
-            $allFileNames[$short] = $single[0];
+            $allFileNames[$single->getRelativePathname()] = $single->getRealPath();
         }
 
         return $allFileNames;
