@@ -40,14 +40,6 @@ class CompareCommand extends AbstractCommand {
 	protected $_cacheFactory;
 	protected $cacheFactory;
 
-	/**
-	 * Current builder.
-	 *
-	 * @deprecated 3.0.0
-	 *
-	 * @var PHPBuilder
-	 */
-	protected $currentBuilder  = null;
     protected $parseExceptions = array();
 
     protected function configure() {
