@@ -125,7 +125,7 @@ abstract class AbstractCommand extends Command
 
     protected function fetchConfig()
     {
-        $xmlFile = $this->resolveConfigFile($this->getInput()->getOption('ruleSet'));
+        $xmlFile = $this->resolveConfigFile();
 
         $this->debug('Using config-file ' . $xmlFile);
 
@@ -308,8 +308,7 @@ abstract class AbstractCommand extends Command
             'ruleSet',
             'R',
             InputOption::VALUE_OPTIONAL,
-            'A predefined rule set or XML file.',
-            'SemVer2'
+            'A predefined rule set or XML file (default: SemVer2).'
         );
 
         $this->addArgument(
@@ -344,8 +343,6 @@ abstract class AbstractCommand extends Command
             $input->getArgument( 'previous' ),
             $input->getOption( 'ruleSet' )
         );
-
-        $this->fetchConfig();
 
         $this->getPreviousWrapper()->addExcludePattern($input->getOption('exclude'));
         $this->getLatestWrapper()->addExcludePattern($input->getOption('exclude'));
@@ -441,27 +438,25 @@ abstract class AbstractCommand extends Command
      *
      * @return string
      */
-    protected function resolveConfigFile($ruleSet)
+    protected function resolveConfigFile()
     {
+        $ruleSet = $this->getInput()->getOption('ruleSet');
+
+        if (null === $ruleSet && file_exists('phpsemver.xml')) {
+            return 'phpsemver.xml';
+        }
+
+        if (null === $ruleSet) {
+            $ruleSet = 'SemVer2';
+        }
+
         if (file_exists($ruleSet)) {
             return $ruleSet;
         }
 
-        if (file_exists($ruleSet . '.xml')) {
-            return $ruleSet;
-        }
-
         $defaultPath = PHPSEMVER_LIB_PATH . '/PHPSemVer/Rules/';
-        if (file_exists($defaultPath . $ruleSet)) {
-            return $defaultPath . $ruleSet;
-        }
-
         if (file_exists($defaultPath . $ruleSet . '.xml')) {
             return $defaultPath . $ruleSet . '.xml';
-        }
-
-        if (file_exists('phpsemver.xml')) {
-            return 'phpsemver.xml';
         }
 
         throw new \InvalidArgumentException(

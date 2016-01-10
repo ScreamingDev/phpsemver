@@ -16,14 +16,10 @@
 
 namespace PHPSemVer\Console;
 
-use PDepend\Source\Language\PHP\PHPBuilder;
 use PHPSemVer\Config;
 use PHPSemVer\Environment;
-use PHPSemVer\Wrapper\AbstractWrapper;
 use Symfony\Component\Console\Helper\Table;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
