@@ -44,6 +44,14 @@ class MessageCommand extends AbstractCommand {
             InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
             'Name the rule sets that shall be printed.'
         );
+
+        $this->addOption(
+            'prefix',
+            null,
+            InputOption::VALUE_OPTIONAL,
+            'Prefix for each commit message',
+            '- '
+        );
     }
 
 
@@ -63,7 +71,7 @@ class MessageCommand extends AbstractCommand {
 
             foreach ($ruleSet->getErrorMessages() as $message) {
                 /* @var FailedConstraint $message */
-                $out[] = '- ' . $message->getMessage();
+                $out[] = $input->getOption('prefix') . $message->getMessage();
             }
         }
 
