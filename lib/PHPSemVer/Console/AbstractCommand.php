@@ -460,6 +460,10 @@ abstract class AbstractCommand extends Command
             return $defaultPath . $ruleSet . '.xml';
         }
 
+        if (file_exists('phpsemver.xml')) {
+            return 'phpsemver.xml';
+        }
+
         throw new \InvalidArgumentException(
             'Could not find rule set: ' . $ruleSet
         );

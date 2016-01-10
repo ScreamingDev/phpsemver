@@ -7,6 +7,7 @@ use PHPSemVer\Console\AbstractCommand;
 use PHPSemVer\Console\Application;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
+use Symfony\Component\Filesystem\Filesystem;
 use Test\Abstract_TestCase;
 
 class AbstractCommandTest extends Abstract_TestCase
@@ -60,9 +61,18 @@ class AbstractCommandTest extends Abstract_TestCase
             )
         );
 
+        $fs = new Filesystem();
+        $fs->rename('phpsemver.xml', '_phpsemver.xml');
+
         $subject->setOutput(new NullOutput());
 
-        $subject->getConfig();
+        try {
+            $subject->getConfig();
+        } catch (\Exception $e) {
+            throw $e;
+        } finally {
+            $fs->rename('_phpsemver.xml', 'phpsemver.xml');
+        }
     }
 
     public function testItGeneratesTheEnvironment()
