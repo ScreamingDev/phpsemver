@@ -10,4 +10,4 @@ done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
 # Run PHPSemVer
-/usr/bin/env php $DIR/../lib/phpsemver.php $@
+/usr/bin/env php $DIR/../lib/phpsemver.php "$@"
