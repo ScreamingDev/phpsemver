@@ -466,16 +466,6 @@ abstract class AbstractCommand extends Command
     }
 
     /**
-     * Set configuration for this command.
-     *
-     * @param mixed $config
-     */
-    public function setConfig($config)
-    {
-        $this->_config = $config;
-    }
-
-    /**
      * Set input interface.
      *
      * @param InputInterface $input
