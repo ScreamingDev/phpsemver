@@ -42,6 +42,29 @@ class AbstractCommandTest extends Abstract_TestCase
         $this->assertNull($subject->getConfig()->ruleSet());
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Could not find rule set: yomama
+     */
+    public function testItThrowsExceptionOnInvalidRuleSets()
+    {
+        $subject = new AbstractCommandTest_Subject();
+
+        $subject->setInput(
+            new ArrayInput(
+                [
+                    '--ruleSet' => 'yomama',
+                    'previous' => 'HEAD~1'
+                ],
+                $subject->getDefinition()
+            )
+        );
+
+        $subject->setOutput(new NullOutput());
+
+        $subject->getConfig();
+    }
+
     public function testItGeneratesTheEnvironment()
     {
         $subject = new AbstractCommandTest_Subject();
