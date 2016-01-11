@@ -2,8 +2,8 @@
 
 > Check your changes against semantic versions
 
-[![Build Status](https://travis-ci.org/sourcerer-mike/phpsemver.svg?branch=3.1.0)](https://travis-ci.org/sourcerer-mike/phpsemver)
-[![Coverage](https://codecov.io/github/sourcerer-mike/phpsemver/coverage.svg?branch=3.1.0)](http://codecov.io/github/sourcerer-mike/phpsemver?branch=3.1.0)
+[![Build Status](https://travis-ci.org/sourcerer-mike/phpsemver.svg?branch=3.2.0)](https://travis-ci.org/sourcerer-mike/phpsemver)
+[![Coverage](https://codecov.io/github/sourcerer-mike/phpsemver/coverage.svg?branch=3.2.0)](http://codecov.io/github/sourcerer-mike/phpsemver?branch=3.2.0)
 
 Install it via composer
 
@@ -34,7 +34,7 @@ Compare the last commit with your current work:
 
 Or some version (git-tag) against the latest changes:
 
-    bin/phpsemver compare 3.1.0 HEAD
+    bin/phpsemver compare 3.2.0 HEAD
 
 You're welcome!
 
@@ -62,7 +62,7 @@ Make assertions on:
 
 - Functions
 	- IsAdded: Check if a function is new.
-	- IsRemoved: Check if a functions is removed.
+	- IsRemoved: Check if a function is removed.
 	- BodyChanged: Check if someone changed the behaviour of a function.
 - Classes
 	- IsAdded: Check if a classes is new.
@@ -74,7 +74,8 @@ Make assertions on:
 	- ReturnTypeChanged: Watch for changed return types.
 	- ReturnTypeRemoved: Watch for incompatible changes on methods.
 
-Tells you which are major, minor or patch changes.
+Combine them as you like in your own configuration file.
+
 
 ### Configuration
 
@@ -84,7 +85,7 @@ The delivered XSD file makes it easy to write your own configuration (in a prope
     <?xml version="1.0"?>
     <phpsemver
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/sourcerer-mike/phpsemver/3.1.0/etc/phpsemver.xsd"
+            xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/sourcerer-mike/phpsemver/3.2.0/etc/phpsemver.xsd"
             title="My own versioning">
         <RuleSet name="major">
             <Trigger>

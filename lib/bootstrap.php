@@ -10,7 +10,7 @@
  *
  * @author    Mike Pretzlaw <pretzlaw@gmail.com>
  * @copyright 2015 Mike Pretzlaw
- * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.1.0/LICENSE.md MIT License
+ * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.2.0/LICENSE.md MIT License
  * @link      https://github.com/sourcerer-mike/phpsemver/
  */
 
@@ -23,7 +23,7 @@ define( 'PHPSEMVER_BASE_PATH', dirname( __DIR__ ) );
 define( 'PHPSEMVER_LIB_PATH', PHPSEMVER_BASE_PATH . DIRECTORY_SEPARATOR
                               . 'lib' );
 define( 'PHPSEMVER_TEXTDOMAIN', PHPSEMVER_ID );
-define( 'PHPSEMVER_VERSION', '3.1.0' );
+define( 'PHPSEMVER_VERSION', '3.2.0' );
 
 if ( ! is_readable( PHPSEMVER_LIB_PATH ) ) {
 	die(
