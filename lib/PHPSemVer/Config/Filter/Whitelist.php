@@ -44,6 +44,10 @@ class Whitelist extends AbstractConfig
 
     public function matches($fileName)
     {
+        if ( ! $this->getAllPattern()) {
+            return true;
+        }
+
         foreach ($this->getAllPattern() as $pattern) {
             if (preg_match($pattern, $fileName)) {
                 return true;

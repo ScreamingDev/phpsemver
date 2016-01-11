@@ -76,12 +76,11 @@
         </Trigger>
     </RuleSet>
     <Filter>
+        <Whitelist>
+            <Pattern>@lib/.*@</Pattern>
+        </Whitelist>
         <Blacklist>
-            <Pattern>@^bin/@</Pattern>
-            <Pattern>@^etc/@</Pattern>
-            <Pattern>@^lib/Test@</Pattern>
-            <Pattern>@^var/@</Pattern>
-            <Pattern>@^vendor/@</Pattern>
+            <Pattern>@lib/Test/.*@</Pattern>
         </Blacklist>
     </Filter>
 </phpsemver>

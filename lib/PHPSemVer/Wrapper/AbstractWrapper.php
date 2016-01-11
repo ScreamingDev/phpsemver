@@ -92,7 +92,7 @@ abstract class AbstractWrapper
         $nameResolver->addVisitor(new ParentVisitor());
         $nameResolver->addVisitor(new KeyVisitor());
         foreach ($this->getAllFileNames() as $sourceFile) {
-            if ( ! $this->getFilter()->matches($sourceFile)) {
+            if ( $this->getFilter() && ! $this->getFilter()->matches($sourceFile)) {
                 continue;
             }
 
