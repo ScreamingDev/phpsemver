@@ -58,4 +58,17 @@ class WhitelistTest extends Abstract_TestCase
             $whitelist->getAllPattern()
         );
     }
+
+    /**
+     * @param $whitelistNode
+     *
+     * @dataProvider dataFullNodes
+     */
+    public function testItMatchesFilesAgainstPattern($whitelistNode)
+    {
+        $whitelist = new Whitelist($whitelistNode);
+
+        $this->assertTrue($whitelist->matches('lib/Test/foo'));
+        $this->assertFalse($whitelist->matches('yadda'));
+    }
 }
