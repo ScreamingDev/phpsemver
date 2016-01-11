@@ -40,7 +40,8 @@ class Filter extends AbstractConfig
     public function matches($fileName)
     {
         $match = true;
-        if ($this->whitelist()->getAllPattern()) {
+
+        if ($this->whitelist() && $this->whitelist()->getAllPattern()) {
             $match = $this->whitelist()->matches($fileName);
         }
 
@@ -48,7 +49,7 @@ class Filter extends AbstractConfig
             return $match;
         }
 
-        if ($this->blacklist()->getAllPattern()) {
+        if ($this->blacklist() && $this->blacklist()->getAllPattern()) {
             $match = ! $this->blacklist()->matches($fileName);
         }
 

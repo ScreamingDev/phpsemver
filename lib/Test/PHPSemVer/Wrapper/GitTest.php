@@ -165,12 +165,7 @@ class GitTest extends Abstract_TestCase
         $property->setAccessible( true );
         $property->setValue( $git, new Directory( $git->getTempPath() ) );
 
-        $git->setExcludePattern(['@.*xml$@i']);
-
-        array_pop($data);
-
         $this->assertEquals( $data, array_keys( $git->getAllFileNames() ) );
-
     }
 
     public function testItSupportsTheTemporaryPathForAFile()

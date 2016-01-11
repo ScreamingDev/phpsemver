@@ -40,19 +40,6 @@ class Directory extends AbstractWrapper
         $allFileNames = array();
         foreach ($finder as $single) {
             /* @var SplFileInfo $single */
-
-            foreach ($this->getExcludePattern() as $pattern) {
-                if (!$pattern) {
-                    // skip empty pattern
-                    continue;
-                }
-
-                if (preg_match($pattern, $single->getRelativePathname())) {
-                    continue 2;
-                }
-
-            }
-
             $allFileNames[$single->getRelativePathname()] = $single->getRealPath();
         }
 

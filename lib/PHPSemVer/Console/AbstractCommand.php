@@ -52,25 +52,8 @@ abstract class AbstractCommand extends Command
      */
     protected function appendIgnorePattern($config, $latestWrapper, $previousWrapper)
     {
-        $config = $config->getXml();
-
-        $ignorePattern = [];
-        if (isset($config->Filter)) {
-            if (isset($config->Filter->Blacklist)) {
-                foreach ($config->Filter->Blacklist as $node) {
-                    if ( ! isset($node->Pattern)) {
-                        continue;
-                    }
-
-                    foreach ($node->Pattern as $pattern) {
-                        $ignorePattern[] = (string)$pattern;
-                    }
-                }
-            }
-        }
-
-        $latestWrapper->setExcludePattern($ignorePattern);
-        $previousWrapper->setExcludePattern($ignorePattern);
+        $latestWrapper->setFilter($config->filter());
+        $previousWrapper->setFilter($config->filter());
     }
 
     protected function compareTrees()
@@ -289,14 +272,6 @@ abstract class AbstractCommand extends Command
     protected function configure()
     {
         $this->addOption(
-            'exclude',
-            null,
-            InputOption::VALUE_OPTIONAL,
-            'Exclude files containing the given regexp (extends the XML config).',
-            ''
-        );
-
-        $this->addOption(
             'type',
             't',
             InputOption::VALUE_OPTIONAL,
@@ -343,9 +318,6 @@ abstract class AbstractCommand extends Command
             $input->getArgument( 'previous' ),
             $input->getOption( 'ruleSet' )
         );
-
-        $this->getPreviousWrapper()->addExcludePattern($input->getOption('exclude'));
-        $this->getLatestWrapper()->addExcludePattern($input->getOption('exclude'));
 
         $this->appendIgnorePattern($this->getConfig(), $this->getPreviousWrapper(), $this->getLatestWrapper());
     }

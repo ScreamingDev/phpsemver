@@ -21,6 +21,7 @@ use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\NameResolver;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
+use PHPSemVer\Config\Filter;
 use PHPSemVer\DataTree\Importer\KeyVisitor;
 use PHPSemVer\DataTree\Importer\ParentVisitor;
 
@@ -37,7 +38,7 @@ abstract class AbstractWrapper
     protected $_base;
     protected $_cacheFactory;
     protected $_parserExceptions;
-    protected $excludePattern;
+    protected $filter;
 
     public function __construct($base)
     {
@@ -49,21 +50,21 @@ abstract class AbstractWrapper
         $this->_base = $base;
     }
 
-    public function addExcludePattern($getRegExp)
-    {
-        $this->excludePattern[] = $getRegExp;
-    }
-
     abstract public function getAllFileNames();
 
-    public function getExcludePattern()
+    /**
+     * Get the configured filter.
+     *
+     * @return Filter
+     */
+    public function getFilter()
     {
-        return (array)$this->excludePattern;
+        return $this->filter;
     }
 
-    public function setExcludePattern($pattern)
+    public function setFilter($pattern)
     {
-        $this->excludePattern = $pattern;
+        $this->filter = $pattern;
     }
 
     abstract public function getBasePath();
@@ -91,6 +92,10 @@ abstract class AbstractWrapper
         $nameResolver->addVisitor(new ParentVisitor());
         $nameResolver->addVisitor(new KeyVisitor());
         foreach ($this->getAllFileNames() as $sourceFile) {
+            if ( ! $this->getFilter()->matches($sourceFile)) {
+                continue;
+            }
+
             if ( ! preg_match('/\.php$/i', $sourceFile)) {
                 continue;
             }

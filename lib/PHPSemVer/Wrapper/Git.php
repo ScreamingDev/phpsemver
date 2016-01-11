@@ -92,13 +92,6 @@ class Git extends AbstractWrapper
 
         $allFileNames = array();
         foreach ($allPrevious as $singleFile) {
-            foreach ($this->getExcludePattern() as $exclude) {
-                if (preg_match($exclude, $singleFile)) {
-                    continue 2;
-                }
-            }
-
-
             $allFileNames[$singleFile] = $this->getPath($singleFile);
         }
 
