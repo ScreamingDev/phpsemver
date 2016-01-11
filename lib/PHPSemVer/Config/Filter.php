@@ -19,6 +19,8 @@ namespace PHPSemVer\Config;
 
 use PHPSemVer\AbstractConfig;
 use PHPSemVer\Config;
+use PHPSemVer\Config\Filter\Blacklist;
+use PHPSemVer\Config\Filter\Whitelist;
 
 /**
  * Config > Filter.
@@ -27,8 +29,29 @@ use PHPSemVer\Config;
  * @copyright 2015-2016 Mike Pretzlaw. All rights reserved.
  * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.2.0/LICENSE.md MIT License
  * @link      https://github.com/sourcerer-mike/phpsemver/
+ *
+ * @method Blacklist blacklist()
+ * @method Whitelist whitelist()
  */
 class Filter extends AbstractConfig
 {
     const XPATH = '//phpsemver/Filter';
+
+    public function matches($fileName)
+    {
+        $match = true;
+        if ($this->whitelist()->getAllPattern()) {
+            $match = $this->whitelist()->matches($fileName);
+        }
+
+        if ( ! $match) {
+            return $match;
+        }
+
+        if ($this->blacklist()->getAllPattern()) {
+            $match = ! $this->blacklist()->matches($fileName);
+        }
+
+        return $match;
+    }
 }
