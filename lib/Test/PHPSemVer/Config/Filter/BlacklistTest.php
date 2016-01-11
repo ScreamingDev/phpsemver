@@ -37,6 +37,24 @@ class BlacklistTest extends Abstract_TestCase
     {
         $filter = new Blacklist($filterNode);
 
-        $this->assertEquals(1, $filter->getXml()->count());
+        $this->assertEquals(2, $filter->getXml()->count());
+    }
+
+    /**
+     * @param $blacklistNode
+     *
+     * @dataProvider dataFullNodes
+     */
+    public function testItContainsAllPattern($blacklistNode)
+    {
+        $blacklist = new Blacklist($blacklistNode);
+
+        $this->assertEquals(
+            [
+                '@^pattern-test/blacklist/.*@',
+                '@^lib/Test/.*@',
+            ],
+            $blacklist->getAllPattern()
+        );
     }
 }

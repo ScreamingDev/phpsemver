@@ -42,12 +42,13 @@
     </RuleSet>
     <Filter>
         <Blacklist>
-            <Pattern>^pattern-test/blacklist/.*</Pattern>
+            <Pattern>@^pattern-test/blacklist/.*@</Pattern>
+            <Pattern>@^lib/Test/.*@</Pattern>
         </Blacklist>
         <Whitelist>
-            <Pattern>^bin/phpsemver$</Pattern>
-            <Pattern>^lib/.*</Pattern>
-            <Pattern>^pattern-test/whitelist/.*</Pattern>
+            <Pattern>@^bin/phpsemver$@</Pattern>
+            <Pattern>@^lib/.*@</Pattern>
+            <Pattern>@^pattern-test/whitelist/.*@</Pattern>
         </Whitelist>
     </Filter>
 </phpsemver>
