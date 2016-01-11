@@ -105,10 +105,11 @@ The delivered XSD file makes it easy to write your own configuration (in a prope
     
         </RuleSet>
         <Filter>
+            <Whitelist>
+                <Pattern>@lib/.*@</Pattern>
+            </Whitelist>
             <Blacklist>
-                <Pattern>@vendor/.*@</Pattern>
                 <Pattern>@lib/Test/.*@</Pattern>
-                <Pattern>@spec/.*@</Pattern>
             </Blacklist>
         </Filter>
     </phpsemver>
