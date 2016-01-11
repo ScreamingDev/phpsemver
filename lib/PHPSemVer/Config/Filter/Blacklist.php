@@ -41,4 +41,15 @@ class Blacklist extends AbstractConfig
 
         return $pattern;
     }
+
+    public function matches($fileName)
+    {
+        foreach ($this->getAllPattern() as $pattern) {
+            if (preg_match($pattern, $fileName)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

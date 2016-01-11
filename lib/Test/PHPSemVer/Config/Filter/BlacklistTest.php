@@ -57,4 +57,17 @@ class BlacklistTest extends Abstract_TestCase
             $blacklist->getAllPattern()
         );
     }
+
+    /**
+     * @param $blacklistNode
+     *
+     * @dataProvider dataFullNodes
+     */
+    public function testItMatchesFilesAgainstPattern($blacklistNode)
+    {
+        $blacklist = new Blacklist($blacklistNode);
+
+        $this->assertTrue($blacklist->matches('lib/Test/foo'));
+        $this->assertFalse($blacklist->matches('./lib/Test/foo'));
+    }
 }
