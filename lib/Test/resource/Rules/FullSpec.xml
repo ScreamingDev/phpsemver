@@ -45,6 +45,8 @@
             <Pattern>^pattern-test/blacklist/.*</Pattern>
         </Blacklist>
         <Whitelist>
+            <Pattern>^bin/phpsemver$</Pattern>
+            <Pattern>^lib/.*</Pattern>
             <Pattern>^pattern-test/whitelist/.*</Pattern>
         </Whitelist>
     </Filter>
