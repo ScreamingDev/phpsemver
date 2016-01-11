@@ -11,7 +11,7 @@ Install it via composer
 
 and test your code by comparing two versions
 
-    phpsemver compare 1.0.0 HEAD
+    phpsemver compare 3.2.0 HEAD
 
 ## Example
 
