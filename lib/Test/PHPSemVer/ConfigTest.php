@@ -41,4 +41,12 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
 
         $this->assertNotEmpty($config->getTitle());
     }
+
+    public function testItHasFilter()
+    {
+        $full = $this->makeFull();
+
+        $this->assertInstanceOf('\\PHPSemVer\\Config\\Filter', $full->filter());
+        $this->assertEquals(2, $full->filter()->getXml()->count());
+    }
 }

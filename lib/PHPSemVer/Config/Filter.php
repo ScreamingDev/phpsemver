@@ -1,6 +1,6 @@
 <?php
 /**
- * Contains Config class.
+ * Filter Class.
  *
  * LICENSE: This source file is subject to the MIT license
  * that is available through the world-wide-web at the following URI:
@@ -15,22 +15,20 @@
  */
 
 
-namespace PHPSemVer;
+namespace PHPSemVer\Config;
 
-use PHPSemVer\Config\Filter;
-use PHPSemVer\Config\RuleSetCollection;
+use PHPSemVer\AbstractConfig;
+use PHPSemVer\Config;
 
 /**
- * Config.
+ * Config > Filter.
  *
  * @author    Mike Pretzlaw <pretzlaw@gmail.com>
  * @copyright 2015-2016 Mike Pretzlaw. All rights reserved.
  * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.2.0/LICENSE.md MIT License
  * @link      https://github.com/sourcerer-mike/phpsemver/
- *
- * @method Filter filter()
- * @method RuleSetCollection ruleSet()
  */
-class Config extends AbstractConfig
+class Filter extends AbstractConfig
 {
+    const XPATH = '//phpsemver/Filter';
 }
