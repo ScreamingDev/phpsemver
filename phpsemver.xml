@@ -77,10 +77,10 @@
     </RuleSet>
     <Filter>
         <Whitelist>
-            <Pattern>@lib/.*@</Pattern>
+            <Pattern>@^lib/.*@</Pattern>
         </Whitelist>
         <Blacklist>
-            <Pattern>@lib/Test/.*@</Pattern>
+            <Pattern>@^lib/Test/.*@</Pattern>
         </Blacklist>
     </Filter>
 </phpsemver>
