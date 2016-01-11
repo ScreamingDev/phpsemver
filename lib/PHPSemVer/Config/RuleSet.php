@@ -34,7 +34,7 @@ use PHPSemVer\Config\RuleSet\Trigger;
  */
 class RuleSet extends AbstractConfig
 {
-    const XPATH = '//PHPSemVer/RuleSet';
+    const XPATH = '//phpsemver/RuleSet';
 
     protected $attributes
         = [

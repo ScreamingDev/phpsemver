@@ -1,5 +1,8 @@
 <?xml version="1.0" ?>
-<PHPSemVer title="SemVer 2.0">
+<phpsemver
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/sourcerer-mike/phpsemver/3.2.0/etc/phpsemver.xsd"
+        title="My own versioning">
     <RuleSet name="first">
         <Trigger>
             <Classes>
@@ -22,4 +25,12 @@
     </RuleSet>
     <RuleSet name="last">
     </RuleSet>
-</PHPSemVer>
+    <Filter>
+        <Blacklist>
+            <Pattern>^pattern-test/blacklist/.*</Pattern>
+        </Blacklist>
+        <Whitelist>
+            <Pattern>^pattern-test/whitelist/.*</Pattern>
+        </Whitelist>
+    </Filter>
+</phpsemver>
