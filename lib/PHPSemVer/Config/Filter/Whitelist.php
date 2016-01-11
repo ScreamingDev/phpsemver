@@ -31,4 +31,14 @@ use PHPSemVer\Config;
 class Whitelist extends AbstractConfig
 {
     const XPATH = '//phpsemver/Filter/Whitelist';
+
+    public function getAllPattern()
+    {
+        $pattern = [];
+        foreach ($this->getXml()->children() as $child) {
+            $pattern[] = (string) $child;
+        }
+
+        return $pattern;
+    }
 }

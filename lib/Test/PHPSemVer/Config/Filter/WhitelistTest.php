@@ -39,4 +39,23 @@ class WhitelistTest extends Abstract_TestCase
 
         $this->assertEquals(3, $filter->getXml()->count());
     }
+
+    /**
+     * @param $whitelistNode
+     *
+     * @dataProvider dataFullNodes
+     */
+    public function testItContainsAllPattern($whitelistNode)
+    {
+        $whitelist = new Whitelist($whitelistNode);
+
+        $this->assertEquals(
+            [
+                '@^bin/phpsemver$@',
+                '@^lib/.*@',
+                '@^pattern-test/whitelist/.*@',
+            ],
+            $whitelist->getAllPattern()
+        );
+    }
 }
