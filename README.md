@@ -13,11 +13,9 @@ and test your code by comparing two versions
 
     phpsemver compare 3.2.0 HEAD
 
-## Example
+or the last commit with your current work:
 
-Compare the last commit with your current work:
-
-    ./bin/phpsemver compare HEAD .
+    phpsemver compare HEAD .
     
     +-------+-------------------------------------------------------------------+
     | Level | Message                                                           |
@@ -31,10 +29,6 @@ Compare the last commit with your current work:
     +-------+-------------------------------------------------------------------+
     
     Total time: 0.94
-
-Or some version (git-tag) against the latest changes:
-
-    bin/phpsemver compare 3.2.0 HEAD
 
 You're welcome!
 
@@ -86,7 +80,7 @@ The delivered XSD file makes it easy to write your own configuration (in a prope
     <phpsemver
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/sourcerer-mike/phpsemver/3.2.0/etc/phpsemver.xsd"
-            title="My own versioning">
+            title="My own rules">
         <RuleSet name="major">
             <Trigger>
                 <Functions>
