@@ -17,6 +17,7 @@
 namespace PHPSemVer;
 
 
+use PhpParser\Node;
 use PHPSemVer\Config\RuleSet;
 use PHPSemVer\Config\RuleSetCollection;
 
@@ -47,8 +48,8 @@ class Environment
     /**
      * Compare two parsed AST.
      *
-     * @param array $previous
-     * @param array $latest
+     * @param Node[] $previous
+     * @param Node[] $latest
      *
      * @return null
      */
@@ -76,8 +77,14 @@ class Environment
 
             $this->handleNode($old, $new);
 
-            if ($old && $new && isset( $old->stmts ) && isset( $new->stmts )) {
-                $this->compareTrees($old->stmts, $new->stmts);
+            if ($old && $new) {
+                foreach ($old->getSubNodeNames() as $subNode) {
+                    if ( ! is_array($old->$subNode)) {
+                        continue;
+                    }
+
+                    $this->compareTrees($old->$subNode, $new->$subNode);
+                }
             }
         }
 

@@ -127,6 +127,10 @@ abstract class AbstractWrapper
     protected function mergeTrees($dataTree, $tree)
     {
         foreach ($tree as $key => $node) {
+            if (is_numeric($key)) {
+                $key = uniqid();
+            }
+
             if ( ! isset( $dataTree[$key] )) {
                 $dataTree[$key] = $node;
             }
