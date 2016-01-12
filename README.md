@@ -71,7 +71,7 @@ Make assertions on:
 Combine them as you like in your own configuration file.
 
 
-### Configuration
+## Configuration
 
 Configure which assertions are used in a XML-File.
 The delivered XSD file makes it easy to write your own configuration (in a proper IDE).
@@ -110,3 +110,17 @@ The delivered XSD file makes it easy to write your own configuration (in a prope
 
 Write your own and use it with the `--ruleset` option.
 See the wiki entry for more information: https://github.com/sourcerer-mike/phpsemver/wiki/Configuration
+
+### Prepared rule sets
+
+Those projects do semantic versions in different ways.
+So a special config is written for them which can be used via the `--ruleSet` option:
+
+- Drupal-Core
+- SemVer2
+- WordPress
+
+Just write `phpsemver --ruleSet Drupal-Core` and see the latest changes in Drupal.
+There are other companies that follow some semantics in their rules like
+Symfony.
+Don't drag behind - catch up with PHPSemVer.
