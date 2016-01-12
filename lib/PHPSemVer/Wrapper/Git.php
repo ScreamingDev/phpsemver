@@ -72,7 +72,7 @@ class Git extends AbstractWrapper
         return $this->_tempPath;
     }
 
-    public function getAllFileNames()
+    protected function fetchFileNames()
     {
         $options = array(
             'with-tree' => $this->getBase(),
@@ -90,12 +90,10 @@ class Git extends AbstractWrapper
         $allPrevious = explode(PHP_EOL, $result->getOutput());
         $allPrevious = array_filter($allPrevious);
 
-        $allFileNames = array();
+        $this->fileNames = array();
         foreach ($allPrevious as $singleFile) {
-            $allFileNames[$singleFile] = $this->getPath($singleFile);
+            $this->fileNames[$singleFile] = $this->getPath($singleFile);
         }
-
-        return $allFileNames;
     }
 
     /**

@@ -36,8 +36,7 @@ use PHPSemVer\DataTree\Importer\ParentVisitor;
 abstract class AbstractWrapper
 {
     protected $_base;
-    protected $_cacheFactory;
-    protected $_parserExceptions;
+    protected $fileNames;
     protected $filter;
 
     public function __construct($base)
@@ -47,10 +46,28 @@ abstract class AbstractWrapper
                 'Please provide a base. Can not be empty.'
             );
         }
+
         $this->_base = $base;
     }
 
-    abstract public function getAllFileNames();
+    abstract protected function fetchFileNames();
+
+    public function getAllFileNames() {
+        if (null === $this->fileNames) {
+            $this->fetchFileNames();
+        }
+
+        $fileNames = [];
+        foreach ($this->fileNames as $shortName => $realName) {
+            if ( $this->getFilter() && ! $this->getFilter()->matches($shortName)) {
+                continue;
+            }
+
+            $fileNames[$shortName] = $realName;
+        }
+
+        return $fileNames;
+    }
 
     /**
      * Get the configured filter.
@@ -85,8 +102,6 @@ abstract class AbstractWrapper
 
         $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP5);
 
-        $dataTree = [];
-
         $nameResolver = new NodeTraverser();
         $nameResolver->addVisitor(new NameResolver);
         $nameResolver->addVisitor(new ParentVisitor());
@@ -106,14 +121,12 @@ abstract class AbstractWrapper
                 $tree = $parser->parse(file_get_contents($sourceFile));
                 $tree = $nameResolver->traverse($tree);
 
-                $dataTree = $this->mergeTrees($dataTree, $tree);
+                yield $tree;
             } catch (Error $e) {
                 $e->setRawMessage($e->getRawMessage() . ' in file ' . $sourceFile);
                 throw $e;
             }
         }
-
-        return $dataTree;
     }
 
     /**
@@ -124,7 +137,7 @@ abstract class AbstractWrapper
      *
      * @return mixed
      */
-    protected function mergeTrees($dataTree, $tree)
+    public function mergeTrees($dataTree, $tree)
     {
         foreach ($tree as $key => $node) {
             if (is_numeric($key)) {

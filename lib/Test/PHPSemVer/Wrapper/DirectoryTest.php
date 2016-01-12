@@ -3,6 +3,7 @@
 namespace Test\PHPSemVer\Wrapper;
 
 
+use PHPSemVer\Config\Filter;
 use Test\Abstract_TestCase;
 
 class DirectoryTest extends Abstract_TestCase
@@ -28,14 +29,23 @@ class DirectoryTest extends Abstract_TestCase
         // When I instantiate a wrapper on a direcotry
         $fileWrapper = new \PHPSemVer\Wrapper\Directory( static::BASE_DIR . '/resource/v0' );
 
+        $blacklistMock = $this->getMock('\\PHPSemVer\\Config\\Filter\\Blacklist', ['getAllPattern'], [], '', false);
+        $blacklistMock->expects($this->any())
+                      ->method('getAllPattern')
+                      ->willReturn(
+                          [
+                              '@ignoreMe@',
+                          ]
+                      );
+
+        $filterMock = $this->getMock('\\PHPSemVer\\Config\\Filter', ['blacklist'], [], '', false);
+
+        $filterMock->expects($this->any())
+                   ->method('blacklist')
+                   ->willReturn($blacklistMock);
+
         // And ignore all files containing "ignoreMe"
-        $regexp = '@ignoreMe@';
-        $fileWrapper->setFilter(
-            [
-                $regexp,
-                '',
-            ]
-        );
+        $fileWrapper->setFilter($filterMock);
 
         // And fetch all file names
         $allFileNames = $fileWrapper->getAllFileNames();

@@ -33,17 +33,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @link      https://github.com/sourcerer-mike/phpsemver/
  */
 class CompareCommand extends AbstractCommand {
-	protected $_cacheFactory;
-	protected $cacheFactory;
-
-    protected $parseExceptions = array();
-
-    protected function configure() {
-        parent::configure();
-
-		$this->setName( 'compare' );
-	}
-
 	protected function execute(
 		InputInterface $input,
 		OutputInterface $output

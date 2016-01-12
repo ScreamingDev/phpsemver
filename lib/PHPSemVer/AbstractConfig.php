@@ -62,6 +62,10 @@ class AbstractConfig
 
         $className = get_class($this).'\\'.ucfirst($method);
 
+        if ( ! $this->getXml()) {
+            return null;
+        }
+
         $node = $this->getXml()->xpath('./'.ucfirst($method));
 
         if ( ! class_exists($className)) {

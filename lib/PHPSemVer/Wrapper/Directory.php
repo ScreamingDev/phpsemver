@@ -30,20 +30,18 @@ use Symfony\Component\Finder\SplFileInfo;
  */
 class Directory extends AbstractWrapper
 {
-    function getAllFileNames()
+    function fetchFileNames()
     {
         $finder = new Finder();
         $finder->in($this->getBasePath())
                ->files()
                ->name('*.php');
 
-        $allFileNames = array();
+        $this->fileNames = array();
         foreach ($finder as $single) {
             /* @var SplFileInfo $single */
-            $allFileNames[$single->getRelativePathname()] = $single->getRealPath();
+            $this->fileNames[$single->getRelativePathname()] = $single->getRealPath();
         }
-
-        return $allFileNames;
     }
 
     public function getBasePath()

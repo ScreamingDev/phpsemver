@@ -20,6 +20,7 @@ use PHPSemVer\Config;
 use PHPSemVer\Environment;
 use PHPSemVer\Wrapper\AbstractWrapper;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -361,7 +362,17 @@ abstract class AbstractCommand extends Command
         $this->debug('  in ' . $wrapper->getBasePath());
 
         $time     = microtime(true);
-        $dataTree = $wrapper->getDataTree();
+
+        $progress = new ProgressBar($this->getOutput(), $fileAmount);
+        $progress->setFormat('%current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s% %memory:6s% RAM');
+
+        $dataTree = [];
+        foreach ($wrapper->getDataTree() as $tree) {
+            $dataTree = $wrapper->mergeTrees($dataTree, $tree);
+            $progress->advance();
+        }
+
+        $progress->clear();
 
         $this->verbose(
             sprintf(
