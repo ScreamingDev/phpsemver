@@ -115,13 +115,10 @@ abstract class AbstractWrapper
                 continue;
             }
 
-            $sourceFile = realpath($sourceFile);
-
             try {
                 $tree = $parser->parse(file_get_contents($sourceFile));
-                $tree = $nameResolver->traverse($tree);
 
-                yield $tree;
+                yield $nameResolver->traverse($tree);
             } catch (Error $e) {
                 $e->setRawMessage($e->getRawMessage() . ' in file ' . $sourceFile);
                 throw $e;
