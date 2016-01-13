@@ -17,6 +17,9 @@
             <Functions>
                 <IsAdded />
             </Functions>
+            <Interfaces>
+                <IsAdded />
+            </Interfaces>
         </Trigger>
     </RuleSet>
 

@@ -45,6 +45,14 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
+            <xs:element name="Interfaces" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="IsAdded" minOccurs="0"/>
+                        <xs:element name="IsRemoved" minOccurs="0"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
         </xs:sequence>
     </xs:complexType>
 

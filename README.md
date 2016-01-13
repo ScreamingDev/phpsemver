@@ -67,6 +67,9 @@ Make assertions on:
 	- BodyChanged: Check if someone changed the behaviour of a method.
 	- ReturnTypeChanged: Watch for changed return types.
 	- ReturnTypeRemoved: Watch for incompatible changes on methods.
+- Interfaces
+    - IsAdded: Check if an interface is new.
+    - IsRemoved: Check if an interface is removed.
 
 Combine them as you like in your own configuration file.
 
