@@ -121,6 +121,26 @@ class AbstractCommandTest extends Abstract_TestCase
 
         $subject->debug('%d %s %s', 1, 'well', 'formatted');
     }
+
+    public function testSemVer2IsDefaultRuleSet()
+    {
+        $subject = new AbstractCommandTest_Subject();
+
+        $subject->setInput(
+            new ArrayInput(
+                [
+                    'previous' => 'HEAD~1'
+                ],
+                $subject->getDefinition()
+            )
+        );
+
+        $subject->setOutput(new NullOutput());
+
+        $attributes = $subject->getConfig()->title;
+
+        $this->assertEquals($attributes, 'Semantic Versions 2.0.0');
+    }
 }
 
 class AbstractCommandTest_Subject extends AbstractCommand

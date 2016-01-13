@@ -40,6 +40,17 @@ class AbstractConfig
         }
     }
 
+    public function __get($name)
+    {
+        $attributes = $this->getXml()->attributes();
+
+        if ( ! isset( $attributes[$name] )) {
+            return null;
+        }
+
+        return $attributes[$name];
+    }
+
     public function __call($method, $arguments)
     {
         if (isset($this->callBuffer[$method])) {
