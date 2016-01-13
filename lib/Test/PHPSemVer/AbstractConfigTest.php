@@ -25,6 +25,17 @@ class AbstractConfigTest extends Abstract_TestCase
 
         $this->assertNull($config->ruleSet());
     }
+
+    public function testGettingNonExistantAttributeIsNull()
+    {
+        $xmlFile = $this->getResourcePath('Rules/Empty.xml');
+
+        $this->assertFileExists($xmlFile);
+
+        $config = new Config(simplexml_load_file($xmlFile));
+
+        $this->assertNull($config->nothingHere);
+    }
 }
 
 class AbstractConfigTest_Subject extends AbstractConfig
