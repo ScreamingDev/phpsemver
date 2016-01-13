@@ -137,7 +137,17 @@ class AbstractCommandTest extends Abstract_TestCase
 
         $subject->setOutput(new NullOutput());
 
+        $reflectObject = new \ReflectionObject($subject);
+        $prop = $reflectObject->getProperty('_config');
+        $prop->setAccessible(true);
+        $prop->setValue($subject, null);
+
+        $cwd = getcwd();
+        chdir(__DIR__);
+
         $attributes = $subject->getConfig()->title;
+
+        chdir($cwd);
 
         $this->assertEquals($attributes, 'Semantic Versions 2.0.0');
     }
