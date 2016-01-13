@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<phpsemver
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="../../../etc/phpsemver.xsd"
+        title="Semantic Versions 2.0.0">
+    <Description>
+        Given a version number MAJOR.MINOR.PATCH, increment the:
+        <br/>
+        <br/>
+        MAJOR version when you make incompatible API changes,
+        <br/>
+        MINOR version when you add functionality in a backwards-compatible manner, and
+        <br/>
+        PATCH version when you make backwards-compatible bug fixes.
+        <br/>
+        <br/>
+        Additional labels for pre-release and build metadata are available as extensions to the MAJOR.MINOR.PATCH
+        format.
+        <br/>
+        The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",
+        "MAY", and "OPTIONAL" in this document are to be interpreted as described in RFC 2119.
+    </Description>
+    <RuleSet name="major">
+        <Description>
+            Major version X (X.y.z | X > 0) MUST be incremented
+            if any backwards incompatible changes are introduced to the public API.
+            It MAY include minor and patch level changes.
+            Patch and minor version MUST be reset to 0 when major version is incremented.
+        </Description>
+        <Trigger>
+            <Classes>
+                <IsRemoved />
+                <Methods>
+                    <ReturnTypeRemoved />
+                    <IsRemoved />
+                </Methods>
+            </Classes>
+            <Functions>
+                <IsRemoved />
+            </Functions>
+        </Trigger>
+    </RuleSet>
+    <RuleSet name="minor">
+        <Description>
+            Minor version Y (x.Y.z | x > 0) MUST be incremented if new,
+            backwards compatible functionality is introduced to the public API.
+            It MUST be incremented if any public API functionality is marked as deprecated.
+            It MAY be incremented if substantial new functionality
+            or improvements are introduced within the private code.
+            It MAY include patch level changes.
+            Patch version MUST be reset to 0 when minor version is incremented.
+        </Description>
+        <Trigger>
+            <Classes>
+                <IsAdded />
+                <Methods>
+                    <ReturnTypeChanged />
+                    <IsAdded />
+                </Methods>
+            </Classes>
+            <Functions>
+                <IsAdded />
+            </Functions>
+        </Trigger>
+    </RuleSet>
+    <RuleSet name="patch">
+        <Trigger>
+            <Classes>
+                <Methods>
+                    <BodyChanged />
+                </Methods>
+            </Classes>
+            <Functions>
+                <BodyChanged />
+            </Functions>
+        </Trigger>
+    </RuleSet>
+    <Filter>
+        <Blacklist>
+            <Pattern>@resources/templates/test@</Pattern>
+            <Pattern>@^tests@</Pattern>
+        </Blacklist>
+    </Filter>
+</phpsemver>
