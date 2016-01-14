@@ -9,8 +9,8 @@
  * a note to pretzlaw@gmail.com so we can mail you a copy immediately.
  *
  * @author    Mike Pretzlaw <pretzlaw@gmail.com>
- * @copyright 2015 Mike Pretzlaw
- * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.1.0/LICENSE.md MIT License
+ * @copyright 2015-2016 Mike Pretzlaw. All rights reserved.
+ * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.2.0/LICENSE.md MIT License
  * @link      https://github.com/sourcerer-mike/phpsemver/
  */
 
@@ -24,39 +24,24 @@ use Symfony\Component\Finder\SplFileInfo;
  * Wrapper for directories.
  *
  * @author    Mike Pretzlaw <pretzlaw@gmail.com>
- * @copyright 2015 Mike Pretzlaw
- * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.1.0/LICENSE.md MIT License
+ * @copyright 2015-2016 Mike Pretzlaw. All rights reserved.
+ * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.2.0/LICENSE.md MIT License
  * @link      https://github.com/sourcerer-mike/phpsemver/
  */
 class Directory extends AbstractWrapper
 {
-    function getAllFileNames()
+    function fetchFileNames()
     {
         $finder = new Finder();
         $finder->in($this->getBasePath())
                ->files()
                ->name('*.php');
 
-        $allFileNames = array();
+        $this->fileNames = array();
         foreach ($finder as $single) {
             /* @var SplFileInfo $single */
-
-            foreach ($this->getExcludePattern() as $pattern) {
-                if (!$pattern) {
-                    // skip empty pattern
-                    continue;
-                }
-
-                if (preg_match($pattern, $single->getRelativePathname())) {
-                    continue 2;
-                }
-
-            }
-
-            $allFileNames[$single->getRelativePathname()] = $single->getRealPath();
+            $this->fileNames[$single->getRelativePathname()] = $single->getRealPath();
         }
-
-        return $allFileNames;
     }
 
     public function getBasePath()

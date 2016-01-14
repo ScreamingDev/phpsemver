@@ -2,8 +2,8 @@
 
 > Check your changes against semantic versions
 
-[![Build Status](https://travis-ci.org/sourcerer-mike/phpsemver.svg?branch=3.1.0)](https://travis-ci.org/sourcerer-mike/phpsemver)
-[![Coverage](https://codecov.io/github/sourcerer-mike/phpsemver/coverage.svg?branch=3.1.0)](http://codecov.io/github/sourcerer-mike/phpsemver?branch=3.1.0)
+[![Build Status](https://travis-ci.org/sourcerer-mike/phpsemver.svg?branch=3.2.0)](https://travis-ci.org/sourcerer-mike/phpsemver)
+[![Coverage](https://codecov.io/github/sourcerer-mike/phpsemver/coverage.svg?branch=3.2.0)](http://codecov.io/github/sourcerer-mike/phpsemver?branch=3.2.0)
 
 Install it via composer
 
@@ -11,13 +11,11 @@ Install it via composer
 
 and test your code by comparing two versions
 
-    phpsemver compare 1.0.0 HEAD
+    phpsemver compare 3.2.0 HEAD
 
-## Example
+or the last commit with your current work:
 
-Compare the last commit with your current work:
-
-    ./bin/phpsemver compare HEAD .
+    phpsemver compare HEAD .
     
     +-------+-------------------------------------------------------------------+
     | Level | Message                                                           |
@@ -31,10 +29,6 @@ Compare the last commit with your current work:
     +-------+-------------------------------------------------------------------+
     
     Total time: 0.94
-
-Or some version (git-tag) against the latest changes:
-
-    bin/phpsemver compare 3.1.0 HEAD
 
 You're welcome!
 
@@ -62,7 +56,7 @@ Make assertions on:
 
 - Functions
 	- IsAdded: Check if a function is new.
-	- IsRemoved: Check if a functions is removed.
+	- IsRemoved: Check if a function is removed.
 	- BodyChanged: Check if someone changed the behaviour of a function.
 - Classes
 	- IsAdded: Check if a classes is new.
@@ -73,10 +67,14 @@ Make assertions on:
 	- BodyChanged: Check if someone changed the behaviour of a method.
 	- ReturnTypeChanged: Watch for changed return types.
 	- ReturnTypeRemoved: Watch for incompatible changes on methods.
+- Interfaces
+    - IsAdded: Check if an interface is new.
+    - IsRemoved: Check if an interface is removed.
 
-Tells you which are major, minor or patch changes.
+Combine them as you like in your own configuration file.
 
-### Configuration
+
+## Configuration
 
 Configure which assertions are used in a XML-File.
 The delivered XSD file makes it easy to write your own configuration (in a proper IDE).
@@ -84,8 +82,8 @@ The delivered XSD file makes it easy to write your own configuration (in a prope
     <?xml version="1.0"?>
     <phpsemver
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/sourcerer-mike/phpsemver/3.1.0/etc/phpsemver.xsd"
-            title="My own versioning">
+            xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/sourcerer-mike/phpsemver/3.2.0/etc/phpsemver.xsd"
+            title="My own rules">
         <RuleSet name="major">
             <Trigger>
                 <Functions>
@@ -104,13 +102,28 @@ The delivered XSD file makes it easy to write your own configuration (in a prope
     
         </RuleSet>
         <Filter>
+            <Whitelist>
+                <Pattern>@lib/.*@</Pattern>
+            </Whitelist>
             <Blacklist>
-                <Pattern>@vendor/.*@</Pattern>
                 <Pattern>@lib/Test/.*@</Pattern>
-                <Pattern>@spec/.*@</Pattern>
             </Blacklist>
         </Filter>
     </phpsemver>
 
 Write your own and use it with the `--ruleset` option.
 See the wiki entry for more information: https://github.com/sourcerer-mike/phpsemver/wiki/Configuration
+
+### Prepared rule sets
+
+Those projects do semantic versions in different ways.
+So a special config is written for them which can be used via the `--ruleSet` option:
+
+- Drupal-Core
+- SemVer2
+- WordPress
+
+Just write `phpsemver --ruleSet Drupal-Core` and see the latest changes in Drupal.
+There are other companies that follow some semantics in their rules like
+Symfony.
+Don't drag behind - catch up with PHPSemVer.

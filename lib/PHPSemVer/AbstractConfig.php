@@ -9,8 +9,8 @@
  * a note to pretzlaw@gmail.com so we can mail you a copy immediately.
  *
  * @author    Mike Pretzlaw <pretzlaw@gmail.com>
- * @copyright 2015 Mike Pretzlaw
- * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.1.0/LICENSE.md MIT License
+ * @copyright 2015-2016 Mike Pretzlaw. All rights reserved.
+ * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.2.0/LICENSE.md MIT License
  * @link      https://github.com/sourcerer-mike/phpsemver/
  */
 
@@ -21,8 +21,8 @@ namespace PHPSemVer;
  * Abstract config.
  *
  * @author    Mike Pretzlaw <pretzlaw@gmail.com>
- * @copyright 2015 Mike Pretzlaw
- * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.1.0/LICENSE.md MIT License
+ * @copyright 2015-2016 Mike Pretzlaw. All rights reserved.
+ * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.2.0/LICENSE.md MIT License
  * @link      https://github.com/sourcerer-mike/phpsemver/
  */
 class AbstractConfig
@@ -38,6 +38,17 @@ class AbstractConfig
         foreach ($nodes->attributes() as $name => $value) {
             $this->attributes[$name] = (string) $value;
         }
+    }
+
+    public function __get($name)
+    {
+        $attributes = $this->getXml()->attributes();
+
+        if ( ! isset( $attributes[$name] )) {
+            return null;
+        }
+
+        return $attributes[$name];
     }
 
     public function __call($method, $arguments)
@@ -61,6 +72,10 @@ class AbstractConfig
         }
 
         $className = get_class($this).'\\'.ucfirst($method);
+
+        if ( ! $this->getXml()) {
+            return null;
+        }
 
         $node = $this->getXml()->xpath('./'.ucfirst($method));
 

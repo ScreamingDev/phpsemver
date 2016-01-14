@@ -9,7 +9,7 @@
  * a note to pretzlaw@gmail.com so we can mail you a copy immediately.
  *
  * @author    Mike Pretzlaw <pretzlaw@gmail.com>
- * @copyright 2016 Mike Pretzlaw
+ * @copyright 2015-2016 Mike Pretzlaw. All rights reserved.
  * @license   http://github.com/sourcerer-mike/phpsemver/LICENSE.md MIT License
  * @link      http://github.com/sourcerer-mike/phpsemver
  */
@@ -26,7 +26,7 @@ use PhpParser\NodeVisitorAbstract;
  * Turn statement array in associative array.
  *
  * @author    Mike Pretzlaw <pretzlaw@gmail.com>
- * @copyright 2016 Mike Pretzlaw
+ * @copyright 2015-2016 Mike Pretzlaw. All rights reserved.
  * @license   http://github.com/sourcerer-mike/phpsemver/LICENSE.md MIT License
  * @link      http://github.com/sourcerer-mike/phpsemver
  */

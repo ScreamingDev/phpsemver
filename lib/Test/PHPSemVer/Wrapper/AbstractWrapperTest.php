@@ -17,13 +17,13 @@ class AbstractWrapperTest extends Abstract_TestCase {
 }
 
 class AbstractWrapperTest_Subject extends AbstractWrapper {
-	public function getAllFileNames()
-	{
-		return [];
-	}
-
 	public function getBasePath()
 	{
 		return $this->getBase();
+	}
+
+	protected function fetchFileNames()
+	{
+		$this->fileNames = [];
 	}
 }

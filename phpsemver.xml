@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <phpsemver
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="./phpsemver.xsd"
-        title="Semantic Versions 2.0.0">
+        xsi:noNamespaceSchemaLocation="./etc/phpsemver.xsd"
+        title="PHPSemVer 3.2.0">
     <Description>
         Given a version number MAJOR.MINOR.PATCH, increment the:
         <br/>
@@ -38,6 +38,9 @@
             <Functions>
                 <IsRemoved />
             </Functions>
+            <Interfaces>
+                <IsRemoved />
+            </Interfaces>
         </Trigger>
     </RuleSet>
     <RuleSet name="minor">
@@ -61,6 +64,9 @@
             <Functions>
                 <IsAdded />
             </Functions>
+            <Interfaces>
+                <IsAdded />
+            </Interfaces>
         </Trigger>
     </RuleSet>
     <RuleSet name="patch">
@@ -76,12 +82,11 @@
         </Trigger>
     </RuleSet>
     <Filter>
+        <Whitelist>
+            <Pattern>@^lib/.*@</Pattern>
+        </Whitelist>
         <Blacklist>
-            <Pattern>@^bin/@</Pattern>
-            <Pattern>@^etc/@</Pattern>
-            <Pattern>@^lib/Test@</Pattern>
-            <Pattern>@^var/@</Pattern>
-            <Pattern>@^vendor/@</Pattern>
+            <Pattern>@^lib/Test/.*@</Pattern>
         </Blacklist>
     </Filter>
 </phpsemver>

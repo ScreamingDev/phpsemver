@@ -9,14 +9,15 @@
  * a note to pretzlaw@gmail.com so we can mail you a copy immediately.
  *
  * @author    Mike Pretzlaw <pretzlaw@gmail.com>
- * @copyright 2015 Mike Pretzlaw
- * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.1.0/LICENSE.md MIT License
+ * @copyright 2015-2016 Mike Pretzlaw. All rights reserved.
+ * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.2.0/LICENSE.md MIT License
  * @link      https://github.com/sourcerer-mike/phpsemver/
  */
 
 namespace PHPSemVer;
 
 
+use PhpParser\Node;
 use PHPSemVer\Config\RuleSet;
 use PHPSemVer\Config\RuleSetCollection;
 
@@ -24,8 +25,8 @@ use PHPSemVer\Config\RuleSetCollection;
  * Environment to work with.
  *
  * @author    Mike Pretzlaw <pretzlaw@gmail.com>
- * @copyright 2015 Mike Pretzlaw
- * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.1.0/LICENSE.md MIT License
+ * @copyright 2015-2016 Mike Pretzlaw. All rights reserved.
+ * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.2.0/LICENSE.md MIT License
  * @link      https://github.com/sourcerer-mike/phpsemver/
  */
 class Environment
@@ -47,8 +48,8 @@ class Environment
     /**
      * Compare two parsed AST.
      *
-     * @param array $previous
-     * @param array $latest
+     * @param Node[] $previous
+     * @param Node[] $latest
      *
      * @return null
      */
@@ -76,8 +77,14 @@ class Environment
 
             $this->handleNode($old, $new);
 
-            if ($old && $new && isset( $old->stmts ) && isset( $new->stmts )) {
-                $this->compareTrees($old->stmts, $new->stmts);
+            if ($old && $new) {
+                foreach ($old->getSubNodeNames() as $subNode) {
+                    if ( ! is_array($old->$subNode)) {
+                        continue;
+                    }
+
+                    $this->compareTrees($old->$subNode, $new->$subNode);
+                }
             }
         }
 

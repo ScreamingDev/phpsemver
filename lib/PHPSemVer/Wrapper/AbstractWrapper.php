@@ -9,8 +9,8 @@
  * a note to pretzlaw@gmail.com so we can mail you a copy immediately.
  *
  * @author    Mike Pretzlaw <pretzlaw@gmail.com>
- * @copyright 2015 Mike Pretzlaw
- * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.1.0/LICENSE.md MIT License
+ * @copyright 2015-2016 Mike Pretzlaw. All rights reserved.
+ * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.2.0/LICENSE.md MIT License
  * @link      https://github.com/sourcerer-mike/phpsemver/
  */
 
@@ -21,6 +21,7 @@ use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\NameResolver;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
+use PHPSemVer\Config\Filter;
 use PHPSemVer\DataTree\Importer\KeyVisitor;
 use PHPSemVer\DataTree\Importer\ParentVisitor;
 
@@ -28,16 +29,15 @@ use PHPSemVer\DataTree\Importer\ParentVisitor;
  * Basic functionality for wrapper.
  *
  * @author    Mike Pretzlaw <pretzlaw@gmail.com>
- * @copyright 2015 Mike Pretzlaw
- * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.1.0/LICENSE.md MIT License
+ * @copyright 2015-2016 Mike Pretzlaw. All rights reserved.
+ * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.2.0/LICENSE.md MIT License
  * @link      https://github.com/sourcerer-mike/phpsemver/
  */
 abstract class AbstractWrapper
 {
     protected $_base;
-    protected $_cacheFactory;
-    protected $_parserExceptions;
-    protected $excludePattern;
+    protected $fileNames;
+    protected $filter;
 
     public function __construct($base)
     {
@@ -46,24 +46,42 @@ abstract class AbstractWrapper
                 'Please provide a base. Can not be empty.'
             );
         }
+
         $this->_base = $base;
     }
 
-    public function addExcludePattern($getRegExp)
-    {
-        $this->excludePattern[] = $getRegExp;
+    abstract protected function fetchFileNames();
+
+    public function getAllFileNames() {
+        if (null === $this->fileNames) {
+            $this->fetchFileNames();
+        }
+
+        $fileNames = [];
+        foreach ($this->fileNames as $shortName => $realName) {
+            if ( $this->getFilter() && ! $this->getFilter()->matches($shortName)) {
+                continue;
+            }
+
+            $fileNames[$shortName] = $realName;
+        }
+
+        return $fileNames;
     }
 
-    abstract public function getAllFileNames();
-
-    public function getExcludePattern()
+    /**
+     * Get the configured filter.
+     *
+     * @return Filter
+     */
+    public function getFilter()
     {
-        return (array)$this->excludePattern;
+        return $this->filter;
     }
 
-    public function setExcludePattern($pattern)
+    public function setFilter($pattern)
     {
-        $this->excludePattern = $pattern;
+        $this->filter = $pattern;
     }
 
     abstract public function getBasePath();
@@ -84,31 +102,28 @@ abstract class AbstractWrapper
 
         $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP5);
 
-        $dataTree = [];
-
         $nameResolver = new NodeTraverser();
         $nameResolver->addVisitor(new NameResolver);
         $nameResolver->addVisitor(new ParentVisitor());
         $nameResolver->addVisitor(new KeyVisitor());
-        foreach ($this->getAllFileNames() as $sourceFile) {
+        foreach ($this->getAllFileNames() as $relativePath => $sourceFile) {
+            if ( $this->getFilter() && ! $this->getFilter()->matches($relativePath)) {
+                continue;
+            }
+
             if ( ! preg_match('/\.php$/i', $sourceFile)) {
                 continue;
             }
 
-            $sourceFile = realpath($sourceFile);
-
             try {
                 $tree = $parser->parse(file_get_contents($sourceFile));
-                $tree = $nameResolver->traverse($tree);
 
-                $dataTree = $this->mergeTrees($dataTree, $tree);
+                yield $nameResolver->traverse($tree);
             } catch (Error $e) {
                 $e->setRawMessage($e->getRawMessage() . ' in file ' . $sourceFile);
                 throw $e;
             }
         }
-
-        return $dataTree;
     }
 
     /**
@@ -119,9 +134,13 @@ abstract class AbstractWrapper
      *
      * @return mixed
      */
-    protected function mergeTrees($dataTree, $tree)
+    public function mergeTrees($dataTree, $tree)
     {
         foreach ($tree as $key => $node) {
+            if (is_numeric($key)) {
+                $key = uniqid();
+            }
+
             if ( ! isset( $dataTree[$key] )) {
                 $dataTree[$key] = $node;
             }

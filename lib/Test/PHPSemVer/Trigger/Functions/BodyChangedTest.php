@@ -18,7 +18,13 @@ class BodyChangedTest extends \PHPUnit_Framework_TestCase
             ->method('canHandle')
             ->willReturn(true);
 
-        $this->assertFalse($mock->handle([new \stdClass()], [new \ArrayObject()]));
+        $stdClass = new \stdClass();
+        $stdClass->name = 'same_name_but_different_but_still_the_same';
+
+        $arrayObject = new \ArrayObject();
+        $arrayObject->name = 'same_name_but_different_but_still_the_same';
+
+        $this->assertTrue($mock->handle($arrayObject, $stdClass));
     }
 
     public function testHandleNullWhenInvalidArgument()

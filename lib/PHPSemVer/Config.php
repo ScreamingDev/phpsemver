@@ -9,24 +9,26 @@
  * a note to pretzlaw@gmail.com so we can mail you a copy immediately.
  *
  * @author    Mike Pretzlaw <pretzlaw@gmail.com>
- * @copyright 2015 Mike Pretzlaw
- * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.1.0/LICENSE.md MIT License
+ * @copyright 2015-2016 Mike Pretzlaw. All rights reserved.
+ * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.2.0/LICENSE.md MIT License
  * @link      https://github.com/sourcerer-mike/phpsemver/
  */
 
 
 namespace PHPSemVer;
 
+use PHPSemVer\Config\Filter;
 use PHPSemVer\Config\RuleSetCollection;
 
 /**
  * Config.
  *
  * @author    Mike Pretzlaw <pretzlaw@gmail.com>
- * @copyright 2015 Mike Pretzlaw
- * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.1.0/LICENSE.md MIT License
+ * @copyright 2015-2016 Mike Pretzlaw. All rights reserved.
+ * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.2.0/LICENSE.md MIT License
  * @link      https://github.com/sourcerer-mike/phpsemver/
  *
+ * @method Filter filter()
  * @method RuleSetCollection ruleSet()
  */
 class Config extends AbstractConfig

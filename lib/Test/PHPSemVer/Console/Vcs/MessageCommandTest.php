@@ -21,6 +21,7 @@ class MessageCommandTest extends Abstract_TestCase {
                 'command' => $command->getName(),
                 'previous' => $this->getResourcePath('v1'),
                 'latest' => $this->getResourcePath('v2'),
+                '--ruleSet' => 'SemVer2'
             )
         );
 
@@ -42,6 +43,7 @@ class MessageCommandTest extends Abstract_TestCase {
                 'previous' => $this->getResourcePath('v1'),
                 'latest' => $this->getResourcePath('v2'),
                 '--prefix' => $prefix,
+                '--ruleSet' => 'SemVer2',
             )
         );
 

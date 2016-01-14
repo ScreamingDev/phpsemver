@@ -9,8 +9,8 @@
  * a note to pretzlaw@gmail.com so we can mail you a copy immediately.
  *
  * @author    Mike Pretzlaw <pretzlaw@gmail.com>
- * @copyright 2015 Mike Pretzlaw
- * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.1.0/LICENSE.md MIT License
+ * @copyright 2015-2016 Mike Pretzlaw. All rights reserved.
+ * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.2.0/LICENSE.md MIT License
  * @link      https://github.com/sourcerer-mike/phpsemver/
  */
 
@@ -23,8 +23,8 @@ use GitWrapper\GitWrapper;
  * Wrapper for GIT context.
  *
  * @author    Mike Pretzlaw <pretzlaw@gmail.com>
- * @copyright 2015 Mike Pretzlaw
- * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.1.0/LICENSE.md MIT License
+ * @copyright 2015-2016 Mike Pretzlaw. All rights reserved.
+ * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.2.0/LICENSE.md MIT License
  * @link      https://github.com/sourcerer-mike/phpsemver/
  */
 class Git extends AbstractWrapper
@@ -72,7 +72,7 @@ class Git extends AbstractWrapper
         return $this->_tempPath;
     }
 
-    public function getAllFileNames()
+    protected function fetchFileNames()
     {
         $options = array(
             'with-tree' => $this->getBase(),
@@ -90,19 +90,10 @@ class Git extends AbstractWrapper
         $allPrevious = explode(PHP_EOL, $result->getOutput());
         $allPrevious = array_filter($allPrevious);
 
-        $allFileNames = array();
+        $this->fileNames = array();
         foreach ($allPrevious as $singleFile) {
-            foreach ($this->getExcludePattern() as $exclude) {
-                if (preg_match($exclude, $singleFile)) {
-                    continue 2;
-                }
-            }
-
-
-            $allFileNames[$singleFile] = $this->getPath($singleFile);
+            $this->fileNames[$singleFile] = $this->getPath($singleFile);
         }
-
-        return $allFileNames;
     }
 
     /**

@@ -38,6 +38,9 @@
             <Functions>
                 <IsRemoved />
             </Functions>
+            <Interfaces>
+                <IsRemoved />
+            </Interfaces>
         </Trigger>
     </RuleSet>
     <RuleSet name="minor">
@@ -61,6 +64,9 @@
             <Functions>
                 <IsAdded />
             </Functions>
+            <Interfaces>
+                <IsAdded />
+            </Interfaces>
         </Trigger>
     </RuleSet>
     <RuleSet name="patch">
