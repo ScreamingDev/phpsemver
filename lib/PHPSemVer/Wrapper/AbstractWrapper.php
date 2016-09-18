@@ -101,11 +101,12 @@ abstract class AbstractWrapper {
 				yield $nameResolver->traverse( $tree );
 			} catch ( Error $e ) {
 				// store failures
-				if ( ! isset( $this->errorCollection[ $sourceFile ] ) ) {
-					$this->errorCollection[ $sourceFile ] = [ ];
+
+				if ( ! isset( $this->errorCollection[ $relativePath ] ) ) {
+					$this->errorCollection[ $relativePath ] = [ ];
 				}
 
-				$this->errorCollection[ $sourceFile ][] = $e;
+				$this->errorCollection[ $relativePath ][] = $e;
 			}
 		}
 	}

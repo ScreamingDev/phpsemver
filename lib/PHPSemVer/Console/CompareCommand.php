@@ -101,8 +101,9 @@ class CompareCommand extends AbstractCommand
         foreach ($this->getPreviousWrapper()->getErrors() as $file => $errors) {
             $output->writeln(
                 sprintf(
-                    '<error>Skipped file "%s" in previous version due to syntax errors.</error>',
-                    $file
+                    '<error>Skipped file "%s" in %s due to syntax errors.</error>',
+                    $file,
+                    $this->getPreviousWrapper()->getBase()
                 )
             );
         }
@@ -115,8 +116,9 @@ class CompareCommand extends AbstractCommand
 
             $output->writeln(
                 sprintf(
-                    '<error>Skipped file "%s" in latest version due to syntax errors.</error>',
-                    $file
+                    '<error>Skipped file "%s" in %s due to syntax errors.</error>',
+                    $file,
+                    $this->getLatestWrapper()->getBase()
                 )
             );
         }

@@ -26,20 +26,21 @@ class AbstractWrapperTest extends Abstract_TestCase {
 		$mock = $builder->getMock();
 		$mock->expects( $this->any() )
 		     ->method( 'getAllFileNames' )
-		     ->willReturn( [ $failedFilePath ] );
+		     ->willReturn( [ 'v2/fileNotParsable.php' => $failedFilePath ] );
 
 		foreach ( $mock->getDataTree() as $item ) {
 			// just a loop to activate the generator.
 		};
 
 		$this->assertNotEmpty( $mock->getErrors() );
-		$this->assertArrayHasKey( $failedFilePath, $mock->getErrors() );
+		$this->assertArrayHasKey( 'v2/fileNotParsable.php', $mock->getErrors() );
+
 
 		/** @var Error $first */
 		$all = $mock->getErrors();
-		$this->assertInstanceOf( '\\PhpParser\\Error', $all[ $failedFilePath ][0] );
+		$this->assertInstanceOf( '\\PhpParser\\Error', $all[ 'v2/fileNotParsable.php' ][0] );
 
-		$this->assertContains( "unexpected '<'", $all[ $failedFilePath ][0]->getMessage() );
+		$this->assertContains( "unexpected '<'", $all[ 'v2/fileNotParsable.php' ][0]->getMessage() );
 	}
 
 	/**
