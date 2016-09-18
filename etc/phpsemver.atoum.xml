@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <phpsemver
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="../../../etc/phpsemver.xsd"
+        xsi:noNamespaceSchemaLocation="phpsemver.xsd"
         title="Semantic Versions 2.0.0">
     <Description>
-        DEPRECATED in 4.0.0 - this file will no longer be maintained.
-        Please use "etc/phpsemver.atoum.xml" instead.
+        Note: This file is for testing puposes only.
+        <br />
         <br />
         Given a version number MAJOR.MINOR.PATCH, increment the:
         <br/>

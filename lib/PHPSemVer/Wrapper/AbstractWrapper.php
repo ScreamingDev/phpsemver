@@ -33,136 +33,148 @@ use PHPSemVer\DataTree\Importer\ParentVisitor;
  * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.2.0/LICENSE.md MIT License
  * @link      https://github.com/sourcerer-mike/phpsemver/
  */
-abstract class AbstractWrapper
-{
-    protected $_base;
-    protected $fileNames;
-    protected $filter;
+abstract class AbstractWrapper {
+	protected $_base;
+	protected $errorCollection = [ ];
+	protected $fileNames;
+	protected $filter;
 
-    public function __construct($base)
-    {
-        if ( ! $base) {
-            throw new \InvalidArgumentException(
-                'Please provide a base. Can not be empty.'
-            );
-        }
+	public function __construct( $base ) {
+		if ( ! $base ) {
+			throw new \InvalidArgumentException(
+				'Please provide a base. Can not be empty.'
+			);
+		}
 
-        $this->_base = $base;
-    }
+		$this->_base = $base;
+	}
 
-    abstract protected function fetchFileNames();
+	public function getAllFileNames() {
+		if ( null === $this->fileNames ) {
+			$this->fetchFileNames();
+		}
 
-    public function getAllFileNames() {
-        if (null === $this->fileNames) {
-            $this->fetchFileNames();
-        }
+		$fileNames = [ ];
+		foreach ( $this->fileNames as $shortName => $realName ) {
+			if ( $this->getFilter() && ! $this->getFilter()->matches( $shortName ) ) {
+				continue;
+			}
 
-        $fileNames = [];
-        foreach ($this->fileNames as $shortName => $realName) {
-            if ( $this->getFilter() && ! $this->getFilter()->matches($shortName)) {
-                continue;
-            }
+			$fileNames[ $shortName ] = $realName;
+		}
 
-            $fileNames[$shortName] = $realName;
-        }
+		return $fileNames;
+	}
 
-        return $fileNames;
-    }
+	/**
+	 * Get version.
+	 *
+	 * @return mixed
+	 */
+	public function getBase() {
+		return $this->_base;
+	}
 
-    /**
-     * Get the configured filter.
+	abstract public function getBasePath();
+
+	public function getDataTree() {
+		ini_set( 'xdebug.max_nesting_level', 3000 );
+
+		$parser = ( new ParserFactory() )->create( ParserFactory::PREFER_PHP5 );
+
+		$nameResolver = new NodeTraverser();
+		$nameResolver->addVisitor( new NameResolver );
+		$nameResolver->addVisitor( new ParentVisitor() );
+		$nameResolver->addVisitor( new KeyVisitor() );
+		foreach ( $this->getAllFileNames() as $relativePath => $sourceFile ) {
+			if ( $this->getFilter() && ! $this->getFilter()->matches( $relativePath ) ) {
+				continue;
+			}
+
+			if ( ! preg_match( '/\.php$/i', $sourceFile ) ) {
+				continue;
+			}
+
+			try {
+				$tree = $parser->parse( file_get_contents( $sourceFile ) );
+
+				yield $nameResolver->traverse( $tree );
+			} catch ( Error $e ) {
+				// store failures
+				if ( ! isset( $this->errorCollection[ $sourceFile ] ) ) {
+					$this->errorCollection[ $sourceFile ] = [ ];
+				}
+
+				$this->errorCollection[ $sourceFile ][] = $e;
+			}
+		}
+	}
+
+	/**
+	 * Show all errors that happend while parsing.
+	 *
+	 * This returns an associated array with the absolute path as key
+	 * and an array of errors (`\PhpParser\Error`).
      *
-     * @return Filter
-     */
-    public function getFilter()
-    {
-        return $this->filter;
-    }
+     * @see \PhpParser\Error
+	 *
+	 * @return array
+	 */
+	public function getErrors() {
+		return $this->errorCollection;
+	}
 
-    public function setFilter($pattern)
-    {
-        $this->filter = $pattern;
-    }
+	/**
+	 * Get the configured filter.
+	 *
+	 * @return Filter
+	 */
+	public function getFilter() {
+		return $this->filter;
+	}
 
-    abstract public function getBasePath();
+	public function setFilter( $pattern ) {
+		$this->filter = $pattern;
+	}
 
-    /**
-     * Get version.
-     *
-     * @return mixed
-     */
-    public function getBase()
-    {
-        return $this->_base;
-    }
+	/**
+	 * Merge two Node trees.
+	 *
+	 * @param $tree
+	 * @param $dataTree
+	 *
+	 * @return mixed
+	 */
+	public function mergeTrees( $dataTree, $tree ) {
+		foreach ( $tree as $key => $node ) {
+			if ( is_numeric( $key ) ) {
+				$key = uniqid();
+			}
 
-    public function getDataTree()
-    {
-        ini_set('xdebug.max_nesting_level', 3000);
+			if ( ! isset( $dataTree[ $key ] ) ) {
+				$dataTree[ $key ] = $node;
+			}
 
-        $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP5);
+			foreach ( $node->getSubNodeNames() as $subNode ) {
+				if ( ! isset( $dataTree[ $key ]->$subNode ) ) {
+					$dataTree[ $key ]->$subNode = $node->$subNode;
+				}
 
-        $nameResolver = new NodeTraverser();
-        $nameResolver->addVisitor(new NameResolver);
-        $nameResolver->addVisitor(new ParentVisitor());
-        $nameResolver->addVisitor(new KeyVisitor());
-        foreach ($this->getAllFileNames() as $relativePath => $sourceFile) {
-            if ( $this->getFilter() && ! $this->getFilter()->matches($relativePath)) {
-                continue;
-            }
+				if ( ! is_array( $dataTree[ $key ]->$subNode )
+				     && ! is_array( $node->$subNode )
+				) {
+					continue;
+				}
 
-            if ( ! preg_match('/\.php$/i', $sourceFile)) {
-                continue;
-            }
+				$dataTree[ $key ]->$subNode = array_merge(
+					(array) $dataTree[ $key ]->$subNode,
+					(array) $node->$subNode
+				);
+			}
+		}
 
-            try {
-                $tree = $parser->parse(file_get_contents($sourceFile));
+		return $dataTree;
+	}
 
-                yield $nameResolver->traverse($tree);
-            } catch (Error $e) {
-                $e->setRawMessage($e->getRawMessage() . ' in file ' . $sourceFile);
-                throw $e;
-            }
-        }
-    }
-
-    /**
-     * Merge two Node trees.
-     *
-     * @param $tree
-     * @param $dataTree
-     *
-     * @return mixed
-     */
-    public function mergeTrees($dataTree, $tree)
-    {
-        foreach ($tree as $key => $node) {
-            if (is_numeric($key)) {
-                $key = uniqid();
-            }
-
-            if ( ! isset( $dataTree[$key] )) {
-                $dataTree[$key] = $node;
-            }
-
-            foreach ($node->getSubNodeNames() as $subNode) {
-                if ( ! isset( $dataTree[$key]->$subNode )) {
-                    $dataTree[$key]->$subNode = $node->$subNode;
-                }
-
-                if ( ! is_array($dataTree[$key]->$subNode)
-                     && ! is_array($node->$subNode)
-                ) {
-                    continue;
-                }
-
-                $dataTree[$key]->$subNode = array_merge(
-                    (array) $dataTree[$key]->$subNode,
-                    (array) $node->$subNode
-                );
-            }
-        }
-
-        return $dataTree;
-    }
+	abstract protected function fetchFileNames();
 }
