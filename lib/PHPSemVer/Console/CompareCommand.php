@@ -32,11 +32,13 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @license   https://github.com/sourcerer-mike/phpsemver/tree/3.2.0/LICENSE.md MIT License
  * @link      https://github.com/sourcerer-mike/phpsemver/
  */
-class CompareCommand extends AbstractCommand {
-	protected function execute(
-		InputInterface $input,
-		OutputInterface $output
-	) {
+class CompareCommand extends AbstractCommand
+{
+    protected function execute(
+        InputInterface $input,
+        OutputInterface $output
+    )
+    {
         $totalTime = microtime(true);
 
         $this->compareTrees();
@@ -52,19 +54,22 @@ class CompareCommand extends AbstractCommand {
         );
 
         $this->verbose('');
+
+        $this->showErrors($output);
+
     }
 
 
     /**
      * Print information as table.
      *
-     * @param InputInterface  $input
+     * @param InputInterface $input
      * @param OutputInterface $output
-     * @param Environment     $environment
+     * @param Environment $environment
      */
     protected function printTable(InputInterface $input, OutputInterface $output, $environment)
     {
-        $table   = new Table($output);
+        $table = new Table($output);
         $headers = array('Level', 'Message');
 
         $table->setHeaders($headers);
@@ -82,5 +87,32 @@ class CompareCommand extends AbstractCommand {
 
         $output->writeln('');
         $table->render();
+    }
+
+    /**
+     * Print out all errors that happened while parsing the files.
+     *
+     * @param OutputInterface $output
+     */
+    protected function showErrors(OutputInterface $output)
+    {
+        $skippedFiles = [];
+
+        foreach ($this->getPreviousWrapper()->getErrors() as $file => $errors) {
+            $output->writeln(
+                sprintf('<error>Skipped file "%s" in previous version due to syntax errors.</error>')
+            );
+        }
+
+        foreach ($this->getLatestWrapper()->getErrors() as $file => $errors) {
+            if (in_array($file, $skippedFiles)) {
+                // already shown => skip
+                continue;
+            }
+
+            $output->writeln(
+                sprintf('<error>Skipped file "%s" in latest version due to syntax errors.</error>')
+            );
+        }
     }
 }
