@@ -81,4 +81,20 @@ class Abstract_TestCase extends \PHPUnit_Framework_TestCase
     {
         return file_get_contents( $this->getResourcePath( $file ) );
     }
+
+    /**
+     * Reach a protected or private method.
+     *
+     * @param $class
+     * @param $methodName
+     *
+     * @return \ReflectionMethod
+     */
+    protected static function getMethod($class, $methodName)
+    {
+        $class = new \ReflectionClass($class);
+        $method = $class->getMethod($methodName);
+        $method->setAccessible(true);
+        return $method;
+    }
 }
