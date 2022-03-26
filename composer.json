@@ -32,7 +32,7 @@
     "phpmd/phpmd": "~2.3",
     "phpspec/phpspec": "~2.0",
     "phpunit/phpunit": "~4.4",
-    "squizlabs/php_codesniffer": "2.4.*"
+    "squizlabs/php_codesniffer": "2.4.* || 2.8.*"
   },
   "require": {
     "cpliakas/git-wrapper": "~1.4",
